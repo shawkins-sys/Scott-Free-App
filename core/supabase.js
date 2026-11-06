@@ -5,7 +5,10 @@ import { CONFIG } from '../config.js';
 
 export const supabase = CONFIG.supabaseUrl && CONFIG.supabaseAnonKey
   ? createClient(CONFIG.supabaseUrl, CONFIG.supabaseAnonKey, {
-      auth: { persistSession: true, autoRefreshToken: true, storageKey: 'sf-auth' },
+      // detectSessionInUrl off: sign-in is password + authenticator only, and the
+      // Google Photos sign-in returns its own #access_token, which must not be
+      // mistaken for a Supabase session.
+      auth: { persistSession: true, autoRefreshToken: true, storageKey: 'sf-auth', detectSessionInUrl: false },
     })
   : null;
 

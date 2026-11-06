@@ -15,4 +15,8 @@ export const CONFIG = {
   // Filled in during Supabase setup (see docs/SUPABASE-SETUP.md).
   supabaseUrl: 'https://fkcnfgevtwemgokrjxrk.supabase.co',
   supabaseAnonKey: 'sb_publishable_Br7GyAuvgd0h8Mcud82-RA_RoEcKBO4',
+
+  // Google OAuth client ID for the Photos Picker (see docs/GOOGLE-PHOTOS-SETUP.md).
+  // A client ID is public by design and safe to commit. Never add a client secret.
+  googleClientId: '',
 };

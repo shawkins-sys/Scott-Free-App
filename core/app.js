@@ -7,6 +7,7 @@ import { mountGrid, currentDevice } from './grid.js';
 import { requireAuth, signOut } from './auth.js';
 import { getTodayCheckin, checkinDoneToday, pickDailyPhrase, getDisplayPhrase } from './wellbeing.js';
 import { renderCheckinForm } from './checkin.js';
+import { captureGoogleReturn } from './google.js';
 
 const view = document.getElementById('view');
 const hubbar = document.getElementById('hubbar');
@@ -75,7 +76,7 @@ function renderHubBar(activeId) {
     </a>`;
   hubbar.innerHTML =
     btn('home', 'Home', 'home', '#/') +
-    hubs.map((h) => btn(h.id, h.title, h.icon, `#/hub/${h.id}`)).join('');
+    hubs.filter((h) => !h.hidden).map((h) => btn(h.id, h.title, h.icon, `#/hub/${h.id}`)).join('');
 }
 
 async function renderHome() {
@@ -95,7 +96,7 @@ async function renderHome() {
       <div id="grid-slot"></div>
       <div id="quiet-lines"></div>
       <div id="weekly-slot"></div>
-      <p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>
+      <p class="signout"><a class="link-btn" href="#/hub/settings">Settings</a> &middot; <button class="link-btn" id="signout-btn">Sign out</button></p>
     </section>`;
   document.getElementById('signout-btn').addEventListener('click', signOut);
 
@@ -170,6 +171,9 @@ window.addEventListener('resize', () => {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch((err) => console.warn('Service worker not registered', err));
 }
+
+// Returning from Google sign-in (Photos): take the token out of the address first.
+captureGoogleReturn();
 
 // Nothing loads until sign-in with MFA is complete.
 requireAuth(view)

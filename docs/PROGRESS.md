@@ -42,5 +42,14 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - `sw.js`: VERSION sf-v7, `sf-photos` cache kept across updates.
 - `tiles/weather/index.js`: Open-Meteo, geolocation (8 s timeout, 30 min max age) with Cheltenham fallback, result cached 15 min in localStorage, last forecast shown offline.
 
+### Photos from Google Photos (added 06/11/2026, Scott's request)
+- Google removed library read access (March 2025), so no live album link. Uses the Photos Picker API: Scott chooses photos in Settings every few months; copies resized to 2048px are saved to the `photos` bucket. Choosing again replaces the set (files named `gp-<id>.<ext>`, already-present items skipped, others removed).
+- Google photo links have no CORS, so `supabase/functions/photos-import` (Edge Function, service role, checks user + aal2) downloads and uploads. Actions `import` (5 items per call) and `remove`.
+- Google sign-in: OAuth implicit redirect (more reliable than a popup in the Android PWA), scope `photospicker.mediaitems.readonly`, token in sessionStorage only. `core/google.js`, `captureGoogleReturn()` runs before routing. `config.js` `googleClientId` (public). No client secret anywhere.
+- supabase-js `detectSessionInUrl: false` so Google's `#access_token` is not taken for a Supabase session.
+- New Settings hub (`hubs/settings`, `hidden: true` in registry so not on the hub bar), linked next to Sign out. Will also hold home location (Phase 7) etc.
+- Setup guide: `docs/GOOGLE-PHOTOS-SETUP.md`. sw.js VERSION sf-v8.
+- Status: built, waiting on Scott's Google Cloud client ID and Edge Function deploy.
+
 ## Next: Phase 4 (Calendar, Plan hub, Edge Function, key dates)
 Needs the personal calendar secret iCal URL (as a Supabase secret).

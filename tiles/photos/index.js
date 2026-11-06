@@ -1,4 +1,5 @@
-// Photos tile. Shuffled slideshow from the private `photos` bucket.
+// Photos tile. Shuffled slideshow from the private `photos` bucket
+// (filled from Google Photos via Settings, or uploaded in Supabase).
 // 8 seconds per photo, swipe to skip, tap for full screen, pause button.
 // Each photo is saved to Cache Storage the first time it is shown, so it
 // is only downloaded once. Shown after the morning check-in.
@@ -124,6 +125,16 @@ function go(delta) {
 
 document.addEventListener('visibilitychange', schedule);
 
+// Called by Settings after a new set of photos is chosen.
+export function resetPhotos() {
+  clearTimeout(state.timer);
+  for (const p of state.urls.values()) p.then((u) => URL.revokeObjectURL(u)).catch(() => {});
+  state.urls.clear();
+  state.photos = [];
+  state.index = 0;
+  listPromise = null;
+}
+
 function mountView(container, full) {
   container.innerHTML = `
     <div class="photo-view${full ? ' full' : ''}">
@@ -193,7 +204,7 @@ async function startView(container, full) {
     }
   }
   if (!state.photos.length) {
-    container.innerHTML = '<p class="muted">No photos yet. Add some to the photos bucket in Supabase Storage.</p>';
+    container.innerHTML = '<p class="muted">No photos yet. Choose some in Settings, at the bottom of Home.</p>';
     return;
   }
   mountView(container, full);
