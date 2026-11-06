@@ -23,7 +23,7 @@ Do these in order. Menu names are as Supabase shows them at the time of writing.
 
 ## 5. Set the site address
 **Authentication > URL Configuration**:
-- Site URL: `https://shawkins-sys.github.io/<repo-name>/`
+- Site URL: `https://shawkins-sys.github.io/Scott-Free-App/`
 - Add the same address under Redirect URLs.
 
 ## 6. Create the database

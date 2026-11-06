@@ -13,6 +13,6 @@ export const CONFIG = {
   phoneBreakpoint: 768,
 
   // Filled in during Supabase setup (see docs/SUPABASE-SETUP.md).
-  supabaseUrl: '',
-  supabaseAnonKey: '',
+  supabaseUrl: 'https://fkcnfgevtwemgokrjxrk.supabase.co',
+  supabaseAnonKey: 'sb_publishable_Br7GyAuvgd0h8Mcud82-RA_RoEcKBO4',
 };
