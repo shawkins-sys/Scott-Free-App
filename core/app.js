@@ -41,7 +41,7 @@ async function renderHome() {
         </div>
         <button class="pill-btn" id="edit-btn" aria-pressed="false">Edit</button>
       </header>
-      <p class="edit-hint" id="edit-hint" hidden>Press and hold a tile to move it, or hold the blue handle to resize. Tap Done to save.</p>
+      <p class="edit-hint" id="edit-hint" hidden>Press and hold a tile to move it, or hold a blue edge to resize. Changes save automatically.</p>
       <div id="checkin-slot"></div>
       <div id="grid-slot"></div>
       <div id="quiet-lines"></div>

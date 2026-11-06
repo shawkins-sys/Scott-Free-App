@@ -170,14 +170,14 @@ button { font: inherit; color: inherit; }
 .grid-stack .ui-resizable-handle { display: none !important; }
 .grid-stack.editing .ui-resizable-se {
   display: flex !important; align-items: center; justify-content: center;
-  width: 44px; height: 44px; right: 12px; bottom: 12px;
-  border-radius: 50%; background: var(--accent); box-shadow: var(--shadow);
-  background-image: none; transform: none; cursor: nwse-resize; z-index: 102;
-  touch-action: none;
+  width: 44px; height: 44px; right: 8px; bottom: 8px;
+  background: none; background-image: none; transform: none;
+  cursor: nwse-resize; z-index: 102; touch-action: none;
 }
 .grid-stack.editing .ui-resizable-se::after {
-  content: ""; width: 14px; height: 14px;
-  border-right: 3px solid #fff; border-bottom: 3px solid #fff; border-radius: 2px;
+  content: ""; width: 18px; height: 18px;
+  border-right: 5px solid var(--accent); border-bottom: 5px solid var(--accent);
+  border-bottom-right-radius: 8px; opacity: 0.6;
 }
 .grid-stack.editing .ui-resizable-s {
   display: block !important; left: 30%; width: 40%; height: 24px; bottom: 6px;
