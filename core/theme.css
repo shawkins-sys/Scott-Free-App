@@ -320,3 +320,41 @@ button { font: inherit; color: inherit; }
 .tag { font-size: 0.75rem; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 10px; }
 .phrase-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
 .phrase-actions .link-btn { color: var(--accent); }
+
+/* ---------- Photos (Phase 3) ---------- */
+.photo-view {
+  position: relative; height: 100%; min-height: 160px;
+  border-radius: var(--radius-sm); overflow: hidden;
+  background: var(--accent-soft); touch-action: pan-y; cursor: pointer;
+}
+.photo-view img { width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; -webkit-user-drag: none; }
+.photo-view.full { height: 72vh; background: #000; cursor: default; }
+.photo-view.full img { object-fit: contain; }
+.photo-msg { display: none; position: absolute; inset: 0; margin: 0; place-items: center; text-align: center; padding: 16px; }
+.photo-failed img { visibility: hidden; }
+.photo-failed .photo-msg { display: grid; }
+.photo-pause {
+  position: absolute; right: 10px; bottom: 10px; width: 40px; height: 40px;
+  background: rgba(0, 0, 0, 0.35); color: #fff; border-radius: 50%;
+  backdrop-filter: blur(6px);
+}
+.photo-pause svg { width: 18px; height: 18px; }
+.photo-wait { margin: 0; }
+
+/* ---------- Weather (Phase 3) ---------- */
+.weather .w-icon { display: inline-flex; width: 28px; height: 28px; color: var(--accent); }
+.weather .w-icon svg { width: 100%; height: 100%; }
+.w-now { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.w-icon.w-icon-lg { width: 52px; height: 52px; }
+.w-big { font-size: 2.2rem; font-weight: 600; line-height: 1; }
+.w-desc { color: var(--muted); }
+.w-meta { margin-left: auto; text-align: right; font-size: 0.9rem; }
+.w-hours { list-style: none; padding: 0; margin: 12px 0 0; display: flex; justify-content: space-between; gap: 6px; }
+.w-hours li { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 40px; font-size: 0.85rem; }
+.w-hours .w-time, .w-rain { color: var(--muted); font-size: 0.75rem; }
+.w-rain { min-height: 1.1em; }
+.w-scroll { overflow-x: auto; justify-content: flex-start; gap: 14px; padding-bottom: 6px; }
+.w-head { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 20px 0 6px; font-weight: 600; }
+.w-days { list-style: none; padding: 0; margin: 0; }
+.w-days li { display: grid; grid-template-columns: 4em 32px 3em 1fr; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.w-range { text-align: right; }

@@ -28,8 +28,19 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - Seed phrase added once when the list is empty (`settings.data.phraseSeeded`), so deleting it does not bring it back.
 - Today's check-in can be edited from the Wellbeing hub; the day's phrase does not change.
 
-## Phase 2: Wellbeing core (built, awaiting Scott's test)
+## Phase 2: Wellbeing core (complete, 06/11/2026)
 - `core/wellbeing.js` (data), `core/checkin.js` (form), `core/app.js` (lock, phrase line, `afterCheckin()` hook for breathing and music later, refresh on new day), `hubs/wellbeing/index.js`, check-in styles in `theme.css`. `sw.js` VERSION sf-v6.
-- Open point for Phase 3: brief 4.3 lists calendar and weather on Home while locked, but not photos.
 
-## Next: Phase 3 (Photos and Weather tiles)
+### Phase 3 decisions (06/11/2026)
+- Photos tile shows a quiet line until today's check-in is done (space kept so tiles do not jump), then loads without a reload via the `sf:checkin-done` window event.
+- Photos fill the tile (object-fit cover); full screen shows the whole photo.
+- Weather shows no place name: "Your location", or "Cheltenham" on fallback. Units °C and mph.
+- Weather expanded view: next 24 hours plus 7 days.
+
+## Phase 3: Photos and Weather (built, awaiting Scott's test)
+- `tiles/photos/index.js`: lists bucket root once per app load (jpg, jpeg, png, webp, gif, avif; HEIC skipped as Chrome cannot show it), shuffles, 8 s per photo, swipe, tap for full screen, shared pause. Each photo is downloaded via a 1 hour signed URL the first time it is shown and saved in Cache Storage `sf-photos`, keyed by name + eTag; deleted or replaced files are removed from the cache. Offline uses cached photos. Only prev/current/next held in memory.
+- `sw.js`: VERSION sf-v7, `sf-photos` cache kept across updates.
+- `tiles/weather/index.js`: Open-Meteo, geolocation (8 s timeout, 30 min max age) with Cheltenham fallback, result cached 15 min in localStorage, last forecast shown offline.
+
+## Next: Phase 4 (Calendar, Plan hub, Edge Function, key dates)
+Needs the personal calendar secret iCal URL (as a Supabase secret).

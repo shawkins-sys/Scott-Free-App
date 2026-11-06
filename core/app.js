@@ -59,6 +59,7 @@ async function setupCheckin() {
     onSaved: async (saved) => {
       slot.innerHTML = '';
       renderHubBar('home');
+      window.dispatchEvent(new CustomEvent('sf:checkin-done'));
       await afterCheckin(saved);
       showPhrase();
     },

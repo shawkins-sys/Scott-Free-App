@@ -3,7 +3,7 @@
 // the offline fallback. Pinned CDN libraries: cache first. Supabase and other
 // APIs are never cached here.
 
-const VERSION = 'sf-v6';
+const VERSION = 'sf-v7';
 const SHELL_CACHE = `${VERSION}-shell`;
 const CDN_CACHE = `${VERSION}-cdn`;
 
@@ -37,10 +37,11 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  // Old app caches are removed. The sf-photos cache is kept across updates.
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(
-        keys.filter((k) => !k.startsWith(VERSION)).map((k) => caches.delete(k))
+        keys.filter((k) => !k.startsWith(VERSION) && k !== 'sf-photos').map((k) => caches.delete(k))
       ))
       .then(() => self.clients.claim())
   );
