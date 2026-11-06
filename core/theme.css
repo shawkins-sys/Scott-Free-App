@@ -141,6 +141,9 @@ button { font: inherit; color: inherit; }
 .phrase { margin: 10px 0 0; color: var(--muted); font-style: italic; font-size: 0.95rem; }
 .phrase:empty { display: none; }
 
+.edit-hint { margin: -8px 4px 12px; font-size: 0.85rem; color: var(--accent); }
+.edit-hint[hidden] { display: none; }
+
 #checkin-slot:empty, #quiet-lines:empty, #weekly-slot:empty { display: none; }
 
 /* Tiles inside GridStack */
@@ -162,6 +165,28 @@ button { font: inherit; color: inherit; }
   cursor: move;
 }
 .grid-stack.editing .tile-expand { visibility: hidden; }
+
+/* Touch-sized resize handles, visible only in Edit mode */
+.grid-stack .ui-resizable-handle { display: none !important; }
+.grid-stack.editing .ui-resizable-se {
+  display: flex !important; align-items: center; justify-content: center;
+  width: 44px; height: 44px; right: 12px; bottom: 12px;
+  border-radius: 50%; background: var(--accent); box-shadow: var(--shadow);
+  background-image: none; transform: none; cursor: nwse-resize; z-index: 102;
+  touch-action: none;
+}
+.grid-stack.editing .ui-resizable-se::after {
+  content: ""; width: 14px; height: 14px;
+  border-right: 3px solid #fff; border-bottom: 3px solid #fff; border-radius: 2px;
+}
+.grid-stack.editing .ui-resizable-s {
+  display: block !important; left: 30%; width: 40%; height: 24px; bottom: 6px;
+  cursor: ns-resize; touch-action: none; background: none;
+}
+.grid-stack.editing .ui-resizable-s::after {
+  content: ""; display: block; width: 48px; height: 5px; margin: 10px auto 0;
+  border-radius: 3px; background: var(--accent); opacity: 0.6;
+}
 
 .placeholder {
   height: 100%;

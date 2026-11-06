@@ -71,6 +71,8 @@ export async function mountGrid(container) {
       staticGrid: true,
       float: false,
       animate: true,
+      alwaysShowResizeHandle: true,
+      resizable: { handles: 'se,s' },
     },
     gridEl
   );
@@ -87,7 +89,9 @@ export async function mountGrid(container) {
     const size = (tile.defaultSize && tile.defaultSize[device]) || { w: COLUMNS[device], h: 4 };
     const el = tileShell(tile);
     gridEl.appendChild(el);
-    grid.makeWidget(el, pos ? { x: pos.x, y: pos.y, w: pos.w, h: pos.h } : { w: size.w, h: size.h });
+    grid.makeWidget(el, pos
+      ? { id: tile.id, x: pos.x, y: pos.y, w: pos.w, h: pos.h }
+      : { id: tile.id, w: size.w, h: size.h });
     try {
       await tile.render(el.querySelector('.tile-body'));
     } catch (err) {

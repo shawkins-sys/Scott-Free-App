@@ -41,6 +41,7 @@ async function renderHome() {
         </div>
         <button class="pill-btn" id="edit-btn" aria-pressed="false">Edit</button>
       </header>
+      <p class="edit-hint" id="edit-hint" hidden>Press and hold a tile to move it, or hold the blue handle to resize. Tap Done to save.</p>
       <div id="checkin-slot"></div>
       <div id="grid-slot"></div>
       <div id="quiet-lines"></div>
@@ -59,6 +60,7 @@ async function renderHome() {
     editBtn.textContent = editing ? 'Done' : 'Edit';
     editBtn.setAttribute('aria-pressed', String(editing));
     editBtn.classList.toggle('active', editing);
+    document.getElementById('edit-hint').hidden = !editing;
   });
 }
 
