@@ -19,5 +19,17 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - No in-app password reset; reset via Supabase dashboard.
 - Possible later: "Add another authenticator" option in Settings.
 
-## Next: Phase 2 (Wellbeing core)
-Check-in, hub lock, daily phrases (rotation, tough days, pinning, seed phrase), Wellbeing hub phrase management. Confirm check-in face/colour style with Scott before building.
+### Phase 2 decisions (06/11/2026)
+- Check-in metrics (all 1 to 5, in `checkins.metrics`): mood, sleep, energy, emotional_stress, work_stress, physical. Add more via `METRICS` in `core/wellbeing.js`.
+- Rating style: colour dots only, number shown on hover/press. Cool to warm scale (1 blue, 5 amber). Colour shows level, not good or bad.
+- Hours slept: stepper in 0.5 h steps (0 to 14), starts from last entry or 7. Exercise yesterday: Yes/No. Note optional. Done enabled once all ratings and exercise are set.
+- Phrase line is empty until the check-in is done. Picked once on Done and stored in `settings.data.dailyPhrase` ({ day, id }), fixed for the day.
+- Phrase order: pinned (only one at a time) > tough days phrase on a tough day > random normal phrase, avoiding yesterday's. Tough day with no tough phrases falls back to normal.
+- Seed phrase added once when the list is empty (`settings.data.phraseSeeded`), so deleting it does not bring it back.
+- Today's check-in can be edited from the Wellbeing hub; the day's phrase does not change.
+
+## Phase 2: Wellbeing core (built, awaiting Scott's test)
+- `core/wellbeing.js` (data), `core/checkin.js` (form), `core/app.js` (lock, phrase line, `afterCheckin()` hook for breathing and music later, refresh on new day), `hubs/wellbeing/index.js`, check-in styles in `theme.css`. `sw.js` VERSION sf-v6.
+- Open point for Phase 3: brief 4.3 lists calendar and weather on Home while locked, but not photos.
+
+## Next: Phase 3 (Photos and Weather tiles)

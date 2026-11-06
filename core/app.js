@@ -2,9 +2,11 @@
 import { CONFIG } from '../config.js';
 import { hubs } from '../registry.js';
 import { icons } from './icons.js';
-import { greeting, friendlyDate } from './date.js';
+import { greeting, friendlyDate, todayKey } from './date.js';
 import { mountGrid, currentDevice } from './grid.js';
 import { requireAuth, signOut } from './auth.js';
+import { getTodayCheckin, checkinDoneToday, pickDailyPhrase, getDisplayPhrase } from './wellbeing.js';
+import { renderCheckinForm } from './checkin.js';
 
 const view = document.getElementById('view');
 const hubbar = document.getElementById('hubbar');
@@ -12,9 +14,55 @@ let gridCtl = null;
 
 document.title = CONFIG.appName;
 
-// Hubs unlock after the morning check-in (added in Phase 2).
+// Hubs stay locked until today's check-in is saved (brief 4.3).
 export function hubsLocked() {
-  return false;
+  return !checkinDoneToday();
+}
+
+async function showPhrase() {
+  const slot = document.getElementById('phrase-slot');
+  if (!slot) return;
+  try { slot.textContent = await getDisplayPhrase(); }
+  catch (err) { console.warn('Phrase not loaded', err); }
+}
+
+// Runs after the check-in is first saved today. Breathing (Phase 8) and
+// morning music (Phase 7) will be added here, in that order.
+async function afterCheckin(entry) {
+  try { await pickDailyPhrase(entry.metrics); }
+  catch (err) { console.warn('Daily phrase not picked', err); }
+}
+
+async function setupCheckin() {
+  const slot = document.getElementById('checkin-slot');
+  let entry;
+  try {
+    entry = await getTodayCheckin({ refresh: true });
+  } catch (err) {
+    console.error('Check-in status not loaded', err);
+    slot.innerHTML = `<div class="card muted">Could not load this morning's check-in.
+      <button class="link-btn" id="checkin-retry">Try again</button></div>`;
+    slot.querySelector('#checkin-retry').addEventListener('click', setupCheckin);
+    return;
+  }
+  if (!document.contains(slot)) return; // moved away from Home meanwhile
+  renderHubBar('home');
+  if (entry) {
+    slot.innerHTML = '';
+    // Safety net in case the phrase was not picked when the check-in was saved.
+    try { await pickDailyPhrase(entry.metrics); } catch { /* shown as empty */ }
+    showPhrase();
+    return;
+  }
+  await renderCheckinForm(slot, {
+    title: 'Morning check-in',
+    onSaved: async (saved) => {
+      slot.innerHTML = '';
+      renderHubBar('home');
+      await afterCheckin(saved);
+      showPhrase();
+    },
+  });
 }
 
 function renderHubBar(activeId) {
@@ -50,6 +98,7 @@ async function renderHome() {
     </section>`;
   document.getElementById('signout-btn').addEventListener('click', signOut);
 
+  setupCheckin();
   gridCtl = await mountGrid(document.getElementById('grid-slot'));
 
   const editBtn = document.getElementById('edit-btn');
@@ -93,6 +142,9 @@ async function renderHub(id) {
 async function route() {
   const hash = location.hash || '#/';
   const match = hash.match(/^#\/hub\/([\w-]+)/);
+  if (match) {
+    try { await getTodayCheckin(); } catch { /* treated as locked */ }
+  }
   renderHubBar(match ? match[1] : 'home');
   window.scrollTo(0, 0);
   if (match) await renderHub(match[1]);
@@ -122,6 +174,14 @@ if ('serviceWorker' in navigator) {
 requireAuth(view)
   .then(() => {
     window.addEventListener('hashchange', route);
+    // If the app is left open past midnight, start the new day fresh.
+    let openDay = todayKey();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && todayKey() !== openDay) {
+        openDay = todayKey();
+        route();
+      }
+    });
     route();
   })
   .catch((err) => {
