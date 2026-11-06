@@ -91,13 +91,34 @@ async function enrolStep(root) {
   }
   const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp', friendlyName: CONFIG.appName });
   if (error) throw error;
+  const secret = String(data.totp.secret).replace(/[^A-Z2-7]/gi, '').toUpperCase();
+  const grouped = secret.match(/.{1,4}/g).join(' ');
   return new Promise((resolve) => {
     const card = screen(root, 'Set up your authenticator', codeForm(`
-      <p>Scan this with your authenticator app (for example Google Authenticator), then enter the 6-digit code it shows.</p>
-      <div class="qr"><img src="${data.totp.qr_code}" alt="Authenticator QR code"></div>
-      <p class="muted">Can't scan? Enter this key manually:<br><code>${esc(data.totp.secret)}</code></p>`));
+      <p>On this phone: tap the button to add ${esc(CONFIG.appName)} to your authenticator app. On a computer: scan the QR code with your phone.</p>
+      <a class="primary-btn center" href="${esc(data.totp.uri)}">Add to authenticator app</a>
+      <div class="qr"><img alt="Authenticator QR code"></div>
+      <p class="muted">Or enter this key manually (time based):</p>
+      <p class="secret-key">${esc(grouped)}</p>
+      <button type="button" class="pill-btn" data-copy>Copy key</button>
+      <p class="muted">Then enter the 6-digit code it shows.</p>`));
+    card.querySelector('.qr img').src = qrSrc(data.totp.qr_code);
+    card.querySelector('[data-copy]').addEventListener('click', async (e) => {
+      try { await navigator.clipboard.writeText(secret); e.target.textContent = 'Copied'; }
+      catch { e.target.textContent = 'Copy failed, type it instead'; }
+    });
     wireCode(card, data.id, resolve);
   });
+}
+
+// Supabase returns the QR as a raw (unencoded) SVG data URL, which browsers
+// can refuse to show. Turn it into a safe image source.
+function qrSrc(qr) {
+  const s = String(qr || '');
+  if (!s.startsWith('data:image/svg+xml') || s.includes(';base64,')) return s;
+  let svg = s.slice(s.indexOf(',') + 1);
+  try { svg = decodeURIComponent(svg); } catch { /* already raw */ }
+  return URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
 }
 
 // Main entry: resolves when fully signed in with MFA.

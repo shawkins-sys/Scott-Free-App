@@ -230,6 +230,13 @@ button { font: inherit; color: inherit; }
 .auth .qr { display: flex; justify-content: center; margin: 12px 0; }
 .auth .qr img { width: 200px; height: 200px; background: #fff; border-radius: var(--radius-sm); padding: 8px; }
 .auth code { word-break: break-all; font-size: 0.85rem; }
+.auth .center { text-align: center; text-decoration: none; margin-bottom: 8px; }
+.auth .secret-key {
+  font-family: ui-monospace, "Roboto Mono", Menlo, Consolas, monospace;
+  font-size: 1.05rem; letter-spacing: 0.08em; word-spacing: 0.3em;
+  background: var(--bg); border-radius: var(--radius-sm); padding: 10px 12px; margin: 6px 0 10px;
+}
+.auth [data-copy] { margin-bottom: 16px; }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
