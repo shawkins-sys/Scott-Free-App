@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Scott Free</title>
+  <meta name="description" content="Personal life hub">
+  <meta name="theme-color" content="#f4f7fb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1724" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/icon-180.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@14.1.0/dist/gridstack.min.css">
+  <link rel="stylesheet" href="./core/theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/gridstack@14.1.0/dist/gridstack-all.js"></script>
+</head>
+<body>
+  <div id="app">
+    <main id="view" aria-live="polite"></main>
+    <nav id="hubbar" aria-label="Hubs"></nav>
+  </div>
+  <div id="overlay" hidden></div>
+  <script type="module" src="./core/app.js"></script>
+</body>
+</html>
