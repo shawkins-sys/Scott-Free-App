@@ -397,3 +397,29 @@ button { font: inherit; color: inherit; }
 #quiet-lines { margin: 4px 0 var(--space); }
 .quiet-line { display: block; text-align: center; color: var(--muted); font-size: 0.9rem; text-decoration: none; padding: 6px 8px; }
 .quiet-line:hover { color: var(--accent); }
+
+/* ---------- Money (Phase 5) ---------- */
+.card-title.sub { margin-top: 18px; }
+.row-list { list-style: none; padding: 0; margin: 0; }
+.row-list > li + li { border-top: 1px solid var(--border); }
+.row-btn {
+  width: 100%; background: none; border: 0; padding: 10px 2px; cursor: pointer; text-align: left;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.amt { font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; }
+.block { display: block; }
+.alert-row .row-btn { color: var(--lvl-5); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 10px; }
+.chip { border: 1px solid var(--border); background: var(--card); border-radius: 999px; padding: 4px 12px; font-size: 0.85rem; cursor: pointer; }
+.chip.active { background: var(--accent); color: #fff; border-color: transparent; }
+.field textarea {
+  width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font: inherit; resize: vertical;
+}
+.field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dl { margin: 0 0 16px; }
+.dl-row { display: grid; grid-template-columns: 9.5em 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.dl dt { color: var(--muted); font-size: 0.9rem; }
+.dl dd { margin: 0; overflow-wrap: anywhere; }
+.btn-row { display: flex; align-items: center; gap: 16px; }
+.cat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }

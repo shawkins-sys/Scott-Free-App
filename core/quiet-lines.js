@@ -1,10 +1,16 @@
 // Quiet lines at the bottom of Home. Each provider returns
 // { text, href } or null. Shown only after the morning check-in.
-// Phase 5 adds the finance line here.
 import { listKeyDates, quietLineText } from './keydates.js';
+import { listPayments, quietFinanceText } from './money.js';
 import { esc } from './wellbeing.js';
 
 const providers = [
+  // Finance: payments due in 7 days, renewals or cancel-by dates in 30. No amounts.
+  async () => {
+    const text = quietFinanceText(await listPayments());
+    return text ? { text, href: '#/hub/money' } : null;
+  },
+  // Key dates: birthdays and life admin inside their reminder window.
   async () => {
     const text = quietLineText(await listKeyDates());
     return text ? { text, href: '#/hub/plan' } : null;

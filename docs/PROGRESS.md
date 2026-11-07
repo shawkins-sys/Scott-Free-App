@@ -13,6 +13,10 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - `supabase/schema.sql`: all 14 tables, RLS policy `owner_mfa` (user_id = auth.uid() and aal2) on all except `spotify_auth` (no policies, service role only). Private `photos` bucket. `ping()` RPC for keep-alive. `checkins.metrics` is jsonb so metrics can be added.
 - `.github/workflows/keep-alive.yml`: every 3 days, uses secrets SUPABASE_URL and SUPABASE_ANON_KEY (apikey header only, publishable key).
 
+## Before finishing (Scott asked to be reminded at the end)
+- Calendar: add secret `CALENDAR_FEEDS` and deploy `calendar-feed` (docs/CALENDAR-SETUP.md).
+- Google Photos: Google Cloud client ID into `config.js`, deploy `photos-import` (docs/GOOGLE-PHOTOS-SETUP.md).
+
 ## Decisions made
 - Home top section is fixed, only content tiles are movable.
 - Home date shows friendly form "Friday 6 November". DD/MM/YYYY everywhere else.
@@ -58,12 +62,24 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - Reminder lead time: one editable number per item (defaults 7 birthdays, 30 life admin) stored as `lead_days` [N, 0].
 - "Open in Google Calendar" opens that day (event-specific links are not reliable from an iCal feed).
 
-## Phase 4: Calendar and key dates (built, awaiting Scott's test)
+## Phase 4: Calendar and key dates (complete, 07/11/2026)
 - `supabase/functions/calendar-feed`: secret `CALENDAR_FEEDS` (single URL or JSON list), ical.js 2.1.0 via npm, expands recurrence with exceptions/EXDATE, skips cancelled, London day ranges, in-memory feed cache 15 min. Checks user + aal2. Tested locally against a sample feed.
 - `core/calendar.js`: client fetch with 15 min localStorage cache and stale fallback, day helpers, event rows, event detail overlay, `renderAgenda()`.
 - `core/keydates.js`: CRUD, `nextDate`, `advancedDate`, `upcoming`, `quietLineText`, `keyDateRows`. `core/quiet-lines.js`: provider list for Home quiet lines (Phase 5 adds finance).
 - `tiles/calendar`, `hubs/plan` (agenda + key dates with add/edit form overlay). sw.js VERSION sf-v10.
 - Setup guide: `docs/CALENDAR-SETUP.md`.
 
-## Next: Phase 5 (Money part 1)
-Payments table, add/edit/delete form, list, detail panel, overview alerts, quiet Home finance line.
+### Phase 5 decisions (07/11/2026)
+- Next due: weekly uses `payment_day` as weekday (1 Mon to 7 Sun); monthly uses day of month (31 = last day); quarterly/annual repeat every 3/12 months from `start_date` (required for those), `payment_day` overrides the day if set. No schema change.
+- Seed categories (once, `settings.data.categoriesSeeded`): Housing, Council tax, Utilities, Phone & broadband, Insurance, Streaming, Subscriptions, Transport, Loans & credit, Savings, Other. Editable in "Manage categories".
+- Quiet finance line has no amounts, e.g. "2 payments due this week · Sky cancel-by in 3 days · 1 more renewal". Shown after check-in, before the key dates line.
+- Cancel-by = end/renewal date minus parsed notice period ("30 days", "1 month", "2 weeks"); included in 30-day alerts. Unclear notice text gives no cancel-by.
+- Save is blocked if a text field looks like a sort code (nn-nn-nn) or a Luhn-valid 13 to 19 digit card number, or the bank field contains numbers. Long customer references are allowed.
+
+## Phase 5: Money part 1 (built, awaiting Scott's test)
+- `core/money.js`: categories (seeded), payments CRUD, `nextDue`, `cancelBy`, `dueSoon`, `renewalsSoon`, `quietFinanceText`, `sensitiveNumberWarning`. Date maths tested locally.
+- `hubs/money/index.js`: overview (next 7 days with amounts, 30-day renewals/cancel-by highlighted), payments list with category filter chips, detail overlay, add/edit form, categories manager. No monthly outgoings total.
+- `core/quiet-lines.js`: finance provider added. sw.js VERSION sf-v11.
+
+## Next: Phase 6 (Money part 2)
+Pay schedule and bank holidays, statement import (needs Scott's redacted Lloyds CSV and employer payer description), review screen, P&L, category chart, expenses tracker, import reminder banner.
