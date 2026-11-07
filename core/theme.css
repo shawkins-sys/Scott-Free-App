@@ -358,3 +358,20 @@ button { font: inherit; color: inherit; }
 .w-days { list-style: none; padding: 0; margin: 0; }
 .w-days li { display: grid; grid-template-columns: 4em 32px 3em 1fr; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .w-range { text-align: right; }
+
+/* ---------- Calendar (Phase 4) ---------- */
+.ev-list { list-style: none; padding: 0; margin: 0; }
+.ev + .ev { border-top: 1px solid var(--border); }
+.ev-btn {
+  width: 100%; text-align: left; background: none; border: 0; padding: 8px 2px; cursor: pointer;
+  display: grid; grid-template-columns: 7.5em 1fr; column-gap: 10px; align-items: baseline;
+}
+.ev-time { color: var(--muted); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+.ev-title { font-weight: 500; }
+.ev-loc { grid-column: 2; color: var(--muted); font-size: 0.85rem; }
+.ev.done { opacity: 0.45; }
+.agenda-day + .agenda-day { margin-top: 14px; }
+.agenda-head { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 0 0 4px; font-weight: 600; }
+.agenda-empty { margin: 0; }
+.ev-detail p { margin: 0 0 12px; }
+.ev-detail .pill-btn { display: inline-block; text-decoration: none; }
