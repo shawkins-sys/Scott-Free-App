@@ -8,6 +8,7 @@ import { todayKey } from '../../core/date.js';
 import { esc } from '../../core/wellbeing.js';
 import { openOverlay } from '../../core/overlay.js';
 import { renderPayImport } from './import.js';
+import { lastImport } from '../../core/statement.js';
 
 const FIELD_LABELS = {
   provider: 'Provider', plan_name: 'Plan name', bank_name: 'Bank', contract_length: 'Contract length',
@@ -251,7 +252,7 @@ export default {
       </div>
       <div data-pane="overview"><div class="card" id="m-overview"><p class="muted">Loading...</p></div></div>
       <div data-pane="payments" hidden><div class="card" id="m-payments"></div></div>
-      <div data-pane="spending" hidden><div class="card muted">Spending is coming in the next part of Phase 6.</div></div>
+      <div data-pane="spending" hidden></div>
       <div data-pane="import" hidden></div>`;
     const ov = container.querySelector('#m-overview');
     const pl = container.querySelector('#m-payments');
@@ -259,6 +260,15 @@ export default {
     const showTab = async (name) => {
       container.querySelectorAll('[data-tab]').forEach((t) => t.classList.toggle('active', t.dataset.tab === name));
       container.querySelectorAll('[data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== name; });
+      if (name === 'spending') {
+        // Loaded on demand, so the chart library does not slow the hub.
+        const pane = container.querySelector('[data-pane=spending]');
+        if (!pane.innerHTML) pane.innerHTML = '<div class="card muted">Loading...</div>';
+        try { const { renderSpending } = await import('./spending.js'); await renderSpending(pane); } catch (err) {
+          console.error(err);
+          pane.innerHTML = '<div class="card muted">Spending could not load just now. Please try again.</div>';
+        }
+      }
       if (name === 'import' && !loaded.has(name)) {
         loaded.add(name);
         const pane = container.querySelector('[data-pane=import]');
@@ -271,8 +281,11 @@ export default {
     };
 
     const refresh = async () => {
-      [cats, pays] = await Promise.all([listCategories(), listPayments()]);
-      ov.innerHTML = overviewHtml();
+      let last;
+      [cats, pays, last] = await Promise.all([listCategories(), listPayments(), lastImport().catch(() => undefined)]);
+      const stale = last !== undefined && (!last || daysBetween(last.imported_at.slice(0, 10), todayKey()) > 30);
+      ov.innerHTML = (stale ? `<div class="banner"><span>${last ? 'No statement imported in the last 30 days.' : 'No statement imported yet.'}</span>
+        <button class="pill-btn" data-tab="import">Import statement</button></div>` : '') + overviewHtml();
       pl.innerHTML = listHtml();
     };
     container.addEventListener('click', (e) => {

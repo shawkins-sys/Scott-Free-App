@@ -189,3 +189,49 @@ export async function lastImport() {
   if (error) throw error;
   return data;
 }
+
+// ---------- Profit and loss ----------
+
+// Income excludes expenses repaid and transfers. Spending excludes items ticked
+// Claimable, transfers and the Savings category (shown separately as Saved).
+export function summarise(txs, cats) {
+  const savingsIds = new Set(cats.filter((c) => c.name.trim().toLowerCase() === 'savings').map((c) => c.id));
+  const byCat = new Map();
+  let income = 0;
+  let spending = 0;
+  let saved = 0;
+  let review = 0;
+  for (const t of txs) {
+    const a = Number(t.amount);
+    if (t.needs_review) review++;
+    if (t.kind === 'transfer') continue;
+    if (a > 0) {
+      if (t.kind !== 'expenses_repaid') income += a;
+      continue;
+    }
+    if (t.claimable) continue;
+    if (t.category_id && savingsIds.has(t.category_id)) { saved += -a; continue; }
+    spending += -a;
+    byCat.set(t.category_id || null, (byCat.get(t.category_id || null) || 0) + -a);
+  }
+  const r2 = (n) => Math.round(n * 100) / 100;
+  const categories = [...byCat.entries()]
+    .map(([id, total]) => ({ id, name: (cats.find((c) => c.id === id) || {}).name || 'Uncategorised', total: r2(total) }))
+    .sort((a, b) => b.total - a.total);
+  return { income: r2(income), spending: r2(spending), saved: r2(saved), left: r2(income - spending - saved), categories, review };
+}
+
+// Running expenses totals across all time: claimed, repaid, outstanding.
+export async function expensesTotals() {
+  const { data, error } = await supabase.from('transactions')
+    .select('amount, claimable, kind').or('claimable.eq.true,kind.eq.expenses_repaid').limit(10000);
+  if (error) throw error;
+  let claimed = 0;
+  let repaid = 0;
+  for (const t of data || []) {
+    if (t.claimable && t.amount < 0) claimed += -Number(t.amount);
+    if (t.kind === 'expenses_repaid' && t.amount > 0) repaid += Number(t.amount);
+  }
+  const r2 = (n) => Math.round(n * 100) / 100;
+  return { claimed: r2(claimed), repaid: r2(repaid), outstanding: r2(claimed - repaid) };
+}

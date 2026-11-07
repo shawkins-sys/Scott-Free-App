@@ -16,6 +16,8 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 ## Before finishing (Scott asked to be reminded at the end)
 - Calendar: add secret `CALENDAR_FEEDS` and deploy `calendar-feed` (docs/CALENDAR-SETUP.md).
 - Google Photos: Google Cloud client ID into `config.js`, deploy `photos-import` (docs/GOOGLE-PHOTOS-SETUP.md).
+- Statement import: Scott to send a redacted Lloyds CSV sample and the employer payer description; finalise `parseStatement()` and set the employer pattern.
+- Check gov.uk bank holidays fetch works from the browser (CORS). If not, move it to an Edge Function (fallback list covers 2026 to 2027).
 
 ## Decisions made
 - Home top section is fixed, only content tiles are movable.
@@ -76,10 +78,25 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - Cancel-by = end/renewal date minus parsed notice period ("30 days", "1 month", "2 weeks"); included in 30-day alerts. Unclear notice text gives no cancel-by.
 - Save is blocked if a text field looks like a sort code (nn-nn-nn) or a Luhn-valid 13 to 19 digit card number, or the bank field contains numbers. Long customer references are allowed.
 
-## Phase 5: Money part 1 (built, awaiting Scott's test)
+## Phase 5: Money part 1 (complete, 07/11/2026)
 - `core/money.js`: categories (seeded), payments CRUD, `nextDue`, `cancelBy`, `dueSoon`, `renewalsSoon`, `quietFinanceText`, `sensitiveNumberWarning`. Date maths tested locally.
 - `hubs/money/index.js`: overview (next 7 days with amounts, 30-day renewals/cancel-by highlighted), payments list with category filter chips, detail overlay, add/edit form, categories manager. No monthly outgoings total.
 - `core/quiet-lines.js`: finance provider added. sw.js VERSION sf-v11.
 
-## Next: Phase 6 (Money part 2)
-Pay schedule and bank holidays, statement import (needs Scott's redacted Lloyds CSV and employer payer description), review screen, P&L, category chart, expenses tracker, import reminder banner.
+### Phase 6 decisions (07/11/2026)
+- Pay period: from one actual payday up to the day before the next. Paydays every 28 days from 13/11/2026; bank holiday rule in `settings.data.pay.holidayRule` (after | before); overrides in `payday_overrides`.
+- Usual salary is learned from the last salary payment (`settings.data.money.lastSalary`), seeded once by Scott. Salary = employer credit on an actual payday within 15% of it; any other employer credit = Expenses repaid. Employer pattern in `settings.data.money.employerPattern`.
+- Recurring payment match: all provider words (3+ letters) in the description and amount within 10%.
+- Savings category outgoings are excluded from Spending and shown as "Saved". Left over = income - spending - saved.
+- Added `kind = 'transfer'` (Transfer, ignored) for moves between own accounts; credits can be income, salary, expenses_repaid or transfer.
+- Merchant rules created from the review screen ("Remember for", default first two words of the normalised description) and applied straight away to other waiting transactions.
+- Dedupe key: date | amount | balance | normalised description, unique per user; import upserts with ignore duplicates.
+
+## Phase 6: Money part 2 (built, awaiting Scott's test; parser provisional)
+- `core/payschedule.js`: bank holidays (gov.uk, cached 30 days, fallback list 2026 to 2027), paydays, `payPeriod`, `isPayday`, overrides. Tested locally.
+- `core/statement.js`: PapaParse 5.7.0 (+esm), `parseStatement` (finds columns by name; sort code and account number never read), `classify`, `importStatement`, transactions, `addRule`, `summarise`, `expensesTotals`. Tested locally with a synthetic Lloyds file.
+- `hubs/money`: tabs Overview | Payments | Spending | Pay & import. `import.js` (paydays with Change, holiday rule, import, review, income settings). `spending.js` (P&L pay period / calendar month with prev/next, Chart.js 4.6.1 horizontal bar by category, expenses tracker, transaction list with edit overlay), loaded on demand. Overview shows the import reminder banner when no import in 30 days.
+- sw.js VERSION sf-v13.
+
+## Next: Phase 7 (Morning music)
+Spotify connection, playlist setup, home detection, Sonos playback, fallbacks and reconnect prompt. Needs Scott's Spotify developer app and 10 playlist links with mood tags.
