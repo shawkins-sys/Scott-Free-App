@@ -6,6 +6,7 @@ import { CONFIG } from '../config.js';
 import { todayKey } from './date.js';
 import { esc } from './wellbeing.js';
 import { openOverlay } from './overlay.js';
+import { listKeyDates, keyDateRows } from './keydates.js';
 
 const CACHE_KEY = 'sf-calendar';
 const CACHE_MINUTES = 15;
@@ -122,27 +123,33 @@ export function bindEventClicks(container, events) {
   });
 }
 
+// Key dates for the calendar views. Never blocks the calendar if it fails.
+export async function getKeyDatesSafe() {
+  try { return await listKeyDates(); } catch (err) { console.warn('Key dates not loaded', err); return []; }
+}
+
 // Agenda for today plus the next 7 days, used by the Plan hub and the expanded tile.
 export async function renderAgenda(container, days = 8) {
   container.innerHTML = '<p class="muted">Loading calendar...</p>';
-  let data;
-  try { data = await getEvents(days); } catch (err) {
-    console.warn('Calendar failed', err);
-    container.innerHTML = '<p class="muted">The calendar is not available right now.</p>';
-    return;
-  }
-  if (!data.configured) { container.innerHTML = '<p class="muted">Calendar is not connected yet.</p>'; return; }
+  const [result, keyDates] = await Promise.all([
+    getEvents(days).catch((err) => { console.warn('Calendar failed', err); return null; }),
+    getKeyDatesSafe(),
+  ]);
+  const data = result && result.configured ? result : { events: [] };
+  const note = !result ? 'The calendar is not available right now.'
+    : !result.configured ? 'Calendar is not connected yet.'
+    : result.stale ? 'Showing the last saved calendar.' : '';
   const today = todayKey();
   const sections = [];
   for (let i = 0; i < days; i++) {
     const key = addDaysKey(today, i);
-    const rows = eventRows(data.events, key, { dimFinished: true });
+    const rows = keyDateRows(keyDates, key) + eventRows(data.events, key, { dimFinished: true });
     sections.push(`
       <section class="agenda-day">
         <h3 class="agenda-head">${dayLabel(key)}</h3>
         ${rows ? `<ul class="ev-list">${rows}</ul>` : '<p class="muted small agenda-empty">Nothing planned</p>'}
       </section>`);
   }
-  container.innerHTML = `${data.stale ? '<p class="muted small">Showing the last saved calendar.</p>' : ''}${sections.join('')}`;
+  container.innerHTML = `${note ? `<p class="muted small">${note}</p>` : ''}${sections.join('')}`;
   bindEventClicks(container, data.events);
 }

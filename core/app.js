@@ -8,6 +8,7 @@ import { requireAuth, signOut } from './auth.js';
 import { getTodayCheckin, checkinDoneToday, pickDailyPhrase, getDisplayPhrase } from './wellbeing.js';
 import { renderCheckinForm } from './checkin.js';
 import { captureGoogleReturn } from './google.js';
+import { renderQuietLines } from './quiet-lines.js';
 
 const view = document.getElementById('view');
 const hubbar = document.getElementById('hubbar');
@@ -53,6 +54,7 @@ async function setupCheckin() {
     // Safety net in case the phrase was not picked when the check-in was saved.
     try { await pickDailyPhrase(entry.metrics); } catch { /* shown as empty */ }
     showPhrase();
+    renderQuietLines(document.getElementById('quiet-lines'));
     return;
   }
   await renderCheckinForm(slot, {
@@ -63,6 +65,7 @@ async function setupCheckin() {
       window.dispatchEvent(new CustomEvent('sf:checkin-done'));
       await afterCheckin(saved);
       showPhrase();
+      renderQuietLines(document.getElementById('quiet-lines'));
     },
   });
 }

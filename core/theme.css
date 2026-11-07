@@ -375,3 +375,25 @@ button { font: inherit; color: inherit; }
 .agenda-empty { margin: 0; }
 .ev-detail p { margin: 0 0 12px; }
 .ev-detail .pill-btn { display: inline-block; text-decoration: none; }
+
+/* ---------- Key dates and quiet lines (Phase 4) ---------- */
+[hidden] { display: none !important; }
+.card-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.card-row .card-title { margin: 0; }
+.kd-item { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 0; border-top: 1px solid var(--border); }
+.kd-main { display: flex; flex-direction: column; gap: 2px; }
+.kd-title { font-weight: 500; }
+.kd-when { font-size: 0.9rem; }
+.kd-item.soon .kd-when { color: var(--accent); }
+.kd-item.overdue .kd-when { color: var(--lvl-5); font-weight: 500; }
+.kd-kind { margin-bottom: 16px; }
+.field select {
+  width: 100%; padding: 12px 14px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit;
+}
+.ev.kd .ev-btn { text-decoration: none; color: inherit; }
+.ev.kd .ev-time { color: var(--accent); }
+.ev.kd .ev-title::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: middle; }
+#quiet-lines { margin: 4px 0 var(--space); }
+.quiet-line { display: block; text-align: center; color: var(--muted); font-size: 0.9rem; text-decoration: none; padding: 6px 8px; }
+.quiet-line:hover { color: var(--accent); }

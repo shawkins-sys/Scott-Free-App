@@ -37,7 +37,7 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - Weather shows no place name: "Your location", or "Cheltenham" on fallback. Units °C and mph.
 - Weather expanded view: next 24 hours plus 7 days.
 
-## Phase 3: Photos and Weather (built, awaiting Scott's test)
+## Phase 3: Photos and Weather (complete, 07/11/2026)
 - `tiles/photos/index.js`: lists bucket root once per app load (jpg, jpeg, png, webp, gif, avif; HEIC skipped as Chrome cannot show it), shuffles, 8 s per photo, swipe, tap for full screen, shared pause. Each photo is downloaded via a 1 hour signed URL the first time it is shown and saved in Cache Storage `sf-photos`, keyed by name + eTag; deleted or replaced files are removed from the cache. Offline uses cached photos. Only prev/current/next held in memory.
 - `sw.js`: VERSION sf-v7, `sf-photos` cache kept across updates.
 - `tiles/weather/index.js`: Open-Meteo, geolocation (8 s timeout, 30 min max age) with Cheltenham fallback, result cached 15 min in localStorage, last forecast shown offline.
@@ -49,7 +49,21 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - supabase-js `detectSessionInUrl: false` so Google's `#access_token` is not taken for a Supabase session.
 - New Settings hub (`hubs/settings`, `hidden: true` in registry so not on the hub bar), linked next to Sign out. Will also hold home location (Phase 7) etc.
 - Setup guide: `docs/GOOGLE-PHOTOS-SETUP.md`. sw.js VERSION sf-v8.
-- Status: built, waiting on Scott's Google Cloud client ID and Edge Function deploy.
+- Status: built, parked until after the full build (Scott, 07/11/2026). Needs Google Cloud client ID and Edge Function deploy.
 
-## Next: Phase 4 (Calendar, Plan hub, Edge Function, key dates)
-Needs the personal calendar secret iCal URL (as a Supabase secret).
+### Phase 4 decisions (07/11/2026)
+- Life admin stays on its due date (shown overdue) until "Done", which advances it (counted from the original due date so month-ends do not drift). Done on a non-repeating item offers to remove it. Birthdays roll yearly by themselves; 29 Feb shows on 28 Feb in non-leap years.
+- Home calendar tile shows finished events dimmed. Today's key dates shown first, marked with an accent dot.
+- Quiet key dates line lists up to three, e.g. "MOT overdue by 3 days · Mum's birthday in 5 days · Car tax in 20 days". Shown only after the check-in (same rule as photos). Overdue life admin always included.
+- Reminder lead time: one editable number per item (defaults 7 birthdays, 30 life admin) stored as `lead_days` [N, 0].
+- "Open in Google Calendar" opens that day (event-specific links are not reliable from an iCal feed).
+
+## Phase 4: Calendar and key dates (built, awaiting Scott's test)
+- `supabase/functions/calendar-feed`: secret `CALENDAR_FEEDS` (single URL or JSON list), ical.js 2.1.0 via npm, expands recurrence with exceptions/EXDATE, skips cancelled, London day ranges, in-memory feed cache 15 min. Checks user + aal2. Tested locally against a sample feed.
+- `core/calendar.js`: client fetch with 15 min localStorage cache and stale fallback, day helpers, event rows, event detail overlay, `renderAgenda()`.
+- `core/keydates.js`: CRUD, `nextDate`, `advancedDate`, `upcoming`, `quietLineText`, `keyDateRows`. `core/quiet-lines.js`: provider list for Home quiet lines (Phase 5 adds finance).
+- `tiles/calendar`, `hubs/plan` (agenda + key dates with add/edit form overlay). sw.js VERSION sf-v10.
+- Setup guide: `docs/CALENDAR-SETUP.md`.
+
+## Next: Phase 5 (Money part 1)
+Payments table, add/edit/delete form, list, detail panel, overview alerts, quiet Home finance line.
