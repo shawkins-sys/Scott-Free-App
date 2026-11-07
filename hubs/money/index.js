@@ -7,6 +7,7 @@ import { daysBetween, formatKey } from '../../core/keydates.js';
 import { todayKey } from '../../core/date.js';
 import { esc } from '../../core/wellbeing.js';
 import { openOverlay } from '../../core/overlay.js';
+import { renderPayImport } from './import.js';
 
 const FIELD_LABELS = {
   provider: 'Provider', plan_name: 'Plan name', bank_name: 'Bank', contract_length: 'Contract length',
@@ -242,10 +243,32 @@ export default {
   title: 'Money',
   async render(container) {
     container.innerHTML = `
-      <div class="card" id="m-overview"><p class="muted">Loading...</p></div>
-      <div class="card" id="m-payments"></div>`;
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="overview" role="tab">Overview</button>
+        <button class="tab" data-tab="payments" role="tab">Payments</button>
+        <button class="tab" data-tab="spending" role="tab">Spending</button>
+        <button class="tab" data-tab="import" role="tab">Pay &amp; import</button>
+      </div>
+      <div data-pane="overview"><div class="card" id="m-overview"><p class="muted">Loading...</p></div></div>
+      <div data-pane="payments" hidden><div class="card" id="m-payments"></div></div>
+      <div data-pane="spending" hidden><div class="card muted">Spending is coming in the next part of Phase 6.</div></div>
+      <div data-pane="import" hidden></div>`;
     const ov = container.querySelector('#m-overview');
     const pl = container.querySelector('#m-payments');
+    const loaded = new Set();
+    const showTab = async (name) => {
+      container.querySelectorAll('[data-tab]').forEach((t) => t.classList.toggle('active', t.dataset.tab === name));
+      container.querySelectorAll('[data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== name; });
+      if (name === 'import' && !loaded.has(name)) {
+        loaded.add(name);
+        const pane = container.querySelector('[data-pane=import]');
+        pane.innerHTML = '<div class="card muted">Loading...</div>';
+        try { await renderPayImport(pane); } catch (err) {
+          console.error(err); loaded.delete(name);
+          pane.innerHTML = '<div class="card muted">This could not load just now. Please try again.</div>';
+        }
+      }
+    };
 
     const refresh = async () => {
       [cats, pays] = await Promise.all([listCategories(), listPayments()]);
@@ -253,6 +276,8 @@ export default {
       pl.innerHTML = listHtml();
     };
     container.addEventListener('click', (e) => {
+      const tab = e.target.closest('[data-tab]');
+      if (tab) { showTab(tab.dataset.tab); return; }
       const open = e.target.closest('[data-open]');
       if (open) { const p = pays.find((x) => x.id === open.dataset.open); if (p) openDetail(p, refresh); return; }
       const chip = e.target.closest('[data-filter]');

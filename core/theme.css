@@ -423,3 +423,19 @@ button { font: inherit; color: inherit; }
 .dl dd { margin: 0; overflow-wrap: anywhere; }
 .btn-row { display: flex; align-items: center; gap: 16px; }
 .cat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+
+/* ---------- Money part 2 (Phase 6) ---------- */
+.tabs { display: flex; gap: 4px; overflow-x: auto; margin-bottom: var(--space); padding: 4px; background: var(--card); border-radius: 999px; box-shadow: var(--shadow); }
+.tab { flex: 1; white-space: nowrap; border: 0; background: none; padding: 8px 14px; border-radius: 999px; cursor: pointer; color: var(--muted); font: inherit; font-size: 0.9rem; }
+.tab.active { background: var(--accent); color: #fff; }
+.file-btn { display: inline-block; cursor: pointer; }
+.review-item { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; }
+.review-head { display: flex; justify-content: space-between; gap: 12px; }
+.review-item select, .review-item input[name=claim_ref] {
+  width: 100%; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font: inherit;
+}
+.review-item .check { margin: 0; flex-wrap: wrap; }
+.inline-input { padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit; width: 12em; }
+.review-item .pill-btn { align-self: flex-start; }
+.amt.in { color: var(--accent); }
