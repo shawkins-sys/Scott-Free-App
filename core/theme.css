@@ -452,3 +452,8 @@ button { font: inherit; color: inherit; }
 .pl .pl-total { border-bottom: 0; }
 .pl .pl-total dt, .pl .pl-total dd { color: var(--text); font-weight: 600; }
 .chart-wrap { position: relative; width: 100%; }
+
+/* Hours slept outside 7 to 8 hours */
+:root { --warn: #d64545; }
+@media (prefers-color-scheme: dark) { :root { --warn: #f07070; } }
+.sleep-warn { color: var(--warn); font-weight: 600; }

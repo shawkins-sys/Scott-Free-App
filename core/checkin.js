@@ -5,6 +5,10 @@ import { METRICS, saveCheckin, getLastCheckin, esc } from './wellbeing.js';
 const HOURS_MIN = 0;
 const HOURS_MAX = 14;
 const HOURS_STEP = 0.5;
+// Hours outside this range show in red (best sleep is around 7.5 hours).
+export const SLEEP_OK_MIN = 7;
+export const SLEEP_OK_MAX = 8;
+export const sleepOutOfRange = (h) => h < SLEEP_OK_MIN || h > SLEEP_OK_MAX;
 
 // options: { existing, title, submitLabel, onSaved(entry) }
 export async function renderCheckinForm(container, options = {}) {
@@ -53,7 +57,7 @@ export async function renderCheckinForm(container, options = {}) {
         </div>
       </div>
       <label class="field">
-        <span>One good thing (optional)</span>
+        <span>One good thing that happened yesterday (optional)</span>
         <input type="text" name="note" maxlength="140" autocomplete="off" value="${esc(existing ? existing.note : '')}">
       </label>
       <p class="form-msg" aria-live="polite"></p>
@@ -67,6 +71,7 @@ export async function renderCheckinForm(container, options = {}) {
 
   const refresh = () => {
     hoursOut.textContent = `${hours % 1 ? hours.toFixed(1) : hours} h`;
+    hoursOut.classList.toggle('sleep-warn', sleepOutOfRange(hours));
     form.querySelectorAll('[data-ex]').forEach((b) => {
       const on = String(exercised) === b.dataset.ex;
       b.classList.toggle('active', on);

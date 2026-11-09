@@ -33,6 +33,7 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - Phrase order: pinned (only one at a time) > tough days phrase on a tough day > random normal phrase, avoiding yesterday's. Tough day with no tough phrases falls back to normal.
 - Seed phrase added once when the list is empty (`settings.data.phraseSeeded`), so deleting it does not bring it back.
 - Today's check-in can be edited from the Wellbeing hub; the day's phrase does not change.
+- (09/11/2026) Note label is "One good thing that happened yesterday". Hours slept shows red below 7 or above 8 (best is 7.5), in the form and the Wellbeing summary (`SLEEP_OK_MIN/MAX` in `core/checkin.js`).
 
 ## Phase 2: Wellbeing core (complete, 06/11/2026)
 - `core/wellbeing.js` (data), `core/checkin.js` (form), `core/app.js` (lock, phrase line, `afterCheckin()` hook for breathing and music later, refresh on new day), `hubs/wellbeing/index.js`, check-in styles in `theme.css`. `sw.js` VERSION sf-v6.

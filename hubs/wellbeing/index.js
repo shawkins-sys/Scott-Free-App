@@ -2,7 +2,7 @@
 // Trends, breathing and weekly review are added in Phase 8.
 import { METRICS, getTodayCheckin, listPhrases, ensureSeedPhrase, addPhrase,
   updatePhrase, deletePhrase, setPinned, esc } from '../../core/wellbeing.js';
-import { renderCheckinForm } from '../../core/checkin.js';
+import { renderCheckinForm, sleepOutOfRange } from '../../core/checkin.js';
 import { openOverlay } from '../../core/overlay.js';
 
 function todayCard(entry) {
@@ -13,7 +13,7 @@ function todayCard(entry) {
   const hours = entry.hours_slept != null ? `${Number(entry.hours_slept)} h` : '-';
   return `
     <ul class="summary">${rows}
-      <li><span>Hours slept</span><span>${hours}</span></li>
+      <li><span>Hours slept</span><span${entry.hours_slept != null && sleepOutOfRange(Number(entry.hours_slept)) ? ' class="sleep-warn"' : ''}>${hours}</span></li>
       <li><span>Exercise yesterday</span><span>${entry.exercised ? 'Yes' : 'No'}</span></li>
     </ul>
     ${entry.note ? `<p class="note">${esc(entry.note)}</p>` : ''}
