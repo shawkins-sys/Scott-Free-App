@@ -63,10 +63,17 @@ export async function mountGrid(container) {
     return { setEditing() {}, device };
   }
 
+  // Fine height steps: each row is 18px. Tile default sizes are written in
+  // 72px blocks, and layouts saved before this change used 72px rows, so
+  // both are scaled up by ROW_SCALE. Saved items record their scale in `s`.
+  const ROW_PX = 18;
+  const ROW_SCALE = 4;
+  const MIN_ROWS = 3;
+
   const grid = GS.init(
     {
       column: COLUMNS[device],
-      cellHeight: 72,
+      cellHeight: ROW_PX,
       margin: 8,
       staticGrid: true,
       float: false,
@@ -89,9 +96,10 @@ export async function mountGrid(container) {
     const size = (tile.defaultSize && tile.defaultSize[device]) || { w: COLUMNS[device], h: 4 };
     const el = tileShell(tile);
     gridEl.appendChild(el);
+    const k = pos ? ROW_SCALE / (pos.s || 1) : ROW_SCALE;
     grid.makeWidget(el, pos
-      ? { id: tile.id, x: pos.x, y: pos.y, w: pos.w, h: pos.h }
-      : { id: tile.id, w: size.w, h: size.h });
+      ? { id: tile.id, x: pos.x, y: Math.round(pos.y * k), w: pos.w, h: Math.round(pos.h * k), minH: MIN_ROWS }
+      : { id: tile.id, w: size.w, h: size.h * ROW_SCALE, minH: MIN_ROWS });
     try {
       await tile.render(el.querySelector('.tile-body'));
     } catch (err) {
@@ -105,7 +113,7 @@ export async function mountGrid(container) {
   grid.on('change', () => {
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
-      const items = grid.save(false).map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+      const items = grid.save(false).map(({ id, x, y, w, h }) => ({ id, x, y, w, h, s: ROW_SCALE }));
       saveLayout(device, items);
     }, 400);
   });

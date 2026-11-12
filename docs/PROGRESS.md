@@ -24,6 +24,7 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - Home date shows friendly form "Friday 6 November". DD/MM/YYYY everywhere else.
 - No in-app password reset; reset via Supabase dashboard.
 - Possible later: "Add another authenticator" option in Settings.
+- (12/11/2026) Grid rows are 18px (was 72px) for finer tile resizing. Tile `defaultSize` stays in 72px blocks and is scaled x4; saved layout items carry `s: 4`, older ones (no `s`) are scaled on load. Minimum tile height 3 rows (54px).
 
 ### Phase 2 decisions (06/11/2026)
 - Check-in metrics (all 1 to 5, in `checkins.metrics`): mood, sleep, energy, emotional_stress, work_stress, physical. Add more via `METRICS` in `core/wellbeing.js`.
