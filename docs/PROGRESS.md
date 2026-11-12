@@ -1,6 +1,6 @@
 # Scott Free: build progress
 
-Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawkins-sys/Scott-Free-App` (public). Live: https://shawkins-sys.github.io/Scott-Free-App/
+Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the claude.ai Project. Repo: `shawkins-sys/Scott-Free-App` (public). Live: https://shawkins-sys.github.io/Scott-Free-App/
 
 ## Phase 1: Foundations (complete, 06/11/2026)
 - Plain HTML/CSS/JS ES modules, no build step. GitHub Pages from `main` / root.
@@ -18,6 +18,7 @@ Brief: `scott-free-build-prompt.md` (v2) in the claude.ai Project. Repo: `shawki
 - Google Photos: Google Cloud client ID into `config.js`, deploy `photos-import` (docs/GOOGLE-PHOTOS-SETUP.md).
 - Statement import: Scott to send a redacted Lloyds CSV sample and the employer payer description; finalise `parseStatement()` and set the employer pattern.
 - Check gov.uk bank holidays fetch works from the browser (CORS). If not, move it to an Edge Function (fallback list covers 2026 to 2027).
+- Brief section 14 (wall display and privacy), recorded 12/11/2026: action only after Phase 9. First review the code, give Scott a short plan of files to change plus decisions, and wait for "continue". Notes: 14.3 lock already comes from the database (`checkins` per London day), so only the wall re-check timing is new. Layout store needs a third device key `wall`.
 
 ## Decisions made
 - Home top section is fixed, only content tiles are movable.
