@@ -8,6 +8,7 @@ import { requireAuth, signOut } from './auth.js';
 import { getTodayCheckin, checkinDoneToday, pickDailyPhrase, getDisplayPhrase } from './wellbeing.js';
 import { renderCheckinForm } from './checkin.js';
 import { captureGoogleReturn } from './google.js';
+import { captureSpotifyReturn } from './spotify.js';
 import { renderQuietLines } from './quiet-lines.js';
 
 const view = document.getElementById('view');
@@ -177,6 +178,7 @@ if ('serviceWorker' in navigator) {
 
 // Returning from Google sign-in (Photos): take the token out of the address first.
 captureGoogleReturn();
+captureSpotifyReturn();
 
 // Nothing loads until sign-in with MFA is complete.
 requireAuth(view)

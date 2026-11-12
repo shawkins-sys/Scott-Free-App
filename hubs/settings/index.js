@@ -6,6 +6,7 @@ import { getSettings, updateSettings, esc } from '../../core/wellbeing.js';
 import { formatDate } from '../../core/date.js';
 import { googleConfigured, startGoogleSignIn, googleToken, clearGoogleToken, takeGoogleError } from '../../core/google.js';
 import { resetPhotos } from '../../tiles/photos/index.js';
+import { renderMusicSettings } from './music.js';
 
 const PICKER = 'https://photospicker.googleapis.com/v1';
 const SESSION_KEY = 'sf-g-session';
@@ -37,6 +38,7 @@ export default {
   title: 'Settings',
   async render(container) {
     container.innerHTML = `
+      <div class="card" id="set-music"></div>
       <div class="card">
         <h2 class="card-title">Photos</h2>
         <p class="muted small" id="ph-status">Loading...</p>
@@ -192,6 +194,10 @@ export default {
       button('Choose photos from Google Photos', begin);
     }
 
+    renderMusicSettings(container.querySelector('#set-music')).catch((err) => {
+      console.error(err);
+      container.querySelector('#set-music').innerHTML = '<h2 class="card-title">Morning music</h2><p class="muted small">Not available right now.</p>';
+    });
     await showStatus();
 
     if (!googleConfigured()) {
