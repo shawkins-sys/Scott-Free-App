@@ -11,6 +11,7 @@ Live: https://shawkins-sys.github.io/Scott-Free-App/
 ## How the app works day to day
 
 - **Home** shows the greeting, today's phrase, the morning check-in, then tiles (weather, photos, calendar) and quiet lines for money and key dates.
+- **App lock:** each device asks for a 4-digit PIN (or fingerprint, where available) when the app opens and when you come back after more than a minute. 5 wrong PINs pause entry for 5 minutes. "Forgot PIN? Sign out" on the lock screen signs you out; sign in again with password and authenticator code, then choose a new PIN.
 - **Everything is locked until the day's check-in is done**, including Settings. The day resets at midnight (UK time). The check-in is stored in the database, so doing it on the phone unlocks the PC too.
 - After the check-in: the daily phrase appears, box breathing runs if either stress rating is 5, then morning music starts (phone only, before 12:00).
 - **Sundays:** a weekly review card appears on Home after the check-in.
@@ -22,6 +23,7 @@ Live: https://shawkins-sys.github.io/Scott-Free-App/
 | --- | --- |
 | Daily phrases (add, edit, pin, tough days) | Settings, Daily phrases |
 | Spotify connect / reconnect, speaker, home location, playlists | Settings, Morning music |
+| App lock: change PIN, fingerprint on/off, lock now (per device) | Settings, App lock |
 | Breathing vibration on or off | Settings, Breathing |
 | Bank holiday rule, employer description, usual salary | Settings, Pay and income |
 | Slideshow photos from Google Photos | Settings, Photos |
@@ -80,6 +82,7 @@ The app's own files and libraries are saved on the device, so it opens without a
 - `docs/`: setup guides (Supabase, Calendar, Spotify, Google Photos), Android test checklist, build progress notes
 
 ## Security
+- Each device has its own app lock (PIN or fingerprint). The PIN is stored on the device only as a salted hash; the fingerprint never leaves the phone. It is a lock screen rather than encryption: it protects against someone picking up your unlocked phone.
 - Sign-in needs your password and an authenticator code. Every table only allows your own account, signed in with the code.
 - No bank account numbers, sort codes or card numbers are stored. Statement imports never read those columns, and the payment form blocks anything that looks like one.
 - Spotify tokens and the calendar address stay server-side in Supabase.

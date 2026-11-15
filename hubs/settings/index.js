@@ -9,6 +9,37 @@ import { resetPhotos } from '../../tiles/photos/index.js';
 import { renderMusicSettings } from './music.js';
 import { renderPhraseSettings } from './phrases.js';
 import { getBreathingSettings, saveBreathingSettings } from '../../core/breathing.js';
+import { biometricAvailable, biometricOn, enableBiometric, disableBiometric, changePin, lockNow, clearLock } from '../../core/applock.js';
+import { signOut } from '../../core/auth.js';
+
+const onSignOut = () => { clearLock(); signOut(); };
+
+// App lock section: change PIN, fingerprint on/off, lock now. Per device.
+async function renderLockSettings(body) {
+  const canBio = await biometricAvailable();
+  const draw = () => {
+    body.innerHTML = `
+      <p class="muted small">The app asks for your PIN${canBio ? ' or fingerprint' : ''} when it opens, and when you come back after more than a minute. This applies to this device only.</p>
+      <div class="btn-row"><button class="pill-btn" data-act="change">Change PIN</button><button class="pill-btn" data-act="lock">Lock now</button></div>
+      ${canBio ? `<label class="check lock-check"><input type="checkbox" name="bio"${biometricOn() ? ' checked' : ''}> Unlock with fingerprint</label>` : '<p class="muted small">Fingerprint unlock is not available on this device.</p>'}
+      <p class="form-msg" aria-live="polite"></p>`;
+  };
+  draw();
+  body.addEventListener('click', async (e) => {
+    const act = e.target.closest('[data-act]');
+    if (!act) return;
+    if (act.dataset.act === 'change') { await changePin({ onSignOut }); draw(); body.querySelector('.form-msg').textContent = 'PIN changed.'; }
+    if (act.dataset.act === 'lock') await lockNow({ onSignOut });
+  });
+  body.addEventListener('change', async (e) => {
+    if (e.target.name !== 'bio') return;
+    const msg = body.querySelector('.form-msg');
+    if (e.target.checked) {
+      try { await enableBiometric(); msg.textContent = 'Fingerprint unlock is on.'; }
+      catch { e.target.checked = false; msg.textContent = 'Fingerprint was not set up.'; }
+    } else { disableBiometric(); msg.textContent = 'Fingerprint unlock is off. Your PIN still works.'; }
+  });
+}
 import { renderPayIncomeSettings } from '../money/import.js';
 
 const PICKER = 'https://photospicker.googleapis.com/v1';
@@ -237,6 +268,7 @@ const SECTIONS = [
     // Open automatically when coming back from Spotify.
     autoOpen: () => !!sessionStorage.getItem('sf-spotify-return') },
   { id: 'phrases', title: 'Daily phrases', render: renderPhraseSettings },
+  { id: 'lock', title: 'App lock', render: renderLockSettings },
   { id: 'breathing', title: 'Breathing', render: renderBreathingSettings },
   { id: 'pay', title: 'Pay and income', render: renderPayIncomeSettings },
   { id: 'photos', title: 'Photos', render: renderPhotosSettings,

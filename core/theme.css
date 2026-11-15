@@ -531,3 +531,29 @@ button { font: inherit; color: inherit; }
   background: var(--card); color: var(--muted); border: 1px solid var(--border); box-shadow: var(--shadow);
   border-radius: 999px; padding: 6px 14px; font-size: 0.8rem; z-index: 150;
 }
+
+/* ---------- App lock (fingerprint or PIN) ---------- */
+body.app-locked #app, body.app-locked #overlay, body.app-locked #hubbar, body.app-locked .breathe { visibility: hidden; }
+#app-lock {
+  position: fixed; inset: 0; z-index: 300; background: var(--bg);
+  display: grid; place-items: center; padding: 24px; overflow-y: auto;
+  -webkit-user-select: none; user-select: none;
+}
+.lock-inner { width: 100%; max-width: 320px; text-align: center; }
+.lock-title { font-size: 1.6rem; margin: 0 0 6px; }
+.pin-dots { display: flex; justify-content: center; gap: 16px; margin: 24px 0 8px; }
+.pin-dots span { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent); }
+.pin-dots span.on { background: var(--accent); }
+.pin-dots.shake { animation: shake 0.35s; }
+@keyframes shake { 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+.lock-msg { min-height: 1.4em; font-size: 0.85rem; color: var(--warn); margin: 0 0 12px; }
+.pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; justify-items: center; margin-bottom: 18px; }
+.pin-pad button {
+  width: 72px; height: 72px; border-radius: 50%; border: 0; background: var(--card); box-shadow: var(--shadow);
+  font: inherit; font-size: 1.6rem; color: var(--text); cursor: pointer;
+}
+.pin-pad button:active { background: var(--accent-soft); }
+.lock-bio { margin-bottom: 10px; }
+.lock-forgot { display: block; margin: 8px auto 0; color: var(--muted); }
+.lock-btns { justify-content: center; margin-top: 20px; }
+.lock-check { margin-top: 14px; }

@@ -12,6 +12,7 @@ import { captureSpotifyReturn } from './spotify.js';
 import { startMorningMusic, maybeReconnectPrompt } from './music.js';
 import { breathingNeeded, runBreathing } from './breathing.js';
 import { renderWeeklyCard } from './weekly.js';
+import { ensureUnlocked, watchAway, clearLock } from './applock.js';
 import { renderQuietLines } from './quiet-lines.js';
 
 const view = document.getElementById('view');
@@ -113,7 +114,7 @@ async function renderHome() {
       <div id="weekly-slot"></div>
       <p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>
     </section>`;
-  document.getElementById('signout-btn').addEventListener('click', signOut);
+  document.getElementById('signout-btn').addEventListener('click', signOutAndClear);
 
   setupCheckin();
   gridCtl = await mountGrid(document.getElementById('grid-slot'));
@@ -212,8 +213,13 @@ captureGoogleReturn();
 captureSpotifyReturn();
 
 // Nothing loads until sign-in with MFA is complete.
+// Sign out also clears this device's app lock; the next sign-in sets a new PIN.
+const signOutAndClear = () => { clearLock(); signOut(); };
+
 requireAuth(view)
-  .then(() => {
+  .then(async () => {
+    await ensureUnlocked({ onSignOut: signOutAndClear }); // fingerprint or PIN before anything shows
+    watchAway({ onSignOut: signOutAndClear });
     signedIn = true;
     window.addEventListener('hashchange', route);
     // If the app is left open past midnight, start the new day fresh.

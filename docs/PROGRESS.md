@@ -145,4 +145,10 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - `docs/ANDROID-TESTING.md` checklist.
 - Smoke-tested in headless Chrome with Supabase and CDN libraries stubbed: sign-in screen renders with no errors; all 35 modules in core, hubs and tiles load and link.
 
+## App lock (added 15/11/2026, Scott's request)
+- Decisions: asks on open and after more than 1 minute away; 5 wrong PINs pause entry for 5 minutes (plus "Forgot PIN? Sign out" link); every device (phone fingerprint or PIN, PC PIN or Windows Hello).
+- `core/applock.js`: per device in localStorage `sf-lock` ({ salt, hash (PBKDF2-SHA256 150k), credId, fails, pausedUntil }). Fingerprint via WebAuthn platform authenticator with userVerification required (local unlock gate, no server check). First run after sign-in: choose PIN twice, offer fingerprint. `ensureUnlocked()` runs after `requireAuth()` before anything renders; `watchAway()` re-locks after 60 s hidden. Lock screen hides #app, #overlay, #hubbar and breathing. Sign out (Home link, Forgot PIN) clears the device lock. Settings, App lock: Change PIN (confirms current first), fingerprint toggle, Lock now.
+- Honest limit told to Scott: a lock screen, not encryption at rest.
+- Tested in headless Chrome: setup, mismatch, reopen, 5 wrong PINs pause (right PIN refused during pause), unlock, PIN not stored in plain text; all modules still load. sw.js VERSION sf-v27.
+
 ## Next: the "Before finishing" list, then brief section 14 (plan first, wait for "continue").

@@ -6,6 +6,13 @@ Use Chrome on the phone with the app installed (Add to Home screen). After any u
 - [ ] Opens full screen from the home screen icon, no browser bar.
 - [ ] Sign in with password, then the 6-digit authenticator code. Close and reopen: still signed in.
 
+## App lock
+- [ ] First open after this update: choose a 4-digit PIN, enter it again, then offered fingerprint. Accept it.
+- [ ] Close and reopen: lock screen; fingerprint prompt appears; PIN also works.
+- [ ] Switch to another app for under a minute: no lock. Over a minute: lock.
+- [ ] 5 wrong PINs: 5 minute pause with a countdown.
+- [ ] Settings, App lock: Change PIN, fingerprint off and on, Lock now.
+
 ## Morning flow
 - [ ] Before the check-in: hub bar icons dimmed; tapping any (including Settings) shows the lock message. No photos, quiet lines or weekly card yet.
 - [ ] Check-in: Done stays grey until all six ratings and Exercise are set. Hours slept shows red below 7 or above 8.
