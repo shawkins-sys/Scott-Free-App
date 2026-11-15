@@ -30,11 +30,27 @@ let todayCache = { day: null, entry: undefined };
 export async function getTodayCheckin({ refresh = false } = {}) {
   const day = todayKey();
   if (!refresh && todayCache.day === day && todayCache.entry !== undefined) return todayCache.entry;
-  const { data, error } = await supabase
-    .from('checkins').select('*').eq('day', day).maybeSingle();
-  if (error) throw error;
+  let data;
+  try {
+    const res = await supabase.from('checkins').select('*').eq('day', day).maybeSingle();
+    if (res.error) throw res.error;
+    data = res.data;
+  } catch (err) {
+    // Offline: use today's check-in if this device saw it saved in the database earlier today.
+    const saved = readSavedCheckin();
+    if (saved && saved.day === day) { todayCache = { day, entry: saved }; return saved; }
+    throw err;
+  }
   todayCache = { day, entry: data || null };
+  rememberCheckin(todayCache.entry);
   return todayCache.entry;
+}
+
+// Device copy of today's check-in, written only after the database confirms it.
+const SAVED_KEY = 'sf-today-checkin';
+function readSavedCheckin() { try { return JSON.parse(localStorage.getItem(SAVED_KEY)); } catch { return null; } }
+function rememberCheckin(entry) {
+  try { if (entry) localStorage.setItem(SAVED_KEY, JSON.stringify(entry)); else localStorage.removeItem(SAVED_KEY); } catch { /* storage full */ }
 }
 
 // True once today's check-in exists. Uses the cache only, so call
@@ -60,6 +76,7 @@ export async function saveCheckin({ metrics, hours_slept, exercised, note }) {
     .select().single();
   if (error) throw error;
   todayCache = { day, entry: data };
+  rememberCheckin(data);
   return data;
 }
 

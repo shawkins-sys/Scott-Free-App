@@ -3,9 +3,10 @@
 // the offline fallback. Pinned CDN libraries: cache first. Supabase and other
 // APIs are never cached here.
 
-const VERSION = 'sf-v25';
+const VERSION = 'sf-v26';
 const SHELL_CACHE = `${VERSION}-shell`;
-const CDN_CACHE = `${VERSION}-cdn`;
+// Pinned library versions never change, so this cache survives app updates.
+const CDN_CACHE = 'sf-cdn';
 
 const SHELL = [
   './',
@@ -37,6 +38,19 @@ const SHELL = [
   './core/trends.js',
   './core/weekly.js',
   './core/theme.css',
+  './hubs/money/import.js',
+  './hubs/money/index.js',
+  './hubs/money/spending.js',
+  './hubs/plan/index.js',
+  './hubs/settings/index.js',
+  './hubs/settings/music.js',
+  './hubs/settings/phrases.js',
+  './hubs/wellbeing/index.js',
+  './hubs/wellbeing/trends.js',
+  './tiles/calendar/index.js',
+  './tiles/photos/index.js',
+  './tiles/weather/index.js',
+  './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
 ];
@@ -50,11 +64,11 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  // Old app caches are removed. The sf-photos cache is kept across updates.
+  // Old app caches are removed. Photos and pinned libraries are kept across updates.
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(
-        keys.filter((k) => !k.startsWith(VERSION) && k !== 'sf-photos').map((k) => caches.delete(k))
+        keys.filter((k) => !k.startsWith(VERSION) && k !== 'sf-photos' && k !== CDN_CACHE).map((k) => caches.delete(k))
       ))
       .then(() => self.clients.claim())
   );

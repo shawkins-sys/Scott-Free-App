@@ -121,7 +121,7 @@ export async function renderCheckinForm(container, options = {}) {
     } catch (err) {
       console.error('Check-in save failed', err);
       msg.classList.add('error');
-      msg.textContent = 'Could not save just now. Please try again.';
+      msg.textContent = navigator.onLine ? 'Could not save just now. Please try again.' : 'You are offline. Your answers are still here: tap Done again once you are back online.';
       submit.disabled = false;
     }
   });

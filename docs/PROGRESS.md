@@ -139,5 +139,10 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Note: backfilled weeks use expenses owed as of the day they were filled in.
 - sw.js VERSION sf-v25. Week maths and rendering tested locally.
 
-## Next: Phase 9 (Polish)
-Offline behaviour, testing on Android, plain-English README (swap photos, update calendar feed URLs, reconnect Spotify, add a tile or hub, where each setting lives). Then the "Before finishing" list, then brief section 14 (plan first).
+## Phase 9: Polish (built 15/11/2026)
+- Offline: `sw.js` now precaches every hub and tile file; pinned CDN libraries use a stable `sf-cdn` cache kept across releases; VERSION sf-v26. Calm "Offline: showing saved information" pill (`watchConnection()` in `core/app.js`), page refreshes when back online (after sign-in only). Today's check-in is copied to localStorage (`sf-today-checkin`) only after the database returns or confirms it, and is used for the lock when offline. Check-in Done offline keeps answers and explains.
+- README rewritten in plain English: daily flow, where each setting lives (table), swap photos, update calendar feed, reconnect Spotify, import a statement, add a tile or hub, release a change (bump VERSION), offline, security.
+- `docs/ANDROID-TESTING.md` checklist.
+- Smoke-tested in headless Chrome with Supabase and CDN libraries stubbed: sign-in screen renders with no errors; all 35 modules in core, hubs and tiles load and link.
+
+## Next: the "Before finishing" list, then brief section 14 (plan first, wait for "continue").

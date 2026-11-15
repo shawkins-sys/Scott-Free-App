@@ -187,6 +187,26 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch((err) => console.warn('Service worker not registered', err));
 }
 
+let signedIn = false;
+
+// Calm offline indicator: shows while there is no connection.
+function watchConnection() {
+  let pill = document.getElementById('offline-pill');
+  if (!pill) {
+    pill = document.createElement('div');
+    pill.id = 'offline-pill';
+    pill.setAttribute('role', 'status');
+    pill.textContent = 'Offline: showing saved information';
+    document.body.appendChild(pill);
+  }
+  const update = () => { pill.hidden = navigator.onLine; };
+  // Back online: refresh the page's data, once signed in.
+  window.addEventListener('online', () => { update(); if (signedIn) route(); });
+  window.addEventListener('offline', update);
+  update();
+}
+watchConnection();
+
 // Returning from Google sign-in (Photos): take the token out of the address first.
 captureGoogleReturn();
 captureSpotifyReturn();
@@ -194,6 +214,7 @@ captureSpotifyReturn();
 // Nothing loads until sign-in with MFA is complete.
 requireAuth(view)
   .then(() => {
+    signedIn = true;
     window.addEventListener('hashchange', route);
     // If the app is left open past midnight, start the new day fresh.
     let openDay = todayKey();
