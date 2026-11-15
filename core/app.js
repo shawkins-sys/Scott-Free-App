@@ -10,6 +10,7 @@ import { renderCheckinForm } from './checkin.js';
 import { captureGoogleReturn } from './google.js';
 import { captureSpotifyReturn } from './spotify.js';
 import { startMorningMusic, maybeReconnectPrompt } from './music.js';
+import { breathingNeeded, runBreathing } from './breathing.js';
 import { renderQuietLines } from './quiet-lines.js';
 
 const view = document.getElementById('view');
@@ -30,11 +31,14 @@ async function showPhrase() {
   catch (err) { console.warn('Phrase not loaded', err); }
 }
 
-// Runs after the check-in is first saved today: daily phrase, then
-// breathing (Phase 8, to be added here), then morning music.
+// Runs after the check-in is first saved today: daily phrase, then box
+// breathing if either stress rating is 5, then morning music.
 async function afterCheckin(entry) {
   try { await pickDailyPhrase(entry.metrics); }
   catch (err) { console.warn('Daily phrase not picked', err); }
+  if (breathingNeeded(entry.metrics)) {
+    try { await runBreathing(); } catch (err) { console.warn('Breathing did not run', err); }
+  }
   startMorningMusic(entry, document.getElementById('music-slot')); // not awaited; it may wait for "Speaker or phone?"
 }
 

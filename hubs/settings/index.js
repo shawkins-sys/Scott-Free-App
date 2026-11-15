@@ -8,6 +8,7 @@ import { googleConfigured, startGoogleSignIn, googleToken, clearGoogleToken, tak
 import { resetPhotos } from '../../tiles/photos/index.js';
 import { renderMusicSettings } from './music.js';
 import { renderPhraseSettings } from './phrases.js';
+import { getBreathingSettings, saveBreathingSettings } from '../../core/breathing.js';
 import { renderPayIncomeSettings } from '../money/import.js';
 
 const PICKER = 'https://photospicker.googleapis.com/v1';
@@ -215,6 +216,20 @@ async function renderPhotosSettings(container) {
     }
 }
 
+// Breathing section: vibration on or off.
+async function renderBreathingSettings(body) {
+  const s = await getBreathingSettings();
+  body.innerHTML = `
+    <p class="muted small">Box breathing runs after the check-in when emotional or work stress is 5, and any time from the Wellbeing hub.</p>
+    <label class="check"><input type="checkbox" name="vibrate"${s.vibrate ? ' checked' : ''}> Gentle vibration at each step</label>
+    <p class="form-msg" aria-live="polite"></p>`;
+  body.querySelector('[name=vibrate]').addEventListener('change', async (e) => {
+    const msg = body.querySelector('.form-msg');
+    try { await saveBreathingSettings({ vibrate: e.target.checked }); msg.classList.remove('error'); msg.textContent = 'Saved.'; }
+    catch { msg.classList.add('error'); msg.textContent = 'That did not save. Please try again.'; }
+  });
+}
+
 // ---------- Settings page: collapsible sections, each loaded when first opened ----------
 
 const SECTIONS = [
@@ -222,6 +237,7 @@ const SECTIONS = [
     // Open automatically when coming back from Spotify.
     autoOpen: () => !!sessionStorage.getItem('sf-spotify-return') },
   { id: 'phrases', title: 'Daily phrases', render: renderPhraseSettings },
+  { id: 'breathing', title: 'Breathing', render: renderBreathingSettings },
   { id: 'pay', title: 'Pay and income', render: renderPayIncomeSettings },
   { id: 'photos', title: 'Photos', render: renderPhotosSettings,
     // Open automatically during the Google Photos flow.

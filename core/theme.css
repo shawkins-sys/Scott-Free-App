@@ -501,3 +501,21 @@ button { font: inherit; color: inherit; }
 .mood-mini { display: flex; gap: 4px; margin-top: 4px; }
 .mood-mini .dot.mini { width: 22px; height: 22px; }
 .pl-form { padding: 10px 0; }
+
+/* ---------- Box breathing (Phase 8) ---------- */
+.breathe { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; background: var(--bg); animation: fade-in 0.25s ease; }
+.breathe.closing { opacity: 0; transition: opacity 0.25s ease; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.breathe-inner { text-align: center; padding: 24px; }
+.breathe-round { color: var(--muted); margin: 0 0 16px; }
+.breathe-svg { width: min(70vw, 280px); height: auto; }
+.breathe-track { fill: none; stroke: var(--border); stroke-width: 6; }
+.breathe-trace { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.45; }
+.breathe-dot { fill: var(--accent); }
+.breathe-step { font-size: 2rem; font-weight: 600; margin: 20px 0 4px; }
+.breathe-count { font-size: 3rem; font-weight: 300; margin: 0 0 20px; font-variant-numeric: tabular-nums; color: var(--accent); }
+.breathe-skip { color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .breathe, .breathe.closing { animation: none; transition: none; } }
+.trend-wrap { height: 200px; margin-bottom: 8px; }
+.pattern-list { margin: 0; padding-left: 18px; }
+.pattern-list li { margin-bottom: 6px; }

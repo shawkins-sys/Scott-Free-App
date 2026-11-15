@@ -123,5 +123,15 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Home has `#music-slot` under `#checkin-slot`. Settings, Morning music, Playlists editor: name, link, mood chips 1 to 5, edit/delete, "x of 10".
 - sw.js VERSION sf-v22. Logic tested locally (link parsing, mood picking).
 
-## Next: Phase 8 (Wellbeing extras)
-Trends (7 and 30 day charts per metric, plain-English patterns after 14 entries), breathing exercise (after check-in when either stress is 5, and from the Wellbeing hub), weekly review (Sunday card, snapshots, Past reviews). Breathing goes in `afterCheckin()` before `startMorningMusic()`.
+### Phase 8 decisions (15/11/2026)
+- Trends: one chart, pick the metric (6 ratings + hours slept), 7 / 30 day switch. Patterns need 14+ check-ins.
+- Weekly review: missed Sundays are filled in next time the app opens (Past reviews has no gaps). Home card all Sunday after the check-in, hidden once Reviewed.
+- Breathing vibration on by default, switch in Settings, Breathing.
+
+## Phase 8 part A: Breathing and trends (built 15/11/2026)
+- `core/breathing.js`: full-screen box breathing (4 x 4 s steps, 4 rounds), dot traces a square with the outline filling in, step text, countdown, "Round n of 4", Skip, vibration per step (`settings.data.breathing.vibrate`). Runs in `afterCheckin()` when emotional or work stress is 5, before music; also a Start button in the Wellbeing hub. Checked in headless Chrome (fixed a negative first-frame bug).
+- `core/trends.js` (pure, tested): `series()` per day, `patterns()`: mood after 7+ h sleep, energy after exercise, weekday with highest work / emotional stress (gaps of 0.3 / 0.5, groups of 5+ / weekday 3+). `hubs/wellbeing/trends.js`: chips per metric, 7/30 switch, Chart.js line, average line, patterns list.
+- sw.js VERSION sf-v24.
+
+## Next: Phase 8 part B (Weekly review)
+Sunday Home card (#weekly-slot) after check-in: this week's check-in averages vs last week, spending so far this pay period, expenses owed, key dates and renewals coming up, next week's calendar at a glance, reflection, Reviewed. Snapshots in `weekly_reviews` (week_start Monday), backfill missed weeks, Past reviews list in the Wellbeing hub.

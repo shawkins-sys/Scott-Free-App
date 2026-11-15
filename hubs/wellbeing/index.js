@@ -1,13 +1,15 @@
 // Wellbeing hub: today's check-in and a history calendar.
 // Each day is coloured by that morning's mood; tap a day to see its check-in.
 // Phrase management moved to Settings (15/11/2026).
-// Trends, breathing and weekly review are added in Phase 8.
+// Phase 8: Trends card and a Box breathing button. Weekly review follows.
 import { METRICS, getTodayCheckin, listCheckins, esc } from '../../core/wellbeing.js';
 import { renderCheckinForm, sleepOutOfRange } from '../../core/checkin.js';
 import { openOverlay } from '../../core/overlay.js';
 import { todayKey } from '../../core/date.js';
 import { dayLabel } from '../../core/calendar.js';
 import { formatKey } from '../../core/keydates.js';
+import { renderTrends } from './trends.js';
+import { runBreathing } from '../../core/breathing.js';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const pad = (n) => String(n).padStart(2, '0');
@@ -93,7 +95,12 @@ export default {
   async render(container) {
     container.innerHTML = `
       <div class="card"><h2 class="card-title">Today</h2><div id="wb-today"><p class="muted">Loading...</p></div></div>
-      <div class="card" id="wb-history"></div>`;
+      <div class="card" id="wb-history"></div>
+      <div class="card" id="wb-trends"></div>
+      <div class="card"><h2 class="card-title">Box breathing</h2>
+        <p class="muted small">Breathe in 4, hold 4, out 4, hold 4. Four rounds, about a minute.</p>
+        <button class="pill-btn" data-breathe>Start</button></div>`;
+    container.querySelector('[data-breathe]').addEventListener('click', () => runBreathing());
     const todayEl = container.querySelector('#wb-today');
     const historyEl = container.querySelector('#wb-history');
 
@@ -116,6 +123,6 @@ export default {
       if (btn) btn.addEventListener('click', editToday);
     };
 
-    await Promise.all([loadToday(), renderHistory(historyEl, editToday)]);
+    await Promise.all([loadToday(), renderHistory(historyEl, editToday), renderTrends(container.querySelector('#wb-trends'))]);
   },
 };
