@@ -198,3 +198,31 @@ export async function parsePdfStatement(file) {
   if (!rows.length) throw new Error('No transactions were found in this PDF. The statement layout may differ from what the app expects.');
   return { rows, start: rows[0].tx_date, end: rows[rows.length - 1].tx_date };
 }
+
+// ---------- Statement check (nothing is saved) ----------
+
+// Words that describe the layout and are safe to keep when sharing the layout.
+const SAFE_WORDS = new Set(['date', 'description', 'type', 'money', 'in', 'out', 'paid', 'balance', 'brought', 'carried',
+  'forward', 'opening', 'closing', 'page', 'of', 'to', 'from', 'statement', 'account', 'transactions', 'credit', 'credits',
+  'debit', 'debits', 'withdrawn', 'details', 'payments', 'receipts', 'total', 'totals', 'sort', 'code', 'number', 'your',
+  'the', 'and', '(£)', '£', 'cr', 'dr', 'january', 'february', 'march', 'april', 'june', 'july', 'august', 'september',
+  'october', 'november', 'december', ...Object.keys(MONTHS), ...[...TYPE_CODES].map((t) => t.toLowerCase())]);
+
+function mask(str) {
+  return str.split(/(\s+)/).map((w) => {
+    if (/^\s+$/.test(w) || SAFE_WORDS.has(w.toLowerCase().replace(/[.,:]$/, ''))) return w;
+    return w.replace(/[A-Za-z]/g, 'x').replace(/\d/g, '9');
+  }).join('');
+}
+
+// Layout with all personal text masked: one line per text row with x positions.
+export function maskedLayout(lines) {
+  return lines.map((l) => `p${l.page} y${Math.round(l.y)}: ${l.items.map((i) => `[${Math.round(i.x)}+${Math.round(i.w)}] ${mask(i.str)}`).join('  ')}`).join('\n');
+}
+
+// Reads a PDF and returns { lines, rows } without saving anything.
+export async function checkPdfStatement(file) {
+  const lines = await extractLines(file);
+  const rows = parseLines(lines).sort((a, b) => a.tx_date.localeCompare(b.tx_date));
+  return { lines, rows };
+}

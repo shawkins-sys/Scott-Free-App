@@ -486,3 +486,7 @@ button { font: inherit; color: inherit; }
 .cal-cell.dot-4 { background: var(--lvl-4); }
 .cal-cell.dot-5 { background: var(--lvl-5); }
 .cal-cell.today { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--accent); }
+.check-list { max-height: 50vh; overflow-y: auto; margin-bottom: 12px; }
+.check-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; }
+.check-row .amt { text-align: right; }
+.layout-box { width: 100%; min-height: 160px; font: 0.75rem/1.3 monospace; margin-top: 8px; }
