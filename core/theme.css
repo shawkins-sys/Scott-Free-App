@@ -203,7 +203,8 @@ button { font: inherit; color: inherit; }
 #hubbar {
   position: fixed; left: 50%; transform: translateX(-50%);
   bottom: calc(12px + env(safe-area-inset-bottom));
-  display: flex; gap: 4px;
+  display: flex; gap: 2px;
+  width: max-content; max-width: calc(100% - 24px);
   padding: 6px;
   background: var(--card);
   border: 1px solid var(--border);
@@ -214,7 +215,7 @@ button { font: inherit; color: inherit; }
 #hubbar:empty { display: none; }
 .hub-btn {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-width: 58px; height: 52px; padding: 0 8px;
+  flex: 1 1 0; min-width: 0; height: 52px; padding: 0 10px; white-space: nowrap;
   border-radius: 999px;
   color: var(--muted); text-decoration: none; font-size: 0.7rem;
 }
