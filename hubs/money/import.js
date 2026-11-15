@@ -57,8 +57,8 @@ async function renderImport(card, onImported) {
   card.innerHTML = `
     <h2 class="card-title">Import statement</h2>
     <p class="muted small">${last ? `Last import ${formatKey(last.imported_at.slice(0, 10))}, covering ${formatKey(last.period_start)} to ${formatKey(last.period_end)}.` : 'No statements imported yet.'}
-      Download a CSV from Lloyds internet banking, then choose it here. Importing the same period twice is safe.</p>
-    <label class="primary-btn file-btn">Import statement<input type="file" accept=".csv,text/csv" hidden></label>
+      Download a statement PDF from the Lloyds app (or a CSV from the Lloyds website), then choose it here. Importing the same period twice is safe.</p>
+    <label class="primary-btn file-btn">Import statement<input type="file" accept=".pdf,application/pdf,.csv,text/csv" hidden></label>
     <p class="form-msg" aria-live="polite"></p>`;
   const msg = card.querySelector('.form-msg');
   card.querySelector('input[type=file]').addEventListener('change', async (e) => {

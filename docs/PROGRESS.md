@@ -16,7 +16,7 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 ## Before finishing (Scott asked to be reminded at the end)
 - Calendar: add secret `CALENDAR_FEEDS` and deploy `calendar-feed` (docs/CALENDAR-SETUP.md).
 - Google Photos: Google Cloud client ID into `config.js`, deploy `photos-import` (docs/GOOGLE-PHOTOS-SETUP.md).
-- Statement import: Scott to send a redacted Lloyds CSV sample and the employer payer description; finalise `parseStatement()` and set the employer pattern.
+- Statement import: Scott uses PDF statements from the Lloyds app (15/11/2026). Scott to send a redacted Lloyds statement PDF and the employer payer description; finalise `parseLines()` in `core/statement-pdf.js` and set the employer pattern.
 - Check gov.uk bank holidays fetch works from the browser (CORS). If not, move it to an Edge Function (fallback list covers 2026 to 2027).
 - Spotify: Client ID into `config.js`, secret `SPOTIFY_CLIENT_ID`, deploy `spotify` (docs/SPOTIFY-SETUP.md).
 - Brief section 14 (wall display and privacy), recorded 12/11/2026: action only after Phase 9. First review the code, give Scott a short plan of files to change plus decisions, and wait for "continue". Notes: 14.3 lock already comes from the database (`checkins` per London day), so only the wall re-check timing is new. Layout store needs a third device key `wall`.
@@ -107,6 +107,7 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Daily phrase management moved from the Wellbeing hub to Settings (`hubs/settings/phrases.js`).
 - Bank holiday rule, employer description and usual salary moved from Money, Pay & import to Settings (`renderPayIncomeSettings` exported from `hubs/money/import.js`). Paydays list with Change stays in Money.
 - Wellbeing hub: Today card plus a History month calendar (Monday first). Days with a check-in are coloured by mood (1 blue to 5 amber); tap a past day for a read-only summary; tapping today opens the edit form. `listCheckins(from, to)` in `core/wellbeing.js`.
+- Statement import accepts Lloyds PDF (from the app, Scott's normal route) as well as CSV. `core/statement-pdf.js`, loaded only for PDFs: pdf.js 6.5.438 from jsDelivr (module worker via a blob so the cross-origin worker loads), text grouped into lines by y, parser finds the Money In / Money Out / Balance header columns, dates like "03 Nov 26" (date shown once per day is carried forward), type codes stripped, wrapped descriptions joined, balance-only lines complete the row above, brought/carried forward lines skipped. Sign and amount are checked against the running balance. Tested locally with a synthetic two-page Lloyds-style PDF. Note: mixing PDF and CSV imports for the same period may create duplicates because descriptions can differ.
 - Settings is now on the hub bar on every page (gear icon, 5 buttons); the Settings link at the bottom of Home was removed. Still locked until the check-in like other hubs. Fixed history calendar days losing their mood colour (CSS order).
 
 ## Phase 7 part A: Spotify connection (built 12/11/2026, awaiting Scott's Spotify app)

@@ -1,4 +1,5 @@
-// Statement import (Lloyds CSV), classification and transactions.
+// Statement import (Lloyds PDF from the app, or CSV from the desktop site),
+// classification and transactions. PDF reading lives in statement-pdf.js.
 // PROVISIONAL: column names follow Lloyds' usual export
 //   Transaction Date, Transaction Type, Sort Code, Account Number,
 //   Transaction Description, Debit Amount, Credit Amount, Balance
@@ -125,8 +126,10 @@ export function classify(rows, { payments, rules, money, payCtx }) {
 
 // Parses, classifies and saves. Returns { added, skipped, review, start, end }.
 export async function importStatement(file) {
-  const text = await file.text();
-  const { rows, start, end } = parseStatement(text);
+  const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
+  const { rows, start, end } = isPdf
+    ? await (await import('./statement-pdf.js')).parsePdfStatement(file) // loaded only when needed
+    : parseStatement(await file.text());
   const [payRes, ruleRes, money, payCtx] = await Promise.all([
     supabase.from('payments').select('*'),
     supabase.from('merchant_rules').select('*'),
