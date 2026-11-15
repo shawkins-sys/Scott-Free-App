@@ -1,4 +1,4 @@
-// Settings. Reached from the link at the bottom of Home (not on the hub bar).
+// Settings hub, on the hub bar on every page.
 // Phase 3: choose slideshow photos from Google Photos.
 // Later phases add home location, pay settings and so on.
 import { supabase } from '../../core/supabase.js';

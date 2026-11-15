@@ -40,7 +40,7 @@ If choosing photos later fails with a sign-in error from the function, open the 
 
 ## Using it
 
-1. Open the app, complete the check-in, then tap **Settings** at the bottom of Home.
+1. Open the app, complete the check-in, then tap **Settings** on the bottom bar.
 2. Tap **Choose photos from Google Photos**. You are sent to Google to sign in.
    - Google will say "Google hasn't verified this app". That is expected for your own app in Testing: tap **Continue**.
 3. Back in the app, tap **Open Google Photos**, select your photos (in the picker you can open an album and select all), then tap **Done**.

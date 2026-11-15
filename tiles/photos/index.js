@@ -204,7 +204,7 @@ async function startView(container, full) {
     }
   }
   if (!state.photos.length) {
-    container.innerHTML = '<p class="muted">No photos yet. Choose some in Settings, at the bottom of Home.</p>';
+    container.innerHTML = '<p class="muted">No photos yet. Choose some in Settings.</p>';
     return;
   }
   mountView(container, full);

@@ -7,8 +7,7 @@ export const hubs = [
   { id: 'money',     title: 'Money',     icon: 'money',     path: './hubs/money/index.js' },
   { id: 'wellbeing', title: 'Wellbeing', icon: 'wellbeing', path: './hubs/wellbeing/index.js' },
   { id: 'plan',      title: 'Plan',      icon: 'plan',      path: './hubs/plan/index.js' },
-  // hidden: not on the hub bar. Settings is linked from the bottom of Home.
-  { id: 'settings',  title: 'Settings',  icon: 'plan',      path: './hubs/settings/index.js', hidden: true },
+  { id: 'settings',  title: 'Settings',  icon: 'settings',  path: './hubs/settings/index.js' },
 ];
 
 // Order here is the default order on a fresh layout.

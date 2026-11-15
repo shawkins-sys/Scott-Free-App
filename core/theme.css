@@ -214,7 +214,7 @@ button { font: inherit; color: inherit; }
 #hubbar:empty { display: none; }
 .hub-btn {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-width: 64px; height: 52px; padding: 0 10px;
+  min-width: 58px; height: 52px; padding: 0 8px;
   border-radius: 999px;
   color: var(--muted); text-decoration: none; font-size: 0.7rem;
 }
@@ -479,3 +479,10 @@ button { font: inherit; color: inherit; }
 .cal-legend { margin-top: 10px; }
 .mini-dot { display: inline-block; width: 10px; height: 10px; vertical-align: middle; margin: 0 3px; border: 0; opacity: 1; }
 .period-nav .icon-btn[disabled] { opacity: 0.3; cursor: default; }
+/* Mood colours on history days (the .cal-cell reset above would otherwise remove them) */
+.cal-cell.dot-1 { background: var(--lvl-1); }
+.cal-cell.dot-2 { background: var(--lvl-2); }
+.cal-cell.dot-3 { background: var(--lvl-3); }
+.cal-cell.dot-4 { background: var(--lvl-4); }
+.cal-cell.dot-5 { background: var(--lvl-5); }
+.cal-cell.today { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--accent); }

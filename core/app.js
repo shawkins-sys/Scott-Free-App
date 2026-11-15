@@ -100,7 +100,7 @@ async function renderHome() {
       <div id="grid-slot"></div>
       <div id="quiet-lines"></div>
       <div id="weekly-slot"></div>
-      <p class="signout"><a class="link-btn" href="#/hub/settings">Settings</a> &middot; <button class="link-btn" id="signout-btn">Sign out</button></p>
+      <p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>
     </section>`;
   document.getElementById('signout-btn').addEventListener('click', signOut);
 

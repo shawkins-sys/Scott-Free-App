@@ -107,6 +107,7 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Daily phrase management moved from the Wellbeing hub to Settings (`hubs/settings/phrases.js`).
 - Bank holiday rule, employer description and usual salary moved from Money, Pay & import to Settings (`renderPayIncomeSettings` exported from `hubs/money/import.js`). Paydays list with Change stays in Money.
 - Wellbeing hub: Today card plus a History month calendar (Monday first). Days with a check-in are coloured by mood (1 blue to 5 amber); tap a past day for a read-only summary; tapping today opens the edit form. `listCheckins(from, to)` in `core/wellbeing.js`.
+- Settings is now on the hub bar on every page (gear icon, 5 buttons); the Settings link at the bottom of Home was removed. Still locked until the check-in like other hubs. Fixed history calendar days losing their mood colour (CSS order).
 
 ## Phase 7 part A: Spotify connection (built 12/11/2026, awaiting Scott's Spotify app)
 - Decisions: phone fallback shows an "Open in Spotify" button (no auto-open); speaker picked once in Settings from the Spotify device list; music starts from phone check-ins only, and only before 12:00.
