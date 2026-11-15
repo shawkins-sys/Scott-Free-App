@@ -2,6 +2,8 @@
 // falling back to Cheltenham if location is denied, slow or unavailable.
 import { CONFIG } from '../../config.js';
 import { londonParts } from '../../core/date.js';
+import { isWall } from '../../core/device.js';
+import { getMusicSettings } from '../../core/spotify.js';
 
 const FALLBACK = { lat: 51.8994, lon: -2.0783, label: 'Cheltenham' };
 const CACHE_KEY = 'sf-weather';
@@ -44,7 +46,17 @@ const icon = (code, day = 1) => W_ICONS[describe(code)[1]](day);
 const deg = (t) => `${Math.round(t)}°`;
 
 // ---------- Location ----------
+// Wall display: the saved home location (Settings, Morning music), else Cheltenham.
+async function wallPlace() {
+  try {
+    const { home } = await getMusicSettings();
+    if (home) return { lat: home.lat, lon: home.lon, label: 'Home' };
+  } catch { /* use fallback */ }
+  return FALLBACK;
+}
+
 function getPlace() {
+  if (isWall()) return wallPlace();
   return new Promise((resolve) => {
     if (!('geolocation' in navigator)) return resolve(FALLBACK);
     const timer = setTimeout(() => resolve(FALLBACK), GEO_TIMEOUT_MS + 500);

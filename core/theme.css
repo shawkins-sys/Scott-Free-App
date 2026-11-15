@@ -557,3 +557,28 @@ body.app-locked #app, body.app-locked #overlay, body.app-locked #hubbar, body.ap
 .lock-forgot { display: block; margin: 8px auto 0; color: var(--muted); }
 .lock-btns { justify-content: center; margin-top: 20px; }
 .lock-check { margin-top: 14px; }
+
+/* ---------- Wall display (brief 14.1) ---------- */
+body.wall { font-size: 19px; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+body.wall input, body.wall textarea { -webkit-user-select: text; user-select: text; }
+body.wall .wall-clock { font-size: 4.5rem; font-weight: 300; line-height: 1; margin: 0 0 8px; font-variant-numeric: tabular-nums; color: var(--text); }
+body.wall .greeting { font-size: 2.6rem; color: var(--text); }
+body.wall .today { font-size: 1.3rem; color: var(--text); opacity: 0.85; }
+body.wall .phrase { font-size: 1.25rem; color: var(--text); opacity: 0.9; }
+body.wall .home-head { padding-top: 12px; }
+body.wall button, body.wall .pill-btn, body.wall .primary-btn, body.wall .chip, body.wall .tab, body.wall .row-btn { min-height: 56px; }
+body.wall .icon-btn { min-width: 56px; min-height: 56px; }
+
+body.wall .dot { width: 60px; height: 60px; }
+body.wall .dots { max-width: 440px; }
+body.wall .tile-title { font-size: 1rem; }
+body.wall .quiet-line { font-size: 1.05rem; }
+body.wall #view { max-width: 1600px; }
+body.wall .metric-ends, body.wall .checkin-row { max-width: 440px; }
+body.wall .checkin { display: grid; grid-template-columns: 1fr 1fr; column-gap: 56px; }
+body.wall .checkin > :not(.metric) { grid-column: 1 / -1; }
+body.wall #hubbar { padding: 8px; }
+body.wall .hub-btn { height: 76px; min-width: 120px; font-size: 1rem; }
+body.wall .hub-btn svg { width: 30px; height: 30px; }
+body.wall { --bar-h: 92px; }
+body.wall .metric-ends { font-size: 0.85rem; }

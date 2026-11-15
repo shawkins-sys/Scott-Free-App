@@ -5,6 +5,7 @@
 import { supabase } from './supabase.js';
 import { CONFIG } from '../config.js';
 import { londonParts } from './date.js';
+import { isWall } from './device.js';
 import { esc } from './wellbeing.js';
 import { spotifyConfigured, spotifyStatus, spotifyPlay, startSpotifyConnect,
   getMusicSettings, currentPosition, distanceM } from './spotify.js';
@@ -86,10 +87,11 @@ function askTarget(slot) {
 // ---------- Flow ----------
 
 const isPhone = () => window.innerWidth < CONFIG.phoneBreakpoint;
+// A wall display is always treated as at home (brief 14.2).
 
 export async function startMorningMusic(entry, slot) {
   try {
-    if (!spotifyConfigured() || !isPhone() || londonParts().hour >= MUSIC_BEFORE_HOUR) return;
+    if (!spotifyConfigured() || !(isPhone() || isWall()) || londonParts().hour >= MUSIC_BEFORE_HOUR) return;
     const mood = entry && entry.metrics && entry.metrics.mood;
     if (!mood) return;
     const playlists = await listPlaylists();
@@ -107,6 +109,7 @@ export async function startMorningMusic(entry, slot) {
     const settings = await getMusicSettings();
     let target;
     if (!settings.speakerId) target = 'phone';
+    else if (isWall()) target = 'speaker'; // no location check on the wall
     else {
       card(slot, '<p class="music-line muted">Starting your music...</p>');
       const pos = settings.home ? await currentPosition(8000) : null;

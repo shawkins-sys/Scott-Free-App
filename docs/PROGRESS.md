@@ -151,9 +151,22 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Honest limit told to Scott: a lock screen, not encryption at rest.
 - Tested in headless Chrome: setup, mismatch, reopen, 5 wrong PINs pause (right PIN refused during pause), unlock, PIN not stored in plain text; all modules still load. sw.js VERSION sf-v27.
 
-## Section 14 (wall display) plan, agreed 15/11/2026, waiting for Scott's "continue"
+## Section 14 (wall display) plan, agreed 15/11/2026
 - New: `core/device.js` (device ID + wall flag in localStorage), `core/hubpin.js` (4 to 6 digit hub PIN, salted PBKDF2 hash in `settings.data.hubPin`, 5 wrong = 5 min pause per device, relock after 2 min idle or leaving the hub), `hubs/settings/wall.js` (wall switch on any device; set/change PIN and "Also protect Wellbeing" only on non-wall devices).
 - Changed: `core/grid.js` (third layout `wall`, 12 columns, tiles across the width), `core/app.js` (wall: large clock, Screen Wake Lock re-requested on visible, check-in re-check on load / visible / every 5 min, PIN gate for Money, Settings and optionally Wellbeing, weekly card without money), `core/quiet-lines.js` (no finance line on wall), `tiles/weather` (saved home location, Cheltenham fallback), `core/music.js` (wall always at home: Sonos 30%), `core/theme.css` (larger text, 56px+ targets, higher contrast, no selection or long-press), schema, README, ANDROID-TESTING (tablet section).
 - Scott runs one SQL line to allow `wall` in `layouts.device`.
 - Decisions: no app lock on wall devices; Settings needs the hub PIN on the wall (same PIN as Money); Plan stays open. Before a hub PIN is set, Money and Settings on the wall say to set one from the phone or PC.
 
+
+## Section 14 part A: wall mode (built 15/11/2026)
+- SQL given to Scott (run once): `alter table public.layouts drop constraint if exists layouts_device_check; alter table public.layouts add constraint layouts_device_check check (device in ('phone', 'desktop', 'wall'));` schema.sql updated to match.
+- `core/device.js`: `deviceId()`, `isWall()`, `setWall()` (localStorage `sf-device-id`, `sf-wall`).
+- `core/grid.js`: `currentDevice()` returns `wall` first; 12 columns; WALL_DEFAULTS photos/calendar/weather 4 wide x 6 blocks side by side.
+- `core/wall.js`: `startWallMode()` adds body.wall, blocks contextmenu (except inputs), clock in `#wall-clock` (HH:MM London), Screen Wake Lock re-requested on visible, check-in recheck on visible and every 5 min (re-routes if the status changed). `core/app.js`: wall skips the app lock and starts wall mode; clock in the Home header on wall.
+- `core/music.js`: wall counts as a music device and always targets the speaker (no geolocation). `tiles/weather`: wall uses the saved home location (label "Home"), else Cheltenham.
+- `hubs/settings/wall.js`: "This device is a wall display" switch with confirm, reloads to apply. Settings section "Wall display".
+- CSS body.wall: 19px base, 4.5rem clock, larger greeting/date/phrase in full text colour, 56px+ targets, 60px check-in dots, check-in in two columns, larger hub bar (76px), no selection or long-press callout. Checked in headless Chrome at 1280x800.
+- sw.js VERSION sf-v28.
+
+## Next: section 14 part B
+Hub PIN (`core/hubpin.js`, set only on non-wall devices, hash in `settings.data.hubPin`) gating Money, Settings and optionally Wellbeing on the wall; relock after 2 min idle or leaving; 5 wrong = 5 min pause. No finance quiet line and weekly card without money on the wall. Settings controls. Tablet test steps (14.5) in ANDROID-TESTING and final summary.

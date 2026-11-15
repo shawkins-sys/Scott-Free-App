@@ -5,11 +5,17 @@ import { tiles as tileRegistry } from '../registry.js';
 import { loadLayout, saveLayout } from './layout-store.js';
 import { icons } from './icons.js';
 import { openOverlay } from './overlay.js';
+import { isWall } from './device.js';
 
 const GS = window.GridStack && (window.GridStack.GridStack || window.GridStack);
-const COLUMNS = { phone: 4, desktop: 12 };
+const COLUMNS = { phone: 4, desktop: 12, wall: 12 };
+
+// Wall display defaults: same order as the phone, tiles side by side across
+// the width (12 columns, in 72px height blocks like other defaults).
+const WALL_DEFAULTS = { photos: { w: 4, h: 6 }, calendar: { w: 4, h: 6 }, weather: { w: 4, h: 6 } };
 
 export function currentDevice() {
+  if (isWall()) return 'wall';
   return window.innerWidth < CONFIG.phoneBreakpoint ? 'phone' : 'desktop';
 }
 
@@ -93,7 +99,9 @@ export async function mountGrid(container) {
   grid.batchUpdate();
   for (const tile of ordered) {
     const pos = savedById.get(tile.id);
-    const size = (tile.defaultSize && tile.defaultSize[device]) || { w: COLUMNS[device], h: 4 };
+    const size = (tile.defaultSize && tile.defaultSize[device])
+      || (device === 'wall' && (WALL_DEFAULTS[tile.id] || { w: 4, h: 6 }))
+      || { w: COLUMNS[device], h: 4 };
     const el = tileShell(tile);
     gridEl.appendChild(el);
     const k = pos ? ROW_SCALE / (pos.s || 1) : ROW_SCALE;

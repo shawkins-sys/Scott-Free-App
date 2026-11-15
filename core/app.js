@@ -13,6 +13,8 @@ import { startMorningMusic, maybeReconnectPrompt } from './music.js';
 import { breathingNeeded, runBreathing } from './breathing.js';
 import { renderWeeklyCard } from './weekly.js';
 import { ensureUnlocked, watchAway, clearLock } from './applock.js';
+import { isWall } from './device.js';
+import { startWallMode, tickClock } from './wall.js';
 import { renderQuietLines } from './quiet-lines.js';
 
 const view = document.getElementById('view');
@@ -100,6 +102,7 @@ async function renderHome() {
     <section class="home">
       <header class="home-head">
         <div>
+          ${isWall() ? '<p class="wall-clock" id="wall-clock" aria-live="off"></p>' : ''}
           <h1 class="greeting">${greeting(now)}, ${CONFIG.ownerName}</h1>
           <p class="today">${friendlyDate(now)}</p>
           <p class="phrase" id="phrase-slot"></p>
@@ -114,6 +117,7 @@ async function renderHome() {
       <div id="weekly-slot"></div>
       <p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>
     </section>`;
+  tickClock();
   document.getElementById('signout-btn').addEventListener('click', signOutAndClear);
 
   setupCheckin();
@@ -218,8 +222,13 @@ const signOutAndClear = () => { clearLock(); signOut(); };
 
 requireAuth(view)
   .then(async () => {
-    await ensureUnlocked({ onSignOut: signOutAndClear }); // fingerprint or PIN before anything shows
-    watchAway({ onSignOut: signOutAndClear });
+    if (isWall()) {
+      // Wall display: no app lock (hub PIN protects Money, Settings and optionally Wellbeing).
+      startWallMode({ onChange: () => route() });
+    } else {
+      await ensureUnlocked({ onSignOut: signOutAndClear }); // fingerprint or PIN before anything shows
+      watchAway({ onSignOut: signOutAndClear });
+    }
     signedIn = true;
     window.addEventListener('hashchange', route);
     // If the app is left open past midnight, start the new day fresh.

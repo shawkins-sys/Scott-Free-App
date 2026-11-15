@@ -1,4 +1,4 @@
-// Saves and loads tile layouts, one per device type ('phone' or 'desktop').
+// Saves and loads tile layouts, one per device type ('phone', 'desktop' or 'wall').
 // Supabase is the source of truth. Local storage is a fast offline cache.
 import { supabase } from './supabase.js';
 

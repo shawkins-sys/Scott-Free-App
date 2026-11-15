@@ -30,7 +30,7 @@ create table if not exists public.settings (
 
 create table if not exists public.layouts (
   user_id uuid not null default auth.uid() references auth.users on delete cascade,
-  device text not null check (device in ('phone', 'desktop')),
+  device text not null check (device in ('phone', 'desktop', 'wall')),
   items jsonb not null default '[]'::jsonb,
   updated_at timestamptz not null default now(),
   primary key (user_id, device)

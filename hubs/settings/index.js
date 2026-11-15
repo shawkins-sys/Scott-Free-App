@@ -8,6 +8,7 @@ import { googleConfigured, startGoogleSignIn, googleToken, clearGoogleToken, tak
 import { resetPhotos } from '../../tiles/photos/index.js';
 import { renderMusicSettings } from './music.js';
 import { renderPhraseSettings } from './phrases.js';
+import { renderWallSettings } from './wall.js';
 import { getBreathingSettings, saveBreathingSettings } from '../../core/breathing.js';
 import { biometricAvailable, biometricOn, enableBiometric, disableBiometric, changePin, lockNow, clearLock } from '../../core/applock.js';
 import { signOut } from '../../core/auth.js';
@@ -269,6 +270,7 @@ const SECTIONS = [
     autoOpen: () => !!sessionStorage.getItem('sf-spotify-return') },
   { id: 'phrases', title: 'Daily phrases', render: renderPhraseSettings },
   { id: 'lock', title: 'App lock', render: renderLockSettings },
+  { id: 'wall', title: 'Wall display', render: renderWallSettings },
   { id: 'breathing', title: 'Breathing', render: renderBreathingSettings },
   { id: 'pay', title: 'Pay and income', render: renderPayIncomeSettings },
   { id: 'photos', title: 'Photos', render: renderPhotosSettings,
