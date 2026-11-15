@@ -519,3 +519,8 @@ button { font: inherit; color: inherit; }
 .trend-wrap { height: 200px; margin-bottom: 8px; }
 .pattern-list { margin: 0; padding-left: 18px; }
 .pattern-list li { margin-bottom: 6px; }
+
+/* ---------- Weekly review (Phase 8) ---------- */
+.weekly-card { margin-bottom: var(--space); }
+.week-glance li { display: grid; grid-template-columns: 8.5em 1fr; gap: 10px; padding: 6px 0; font-size: 0.9rem; }
+.glance-day { color: var(--muted); }

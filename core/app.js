@@ -11,6 +11,7 @@ import { captureGoogleReturn } from './google.js';
 import { captureSpotifyReturn } from './spotify.js';
 import { startMorningMusic, maybeReconnectPrompt } from './music.js';
 import { breathingNeeded, runBreathing } from './breathing.js';
+import { renderWeeklyCard } from './weekly.js';
 import { renderQuietLines } from './quiet-lines.js';
 
 const view = document.getElementById('view');
@@ -62,6 +63,7 @@ async function setupCheckin() {
     try { await pickDailyPhrase(entry.metrics); } catch { /* shown as empty */ }
     showPhrase();
     renderQuietLines(document.getElementById('quiet-lines'));
+    renderWeeklyCard(document.getElementById('weekly-slot'));
     maybeReconnectPrompt(document.getElementById('music-slot'), todayKey());
     return;
   }
@@ -74,6 +76,7 @@ async function setupCheckin() {
       await afterCheckin(saved);
       showPhrase();
       renderQuietLines(document.getElementById('quiet-lines'));
+      renderWeeklyCard(document.getElementById('weekly-slot'));
     },
   });
 }

@@ -133,5 +133,11 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - `core/trends.js` (pure, tested): `series()` per day, `patterns()`: mood after 7+ h sleep, energy after exercise, weekday with highest work / emotional stress (gaps of 0.3 / 0.5, groups of 5+ / weekday 3+). `hubs/wellbeing/trends.js`: chips per metric, 7/30 switch, Chart.js line, average line, patterns list.
 - sw.js VERSION sf-v24.
 
-## Next: Phase 8 part B (Weekly review)
-Sunday Home card (#weekly-slot) after check-in: this week's check-in averages vs last week, spending so far this pay period, expenses owed, key dates and renewals coming up, next week's calendar at a glance, reflection, Reviewed. Snapshots in `weekly_reviews` (week_start Monday), backfill missed weeks, Past reviews list in the Wellbeing hub.
+## Phase 8 part B: Weekly review (built 15/11/2026)
+- `core/weekly.js`: week = Monday to Sunday (`weekStartOf`). `buildSnapshot(ws)`: check-in averages (6 ratings + hours) this week vs last; money (spending and saved this pay period up to the Sunday, expenses owed) loaded via dynamic imports so a CDN failure does not block it; key dates and renewals in the 14 days after the Sunday; next week's calendar (only when built on the Sunday itself). `syncReviews()`: on Sunday upserts this week's snapshot keeping reflection/reviewed; any day fills missing past weeks (back to the first check-in, max 8). `reviewHtml(review, { showMoney })`: `showMoney: false` hides money figures and renewal lines (for the wall display, brief 14.4). `renderWeeklyCard()` on Home (#weekly-slot) after the check-in on Sundays: reflection (saves on change), Mark as reviewed hides it.
+- Wellbeing hub: Weekly review card with "This week so far" (built live, not saved) and Past reviews newest first (tap to open).
+- Note: backfilled weeks use expenses owed as of the day they were filled in.
+- sw.js VERSION sf-v25. Week maths and rendering tested locally.
+
+## Next: Phase 9 (Polish)
+Offline behaviour, testing on Android, plain-English README (swap photos, update calendar feed URLs, reconnect Spotify, add a tile or hub, where each setting lives). Then the "Before finishing" list, then brief section 14 (plan first).

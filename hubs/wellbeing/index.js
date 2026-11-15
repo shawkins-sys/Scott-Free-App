@@ -10,6 +10,36 @@ import { dayLabel } from '../../core/calendar.js';
 import { formatKey } from '../../core/keydates.js';
 import { renderTrends } from './trends.js';
 import { runBreathing } from '../../core/breathing.js';
+import { listReviews, buildSnapshot, reviewHtml, weekStartOf, syncReviews } from '../../core/weekly.js';
+
+// Weekly review card: this week so far (not saved) and Past reviews, newest first.
+async function renderWeekly(card) {
+  card.innerHTML = '<h2 class="card-title">Weekly review</h2><p class="muted small">Loading...</p>';
+  let reviews = [];
+  try { await syncReviews(); reviews = await listReviews(); } catch (err) { console.warn(err); }
+  card.innerHTML = `
+    <h2 class="card-title">Weekly review</h2>
+    <button class="pill-btn" data-week-now>This week so far</button>
+    <h3 class="w-head">Past reviews</h3>
+    ${reviews.length ? `<ul class="row-list">${reviews.map((r) => `
+      <li><button class="row-btn" data-week="${r.week_start}"><span>Week of ${formatKey(r.week_start)}${r.reflection ? '<span class="muted small block">Reflection added</span>' : ''}</span>
+        <span class="muted small">${r.reviewed ? 'Reviewed' : ''}</span></button></li>`).join('')}</ul>` : '<p class="muted small">Your first review is saved this Sunday.</p>'}`;
+  card.onclick = async (e) => {
+    if (e.target.closest('[data-week-now]')) {
+      const ws = weekStartOf(todayKey());
+      openOverlay('This week so far', async (body) => {
+        body.innerHTML = '<p class="muted">Working it out...</p>';
+        try { body.innerHTML = reviewHtml({ week_start: ws, snapshot: await buildSnapshot(ws) }); }
+        catch { body.innerHTML = '<p class="muted">Not available right now.</p>'; }
+      });
+      return;
+    }
+    const b = e.target.closest('[data-week]');
+    if (!b) return;
+    const r = reviews.find((x) => x.week_start === b.dataset.week);
+    openOverlay(`Week of ${formatKey(r.week_start)}`, (body) => { body.innerHTML = reviewHtml(r); });
+  };
+}
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const pad = (n) => String(n).padStart(2, '0');
@@ -97,6 +127,7 @@ export default {
       <div class="card"><h2 class="card-title">Today</h2><div id="wb-today"><p class="muted">Loading...</p></div></div>
       <div class="card" id="wb-history"></div>
       <div class="card" id="wb-trends"></div>
+      <div class="card" id="wb-weekly"></div>
       <div class="card"><h2 class="card-title">Box breathing</h2>
         <p class="muted small">Breathe in 4, hold 4, out 4, hold 4. Four rounds, about a minute.</p>
         <button class="pill-btn" data-breathe>Start</button></div>`;
@@ -123,6 +154,6 @@ export default {
       if (btn) btn.addEventListener('click', editToday);
     };
 
-    await Promise.all([loadToday(), renderHistory(historyEl, editToday), renderTrends(container.querySelector('#wb-trends'))]);
+    await Promise.all([loadToday(), renderHistory(historyEl, editToday), renderTrends(container.querySelector('#wb-trends')), renderWeekly(container.querySelector('#wb-weekly'))]);
   },
 };
