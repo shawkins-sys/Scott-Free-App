@@ -7,7 +7,6 @@ import { esc } from '../../core/wellbeing.js';
 
 export async function renderMusicSettings(card) {
   card.innerHTML = `
-    <h2 class="card-title">Morning music</h2>
     <div id="mu-spotify"><p class="muted small">Loading...</p></div>
     <div id="mu-speaker"></div>
     <div id="mu-home"></div>

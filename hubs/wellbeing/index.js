@@ -1,12 +1,19 @@
-// Wellbeing hub: today's check-in and phrase management.
+// Wellbeing hub: today's check-in and a history calendar.
+// Each day is coloured by that morning's mood; tap a day to see its check-in.
+// Phrase management moved to Settings (15/11/2026).
 // Trends, breathing and weekly review are added in Phase 8.
-import { METRICS, getTodayCheckin, listPhrases, ensureSeedPhrase, addPhrase,
-  updatePhrase, deletePhrase, setPinned, esc } from '../../core/wellbeing.js';
+import { METRICS, getTodayCheckin, listCheckins, esc } from '../../core/wellbeing.js';
 import { renderCheckinForm, sleepOutOfRange } from '../../core/checkin.js';
 import { openOverlay } from '../../core/overlay.js';
+import { todayKey } from '../../core/date.js';
+import { dayLabel } from '../../core/calendar.js';
+import { formatKey } from '../../core/keydates.js';
 
-function todayCard(entry) {
-  if (!entry) return '<p class="muted">No check-in yet today.</p>';
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const pad = (n) => String(n).padStart(2, '0');
+
+// Read-only summary of one check-in.
+function summaryHtml(entry) {
   const m = entry.metrics || {};
   const rows = METRICS.map((x) => `
     <li><span>${x.label}</span><span class="dot dot-${m[x.key]} mini" aria-label="${m[x.key]} of 5"><span>${m[x.key] ?? '-'}</span></span></li>`).join('');
@@ -16,25 +23,68 @@ function todayCard(entry) {
       <li><span>Hours slept</span><span${entry.hours_slept != null && sleepOutOfRange(Number(entry.hours_slept)) ? ' class="sleep-warn"' : ''}>${hours}</span></li>
       <li><span>Exercise yesterday</span><span>${entry.exercised ? 'Yes' : 'No'}</span></li>
     </ul>
-    ${entry.note ? `<p class="note">${esc(entry.note)}</p>` : ''}
-    <button class="pill-btn" data-edit-checkin>Edit today's check-in</button>`;
+    ${entry.note ? `<p class="note">${esc(entry.note)}</p>` : ''}`;
 }
 
-function phraseRow(p) {
-  return `
-    <li class="phrase-item" data-id="${p.id}">
-      <p class="phrase-text">${esc(p.text)}</p>
-      <div class="phrase-tags">
-        ${p.pinned ? '<span class="tag">Pinned</span>' : ''}
-        ${p.tough_days ? '<span class="tag">For tough days</span>' : ''}
-      </div>
-      <div class="phrase-actions">
-        <button class="link-btn" data-act="pin">${p.pinned ? 'Unpin' : 'Pin'}</button>
-        <button class="link-btn" data-act="tough">${p.tough_days ? 'Not for tough days' : 'For tough days'}</button>
-        <button class="link-btn" data-act="edit">Edit</button>
-        <button class="link-btn" data-act="delete">Delete</button>
-      </div>
-    </li>`;
+const state = { month: null }; // 'YYYY-MM', remembered while the app is open
+
+async function renderHistory(card, onToday) {
+  const today = todayKey();
+  if (!state.month) state.month = today.slice(0, 7);
+  const [y, m] = state.month.split('-').map(Number);
+  const first = `${y}-${pad(m)}-01`;
+  const next = m === 12 ? `${y + 1}-01-01` : `${y}-${pad(m + 1)}-01`;
+  const daysIn = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const lead = (new Date(Date.UTC(y, m - 1, 1)).getUTCDay() + 6) % 7; // Monday first
+
+  card.innerHTML = `<h2 class="card-title">History</h2><p class="muted small">Loading...</p>`;
+  let entries;
+  try { entries = await listCheckins(first, next); } catch (err) {
+    console.error(err);
+    card.innerHTML = '<h2 class="card-title">History</h2><p class="muted small">History is not available right now.</p>';
+    return;
+  }
+  const byDay = new Map(entries.map((e) => [e.day, e]));
+
+  const cells = [];
+  for (let i = 0; i < lead; i++) cells.push('<span class="cal-cell empty"></span>');
+  for (let d = 1; d <= daysIn; d++) {
+    const key = `${y}-${pad(m)}-${pad(d)}`;
+    const e = byDay.get(key);
+    const mood = e && e.metrics && e.metrics.mood;
+    const cls = ['cal-cell', key === today ? 'today' : '', key > today ? 'future' : '', mood ? `dot-${mood} has` : ''].join(' ');
+    cells.push(e
+      ? `<button class="${cls}" data-day="${key}" aria-label="${dayLabel(key)}, mood ${mood} of 5">${d}</button>`
+      : `<span class="${cls}">${d}</span>`);
+  }
+  const isCurrent = state.month === today.slice(0, 7);
+
+  card.innerHTML = `
+    <h2 class="card-title">History</h2>
+    <div class="period-nav">
+      <button class="icon-btn" data-step="-1" aria-label="Previous month">&lsaquo;</button>
+      <span>${MONTHS[m - 1]} ${y}</span>
+      <button class="icon-btn" data-step="1" aria-label="Next month"${isCurrent ? ' disabled' : ''}>&rsaquo;</button>
+    </div>
+    <div class="cal-grid cal-dow">${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((x) => `<span>${x}</span>`).join('')}</div>
+    <div class="cal-grid">${cells.join('')}</div>
+    <p class="muted small cal-legend">Colour shows mood: <span class="dot dot-1 mini-dot"></span>1 to <span class="dot dot-5 mini-dot"></span>5.
+      ${entries.length} check-in${entries.length === 1 ? '' : 's'} this month. Tap a day to see it.</p>`;
+
+  card.onclick = (ev) => {
+    const step = ev.target.closest('[data-step]');
+    if (step && !step.disabled) {
+      const t = y * 12 + (m - 1) + Number(step.dataset.step);
+      state.month = `${Math.floor(t / 12)}-${pad((t % 12) + 1)}`;
+      renderHistory(card, onToday);
+      return;
+    }
+    const day = ev.target.closest('[data-day]');
+    if (!day) return;
+    const e = byDay.get(day.dataset.day);
+    if (day.dataset.day === today) { onToday(); return; }
+    openOverlay(`${dayLabel(e.day)} (${formatKey(e.day)})`, (body) => { body.innerHTML = summaryHtml(e); });
+  };
 }
 
 export default {
@@ -43,100 +93,29 @@ export default {
   async render(container) {
     container.innerHTML = `
       <div class="card"><h2 class="card-title">Today</h2><div id="wb-today"><p class="muted">Loading...</p></div></div>
-      <div class="card">
-        <h2 class="card-title">Daily phrases</h2>
-        <p class="muted small">One phrase shows under the greeting each day after your check-in. A pinned phrase shows every day. Tough days phrases are used when mood is 1 or 2, or either stress rating is 4 or 5.</p>
-        <form id="wb-add" class="phrase-add">
-          <label class="field"><span>New phrase</span><input name="text" maxlength="200" autocomplete="off" required></label>
-          <label class="check"><input type="checkbox" name="tough"> For tough days</label>
-          <button class="primary-btn" type="submit">Add phrase</button>
-        </form>
-        <p class="form-msg" id="wb-msg" aria-live="polite"></p>
-        <ul class="phrase-list" id="wb-phrases"></ul>
-      </div>`;
-
+      <div class="card" id="wb-history"></div>`;
     const todayEl = container.querySelector('#wb-today');
-    const listEl = container.querySelector('#wb-phrases');
-    const msg = container.querySelector('#wb-msg');
-    let phrases = [];
+    const historyEl = container.querySelector('#wb-history');
 
-    const fail = (err) => {
-      console.error(err);
-      msg.classList.add('error');
-      msg.textContent = 'That did not save. Please try again.';
+    const editToday = async () => {
+      const entry = await getTodayCheckin({ refresh: true });
+      if (!entry) return;
+      const close = openOverlay("Edit today's check-in", (body) => renderCheckinForm(body, {
+        existing: entry,
+        submitLabel: 'Save changes',
+        onSaved: async () => { close(); await loadToday(); await renderHistory(historyEl, editToday); },
+      }));
     };
 
     const loadToday = async () => {
       const entry = await getTodayCheckin({ refresh: true });
-      todayEl.innerHTML = todayCard(entry);
+      todayEl.innerHTML = entry
+        ? `${summaryHtml(entry)}<button class="pill-btn" data-edit-checkin>Edit today's check-in</button>`
+        : '<p class="muted">No check-in yet today.</p>';
       const btn = todayEl.querySelector('[data-edit-checkin]');
-      if (btn) btn.addEventListener('click', () => {
-        const close = openOverlay("Edit today's check-in", (body) => renderCheckinForm(body, {
-          existing: entry,
-          submitLabel: 'Save changes',
-          onSaved: async () => { close(); await loadToday(); },
-        }));
-      });
+      if (btn) btn.addEventListener('click', editToday);
     };
 
-    const loadPhrases = async () => {
-      phrases = await ensureSeedPhrase(await listPhrases());
-      listEl.innerHTML = phrases.length
-        ? phrases.map(phraseRow).join('')
-        : '<li class="muted">No phrases yet.</li>';
-    };
-
-    container.querySelector('#wb-add').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.currentTarget;
-      const text = form.text.value.trim();
-      if (!text) return;
-      msg.classList.remove('error');
-      msg.textContent = '';
-      try {
-        await addPhrase(text, form.tough.checked);
-        form.reset();
-        await loadPhrases();
-      } catch (err) { fail(err); }
-    });
-
-    listEl.addEventListener('click', async (e) => {
-      const btn = e.target.closest('[data-act]');
-      if (!btn) return;
-      const li = btn.closest('[data-id]');
-      const p = phrases.find((x) => x.id === li.dataset.id);
-      if (!p) return;
-      msg.classList.remove('error');
-      msg.textContent = '';
-      try {
-        if (btn.dataset.act === 'pin') await setPinned(p.id, !p.pinned);
-        if (btn.dataset.act === 'tough') await updatePhrase(p.id, { tough_days: !p.tough_days });
-        if (btn.dataset.act === 'delete') {
-          if (!window.confirm('Delete this phrase?')) return;
-          await deletePhrase(p.id);
-        }
-        if (btn.dataset.act === 'edit') {
-          li.innerHTML = `
-            <form class="phrase-edit">
-              <label class="field"><span>Edit phrase</span><input name="text" maxlength="200" value="${esc(p.text)}" required></label>
-              <button class="primary-btn" type="submit">Save</button>
-              <button class="link-btn" type="button" data-cancel>Cancel</button>
-            </form>`;
-          const f = li.querySelector('form');
-          f.text.focus();
-          f.querySelector('[data-cancel]').addEventListener('click', loadPhrases);
-          f.addEventListener('submit', async (ev) => {
-            ev.preventDefault();
-            const text = f.text.value.trim();
-            if (!text) return;
-            try { await updatePhrase(p.id, { text }); await loadPhrases(); } catch (err) { fail(err); }
-          });
-          return;
-        }
-        await loadPhrases();
-      } catch (err) { fail(err); }
-    });
-
-    await Promise.all([loadToday(), loadPhrases()]);
+    await Promise.all([loadToday(), renderHistory(historyEl, editToday)]);
   },
 };

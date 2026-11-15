@@ -1,5 +1,5 @@
-// Money hub "Pay & import" tab: pay schedule, income settings,
-// statement import and the review screen.
+// Money hub "Pay & import" tab: pay schedule, statement import and review.
+// Also exports the Settings section for pay and income settings.
 import { payContext, paydays, getPaySettings, savePaySettings, setOverride } from '../../core/payschedule.js';
 import { importStatement, listTransactions, updateTransaction, addRule, suggestPattern,
   getMoneySettings, saveMoneySettings, lastImport } from '../../core/statement.js';
@@ -15,13 +15,11 @@ export async function renderPayImport(pane) {
   pane.innerHTML = `
     <div class="card" id="mi-pay"></div>
     <div class="card" id="mi-import"></div>
-    <div class="card" id="mi-review"></div>
-    <div class="card" id="mi-settings"></div>`;
+    <div class="card" id="mi-review"></div>`;
   await Promise.all([
     renderPay(pane.querySelector('#mi-pay')),
     renderImport(pane.querySelector('#mi-import'), () => renderReview(pane.querySelector('#mi-review'))),
     renderReview(pane.querySelector('#mi-review')),
-    renderIncomeSettings(pane.querySelector('#mi-settings')),
   ]);
 }
 
@@ -39,16 +37,7 @@ async function renderPay(card) {
         <span>${formatKey(p.actual)}${p.actual !== p.scheduled ? ` <span class="muted small">(moved from ${formatKey(p.scheduled)})</span>` : ''}</span>
         <button class="link-btn" data-change>Change</button>
       </li>`).join('')}</ul>
-    <label class="field"><span>If payday is a bank holiday, pay on</span>
-      <select name="rule">
-        <option value="after"${rule === 'after' ? ' selected' : ''}>The next working day</option>
-        <option value="before"${rule === 'before' ? ' selected' : ''}>The working day before</option>
-      </select></label>
-    <p class="muted small">Every 4 weeks on a Friday. Bank holidays from gov.uk (England and Wales).</p>`;
-  card.querySelector('[name=rule]').addEventListener('change', async (e) => {
-    await savePaySettings({ holidayRule: e.target.value });
-    renderPay(card);
-  });
+    <p class="muted small">Every 4 weeks on a Friday. If payday is a bank holiday, pay moves to ${rule === 'before' ? 'the working day before' : 'the next working day'} (change this in Settings).</p>`;
   card.querySelector('.row-list').addEventListener('click', async (e) => {
     if (!e.target.closest('[data-change]')) return;
     const s = e.target.closest('[data-s]').dataset.s;
@@ -159,12 +148,17 @@ async function renderReview(card) {
   });
 }
 
-// ---------- Income settings ----------
+// ---------- Settings page section: Pay and income ----------
 
-async function renderIncomeSettings(card) {
-  const m = await getMoneySettings();
+export async function renderPayIncomeSettings(card) {
+  const [m, pay] = await Promise.all([getMoneySettings(), getPaySettings()]);
   card.innerHTML = `
-    <h2 class="card-title">Income settings</h2>
+    <label class="field"><span>If payday is a bank holiday, pay on</span>
+      <select name="rule">
+        <option value="after"${pay.holidayRule === 'after' ? ' selected' : ''}>The next working day</option>
+        <option value="before"${pay.holidayRule === 'before' ? ' selected' : ''}>The working day before</option>
+      </select></label>
+    <p class="muted small">Paid every 4 weeks on a Friday. Individual paydays can be changed in Money, Pay &amp; import.</p>
     <form class="pay-form">
       <label class="field"><span>Employer payer description (as it appears on the statement)</span>
         <input name="employer" maxlength="60" value="${esc(m.employerPattern)}" placeholder="To confirm from your sample statement"></label>
@@ -174,6 +168,9 @@ async function renderIncomeSettings(card) {
       <button class="primary-btn" type="submit">Save</button>
       <p class="form-msg" aria-live="polite"></p>
     </form>`;
+  card.querySelector('[name=rule]').addEventListener('change', async (e) => {
+    try { await savePaySettings({ holidayRule: e.target.value }); } catch (err) { console.error(err); window.alert('That did not save. Please try again.'); }
+  });
   const f = card.querySelector('form');
   f.addEventListener('submit', async (e) => {
     e.preventDefault();

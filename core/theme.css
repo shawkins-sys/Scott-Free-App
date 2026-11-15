@@ -457,3 +457,25 @@ button { font: inherit; color: inherit; }
 :root { --warn: #d64545; }
 @media (prefers-color-scheme: dark) { :root { --warn: #f07070; } }
 .sleep-warn { color: var(--warn); font-weight: 600; }
+
+/* ---------- Settings sections and check-in history (15/11/2026) ---------- */
+.set-sec { padding: 0; }
+.set-head { list-style: none; cursor: pointer; padding: var(--space); font-weight: 600; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center; }
+.set-head::-webkit-details-marker { display: none; }
+.set-head::after { content: "+"; color: var(--muted); font-weight: 400; font-size: 1.3rem; }
+.set-sec[open] > .set-head::after { content: "-"; }
+.set-body { padding: 0 var(--space) var(--space); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-dow { margin: 8px 0 4px; }
+.cal-dow span { text-align: center; font-size: 0.75rem; color: var(--muted); }
+.cal-cell {
+  aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; font-size: 0.85rem;
+  border: 0; padding: 0; background: none; color: var(--text); font-family: inherit; max-width: 44px; justify-self: center; width: 100%;
+}
+.cal-cell.empty { visibility: hidden; }
+.cal-cell.future { color: var(--muted); opacity: 0.5; }
+.cal-cell.has { color: #fff; font-weight: 600; cursor: pointer; opacity: 1; }
+.cal-cell.today { box-shadow: 0 0 0 2px var(--accent); }
+.cal-legend { margin-top: 10px; }
+.mini-dot { display: inline-block; width: 10px; height: 10px; vertical-align: middle; margin: 0 3px; border: 0; opacity: 1; }
+.period-nav .icon-btn[disabled] { opacity: 0.3; cursor: default; }

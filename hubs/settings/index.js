@@ -7,6 +7,8 @@ import { formatDate } from '../../core/date.js';
 import { googleConfigured, startGoogleSignIn, googleToken, clearGoogleToken, takeGoogleError } from '../../core/google.js';
 import { resetPhotos } from '../../tiles/photos/index.js';
 import { renderMusicSettings } from './music.js';
+import { renderPhraseSettings } from './phrases.js';
+import { renderPayIncomeSettings } from '../money/import.js';
 
 const PICKER = 'https://photospicker.googleapis.com/v1';
 const SESSION_KEY = 'sf-g-session';
@@ -33,14 +35,10 @@ async function bucketNames() {
   return (data || []).filter((f) => f.id).map((f) => f.name);
 }
 
-export default {
-  id: 'settings',
-  title: 'Settings',
-  async render(container) {
+// Photos section: choose slideshow photos from Google Photos.
+async function renderPhotosSettings(container) {
     container.innerHTML = `
-      <div class="card" id="set-music"></div>
-      <div class="card">
-        <h2 class="card-title">Photos</h2>
+      <div>
         <p class="muted small" id="ph-status">Loading...</p>
         <p class="muted small">Choose photos (or a whole album) from Google Photos. The app saves resized copies for the slideshow. Choosing again replaces the current set.</p>
         <div id="ph-action"></div>
@@ -194,10 +192,6 @@ export default {
       button('Choose photos from Google Photos', begin);
     }
 
-    renderMusicSettings(container.querySelector('#set-music')).catch((err) => {
-      console.error(err);
-      container.querySelector('#set-music').innerHTML = '<h2 class="card-title">Morning music</h2><p class="muted small">Not available right now.</p>';
-    });
     await showStatus();
 
     if (!googleConfigured()) {
@@ -218,6 +212,48 @@ export default {
     } else {
       sessionStorage.removeItem(RESUME_KEY);
       button('Choose photos from Google Photos', begin);
+    }
+}
+
+// ---------- Settings page: collapsible sections, each loaded when first opened ----------
+
+const SECTIONS = [
+  { id: 'music', title: 'Morning music', render: renderMusicSettings,
+    // Open automatically when coming back from Spotify.
+    autoOpen: () => !!sessionStorage.getItem('sf-spotify-return') },
+  { id: 'phrases', title: 'Daily phrases', render: renderPhraseSettings },
+  { id: 'pay', title: 'Pay and income', render: renderPayIncomeSettings },
+  { id: 'photos', title: 'Photos', render: renderPhotosSettings,
+    // Open automatically during the Google Photos flow.
+    autoOpen: () => !!(sessionStorage.getItem('sf-g-resume') || sessionStorage.getItem('sf-g-session')) },
+];
+
+export default {
+  id: 'settings',
+  title: 'Settings',
+  async render(container) {
+    container.innerHTML = SECTIONS.map((sec) => `
+      <details class="card set-sec" data-sec="${sec.id}">
+        <summary class="set-head">${sec.title}</summary>
+        <div class="set-body"></div>
+      </details>`).join('');
+
+    for (const sec of SECTIONS) {
+      const el = container.querySelector(`[data-sec="${sec.id}"]`);
+      const body = el.querySelector('.set-body');
+      let loaded = false;
+      const load = () => {
+        if (loaded) return;
+        loaded = true;
+        body.innerHTML = '<p class="muted small">Loading...</p>';
+        Promise.resolve(sec.render(body)).catch((err) => {
+          console.error(`Settings section ${sec.id} failed`, err);
+          loaded = false;
+          body.innerHTML = '<p class="muted small">Not available right now. Close and reopen to try again.</p>';
+        });
+      };
+      el.addEventListener('toggle', () => { if (el.open) load(); });
+      if (sec.autoOpen && sec.autoOpen()) el.open = true; // fires toggle, which loads it
     }
   },
 };

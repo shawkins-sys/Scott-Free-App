@@ -18,6 +18,7 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Google Photos: Google Cloud client ID into `config.js`, deploy `photos-import` (docs/GOOGLE-PHOTOS-SETUP.md).
 - Statement import: Scott to send a redacted Lloyds CSV sample and the employer payer description; finalise `parseStatement()` and set the employer pattern.
 - Check gov.uk bank holidays fetch works from the browser (CORS). If not, move it to an Edge Function (fallback list covers 2026 to 2027).
+- Spotify: Client ID into `config.js`, secret `SPOTIFY_CLIENT_ID`, deploy `spotify` (docs/SPOTIFY-SETUP.md).
 - Brief section 14 (wall display and privacy), recorded 12/11/2026: action only after Phase 9. First review the code, give Scott a short plan of files to change plus decisions, and wait for "continue". Notes: 14.3 lock already comes from the database (`checkins` per London day), so only the wall re-check timing is new. Layout store needs a third device key `wall`.
 
 ## Decisions made
@@ -101,5 +102,16 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - `hubs/money`: tabs Overview | Payments | Spending | Pay & import. `import.js` (paydays with Change, holiday rule, import, review, income settings). `spending.js` (P&L pay period / calendar month with prev/next, Chart.js 4.6.1 horizontal bar by category, expenses tracker, transaction list with edit overlay), loaded on demand. Overview shows the import reminder banner when no import in 30 days.
 - sw.js VERSION sf-v13.
 
-## Next: Phase 7 (Morning music)
-Spotify connection, playlist setup, home detection, Sonos playback, fallbacks and reconnect prompt. Needs Scott's Spotify developer app and 10 playlist links with mood tags.
+### Changes 15/11/2026 (Scott's requests)
+- Settings page is collapsible sections (`<details>`), each loaded when first opened: Morning music, Daily phrases, Pay and income, Photos. Music opens itself on return from Spotify; Photos during the Google flow.
+- Daily phrase management moved from the Wellbeing hub to Settings (`hubs/settings/phrases.js`).
+- Bank holiday rule, employer description and usual salary moved from Money, Pay & import to Settings (`renderPayIncomeSettings` exported from `hubs/money/import.js`). Paydays list with Change stays in Money.
+- Wellbeing hub: Today card plus a History month calendar (Monday first). Days with a check-in are coloured by mood (1 blue to 5 amber); tap a past day for a read-only summary; tapping today opens the edit form. `listCheckins(from, to)` in `core/wellbeing.js`.
+
+## Phase 7 part A: Spotify connection (built 12/11/2026, awaiting Scott's Spotify app)
+- Decisions: phone fallback shows an "Open in Spotify" button (no auto-open); speaker picked once in Settings from the Spotify device list; music starts from phone check-ins only, and only before 12:00.
+- `supabase/functions/spotify`: PKCE (no client secret), secret `SPOTIFY_CLIENT_ID`, tokens in `spotify_auth`, actions connect/status/devices/play/disconnect. Play: transfer (no play), shuffle on, volume 30 on the speaker only, play context, shuffle again. Speaker missing falls back to phone; no phone device returns `open`. invalid_grant clears the token so status shows Reconnect. 6-month expiry from `authorised_at`, warning 14 days before.
+- `core/spotify.js`: PKCE start, `captureSpotifyReturn()` (query `code`/`state`, verifier in localStorage), status/devices/play, music settings (`settings.data.music`: speakerId, speakerName, home), geolocation helpers. `hubs/settings/music.js`. `config.js` `spotifyClientId`. Guide `docs/SPOTIFY-SETUP.md`.
+
+## Next: Phase 7 part B (Morning music)
+Playlists editor (10, mood tags), after-check-in flow (phone only, before 12:00, mood match or nearest, home within 150m or 'Speaker or phone?'), Open in Spotify card, Reconnect prompt on Home. Needs Scott's Spotify Client ID and 10 playlist links with mood tags.

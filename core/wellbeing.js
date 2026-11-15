@@ -169,3 +169,11 @@ export async function getDisplayPhrase() {
   const p = phrases.find((x) => x.id === choice.id);
   return p ? p.text : '';
 }
+
+// Check-ins between two London day keys (inclusive start, exclusive end).
+export async function listCheckins(from, to) {
+  const { data, error } = await supabase.from('checkins').select('*')
+    .gte('day', from).lt('day', to).order('day');
+  if (error) throw error;
+  return data || [];
+}
