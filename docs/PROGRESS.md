@@ -151,4 +151,9 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Honest limit told to Scott: a lock screen, not encryption at rest.
 - Tested in headless Chrome: setup, mismatch, reopen, 5 wrong PINs pause (right PIN refused during pause), unlock, PIN not stored in plain text; all modules still load. sw.js VERSION sf-v27.
 
-## Next: the "Before finishing" list, then brief section 14 (plan first, wait for "continue").
+## Section 14 (wall display) plan, agreed 15/11/2026, waiting for Scott's "continue"
+- New: `core/device.js` (device ID + wall flag in localStorage), `core/hubpin.js` (4 to 6 digit hub PIN, salted PBKDF2 hash in `settings.data.hubPin`, 5 wrong = 5 min pause per device, relock after 2 min idle or leaving the hub), `hubs/settings/wall.js` (wall switch on any device; set/change PIN and "Also protect Wellbeing" only on non-wall devices).
+- Changed: `core/grid.js` (third layout `wall`, 12 columns, tiles across the width), `core/app.js` (wall: large clock, Screen Wake Lock re-requested on visible, check-in re-check on load / visible / every 5 min, PIN gate for Money, Settings and optionally Wellbeing, weekly card without money), `core/quiet-lines.js` (no finance line on wall), `tiles/weather` (saved home location, Cheltenham fallback), `core/music.js` (wall always at home: Sonos 30%), `core/theme.css` (larger text, 56px+ targets, higher contrast, no selection or long-press), schema, README, ANDROID-TESTING (tablet section).
+- Scott runs one SQL line to allow `wall` in `layouts.device`.
+- Decisions: no app lock on wall devices; Settings needs the hub PIN on the wall (same PIN as Money); Plan stays open. Before a hub PIN is set, Money and Settings on the wall say to set one from the phone or PC.
+
