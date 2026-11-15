@@ -491,3 +491,13 @@ button { font: inherit; color: inherit; }
 .check-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; }
 .check-row .amt { text-align: right; }
 .layout-box { width: 100%; min-height: 160px; font: 0.75rem/1.3 monospace; margin-top: 8px; }
+
+/* ---------- Morning music (Phase 7) ---------- */
+.music-card { margin-bottom: var(--space); }
+.music-line { margin: 0 0 10px; }
+.music-card .btn-row a.primary-btn { text-decoration: none; display: inline-block; }
+.mood-row { gap: 10px; justify-content: flex-start; }
+.mood-chip { width: 40px; height: 40px; }
+.mood-mini { display: flex; gap: 4px; margin-top: 4px; }
+.mood-mini .dot.mini { width: 22px; height: 22px; }
+.pl-form { padding: 10px 0; }

@@ -117,5 +117,11 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - `supabase/functions/spotify`: PKCE (no client secret), secret `SPOTIFY_CLIENT_ID`, tokens in `spotify_auth`, actions connect/status/devices/play/disconnect. Play: transfer (no play), shuffle on, volume 30 on the speaker only, play context, shuffle again. Speaker missing falls back to phone; no phone device returns `open`. invalid_grant clears the token so status shows Reconnect. 6-month expiry from `authorised_at`, warning 14 days before.
 - `core/spotify.js`: PKCE start, `captureSpotifyReturn()` (query `code`/`state`, verifier in localStorage), status/devices/play, music settings (`settings.data.music`: speakerId, speakerName, home), geolocation helpers. `hubs/settings/music.js`. `config.js` `spotifyClientId`. Guide `docs/SPOTIFY-SETUP.md`.
 
-## Next: Phase 7 part B (Morning music)
-Playlists editor (10, mood tags), after-check-in flow (phone only, before 12:00, mood match or nearest, home within 150m or 'Speaker or phone?'), Open in Spotify card, Reconnect prompt on Home. Needs Scott's Spotify Client ID and 10 playlist links with mood tags.
+## Phase 7 part B: Morning music flow (built 15/11/2026, awaiting Scott's Spotify app)
+- `core/music.js`: playlists CRUD (max 10, `playlists.moods`), `playlistId()` (accepts open.spotify.com links incl. /intl-xx/, and spotify: URIs), `pickPlaylist()` (random among playlists tagged with today's mood, else the nearest tagged level, ties random). `startMorningMusic(entry, slot)` runs from `afterCheckin()` (not awaited): phone width only, before 12:00 London, needs a mood-tagged playlist. Not connected: expired shows Reconnect card, otherwise Open in Spotify card. No speaker chosen: phone. Home set + location within 150m: speaker; farther: phone; no location or no home: "Speaker or phone?" card. Results: playing (card, clears after 15 s), open (Open in Spotify button + Not now), reconnect (card). Never a raw error.
+- `maybeReconnectPrompt()` on Home after the check-in, at most once a day per device: shows Reconnect when expired or within 14 days.
+- Home has `#music-slot` under `#checkin-slot`. Settings, Morning music, Playlists editor: name, link, mood chips 1 to 5, edit/delete, "x of 10".
+- sw.js VERSION sf-v22. Logic tested locally (link parsing, mood picking).
+
+## Next: Phase 8 (Wellbeing extras)
+Trends (7 and 30 day charts per metric, plain-English patterns after 14 entries), breathing exercise (after check-in when either stress is 5, and from the Wellbeing hub), weekly review (Sunday card, snapshots, Past reviews). Breathing goes in `afterCheckin()` before `startMorningMusic()`.

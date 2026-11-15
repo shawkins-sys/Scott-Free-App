@@ -9,6 +9,7 @@ import { getTodayCheckin, checkinDoneToday, pickDailyPhrase, getDisplayPhrase } 
 import { renderCheckinForm } from './checkin.js';
 import { captureGoogleReturn } from './google.js';
 import { captureSpotifyReturn } from './spotify.js';
+import { startMorningMusic, maybeReconnectPrompt } from './music.js';
 import { renderQuietLines } from './quiet-lines.js';
 
 const view = document.getElementById('view');
@@ -29,11 +30,12 @@ async function showPhrase() {
   catch (err) { console.warn('Phrase not loaded', err); }
 }
 
-// Runs after the check-in is first saved today. Breathing (Phase 8) and
-// morning music (Phase 7) will be added here, in that order.
+// Runs after the check-in is first saved today: daily phrase, then
+// breathing (Phase 8, to be added here), then morning music.
 async function afterCheckin(entry) {
   try { await pickDailyPhrase(entry.metrics); }
   catch (err) { console.warn('Daily phrase not picked', err); }
+  startMorningMusic(entry, document.getElementById('music-slot')); // not awaited; it may wait for "Speaker or phone?"
 }
 
 async function setupCheckin() {
@@ -56,6 +58,7 @@ async function setupCheckin() {
     try { await pickDailyPhrase(entry.metrics); } catch { /* shown as empty */ }
     showPhrase();
     renderQuietLines(document.getElementById('quiet-lines'));
+    maybeReconnectPrompt(document.getElementById('music-slot'), todayKey());
     return;
   }
   await renderCheckinForm(slot, {
@@ -97,6 +100,7 @@ async function renderHome() {
       </header>
       <p class="edit-hint" id="edit-hint" hidden>Press and hold a tile to move it, or hold a blue edge to resize. Changes save automatically.</p>
       <div id="checkin-slot"></div>
+      <div id="music-slot"></div>
       <div id="grid-slot"></div>
       <div id="quiet-lines"></div>
       <div id="weekly-slot"></div>
