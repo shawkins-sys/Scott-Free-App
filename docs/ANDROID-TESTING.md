@@ -46,18 +46,19 @@ Use Chrome on the phone with the app installed (Add to Home screen). After any u
 Before you start: run the one-off SQL line in Supabase (SQL Editor) so the wall layout can be saved:
 `alter table public.layouts drop constraint if exists layouts_device_check; alter table public.layouts add constraint layouts_device_check check (device in ('phone', 'desktop', 'wall'));`
 
-1. **Set the hub PIN first (phone or PC):** Settings, Wall display, enter a 4 to 6 digit PIN twice, Set PIN. Leave "Also protect Wellbeing" off for now.
+1. **Set the hub PIN first (phone or PC)** (it protects Settings on the wall, and Wellbeing if ticked): Settings, Wall display, enter a 4 to 6 digit PIN twice, Set PIN. Leave "Also protect Wellbeing" off for now.
 2. **Turn on wall mode (tablet):** open the app in Chrome on the tablet and install it (Add to Home screen). Sign in (password, then authenticator code), complete the check-in if it is a new day, then Settings, Wall display, tick "This device is a wall display" and confirm. The app reloads with a big clock and no app lock.
    - [ ] Large clock, larger greeting, date and phrase; bottom bar larger.
    - [ ] Screen does not dim or sleep while the app is open.
    - [ ] Long-pressing a tile shows no menu and selects no text.
 3. **Edit the wall layout:** tap Edit, drag and resize tiles across the width, tap Done. Reopen the app on the tablet: layout kept. Check the phone layout is unchanged.
 4. **PIN flow (tablet):**
-   - [ ] Tap Money: PIN pad. A wrong PIN says how many tries are left. The right PIN opens Money.
-   - [ ] Leave Money (Home) and tap Money again: asks for the PIN again.
-   - [ ] Open Money, put the tablet down for over 2 minutes: it locks again.
+   - [ ] No Money button on the bottom bar (Home, Wellbeing, Plan, Settings only).
+   - [ ] Tap Settings: PIN pad. A wrong PIN says how many tries are left. The right PIN opens Settings, without Pay and income or App lock.
+   - [ ] Leave Settings (Home) and tap Settings again: asks for the PIN again.
+   - [ ] Open Settings, put the tablet down for over 2 minutes: it locks again.
    - [ ] 5 wrong PINs: 5 minute pause with a countdown.
-   - [ ] Settings also asks for the PIN. Plan opens without it.
+   - [ ] Plan opens without the PIN.
    - [ ] On the phone, tick "Also protect Wellbeing". On the tablet, Wellbeing now asks for the PIN.
    - [ ] On the tablet, Settings, Wall display shows the PIN cannot be changed there.
 5. **Check-in sync (next morning):** leave the tablet on Home showing the check-in. Do the check-in on your phone.

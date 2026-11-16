@@ -177,4 +177,6 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - README wall section and settings table; `docs/ANDROID-TESTING.md` tablet section (14.5).
 - Tested in headless Chrome with a stateful Supabase stub: PIN set on normal device and refused on wall, hash only stored, Money gated, wrong PIN count, right PIN opens, leaving relocks, Settings gated, Plan and Wellbeing open, no finance quiet line, 2 min idle relock with touch resetting the timer (simulated clock). All 40 modules load. sw.js VERSION sf-v30.
 
+- (16/11/2026, Scott) Money is fully hidden on the wall display: not on the hub bar, `#/hub/money` redirects Home, `needsPin` no longer lists money. Settings on the wall hides Pay and income and App lock; the hub PIN now guards Settings (and Wellbeing if ticked). Tested in headless Chrome. sw.js VERSION sf-v31.
+
 ## Section 14 complete. Remaining: the "Before finishing" list (Scott's setup steps).

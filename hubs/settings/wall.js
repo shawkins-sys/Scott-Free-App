@@ -12,7 +12,7 @@ async function renderPinControls(el) {
   }
   el.innerHTML = `
     <h3 class="w-head">Hub PIN for the wall display</h3>
-    <p class="muted small">On wall displays, Money and Settings need this PIN. ${cfg.hash ? 'A PIN is set.' : '<strong>No PIN set yet.</strong>'} Your phone and PC never ask for it.</p>
+    <p class="muted small">On wall displays, Settings needs this PIN (and Wellbeing, if ticked below). ${cfg.hash ? 'A PIN is set.' : '<strong>No PIN set yet.</strong>'} Your phone and PC never ask for it.</p>
     <form class="pay-form hubpin-form" autocomplete="off">
       <div class="field-pair">
         <label class="field"><span>${cfg.hash ? 'New PIN' : 'PIN'} (4 to 6 digits)</span><input name="pin1" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="new-password"></label>
@@ -41,7 +41,7 @@ async function renderPinControls(el) {
 export async function renderWallSettings(body) {
   const on = isWall();
   body.innerHTML = `
-    <p class="muted small">Turn this on for a tablet or screen on the wall at home. It uses its own layout, larger text, a clock, keeps the screen awake, always plays morning music on the speaker, and hides money figures. Only this device is affected.</p>
+    <p class="muted small">Turn this on for a tablet or screen on the wall at home. It uses its own layout, larger text, a clock, keeps the screen awake and always plays morning music on the speaker. Money is not available on it at all. Only this device is affected.</p>
     <label class="check"><input type="checkbox" name="wall"${on ? ' checked' : ''}> This device is a wall display</label>
     <p class="form-msg" aria-live="polite"></p>
     <div class="wall-pin"></div>`;

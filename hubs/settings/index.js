@@ -9,6 +9,7 @@ import { resetPhotos } from '../../tiles/photos/index.js';
 import { renderMusicSettings } from './music.js';
 import { renderPhraseSettings } from './phrases.js';
 import { renderWallSettings } from './wall.js';
+import { isWall } from '../../core/device.js';
 import { getBreathingSettings, saveBreathingSettings } from '../../core/breathing.js';
 import { biometricAvailable, biometricOn, enableBiometric, disableBiometric, changePin, lockNow, clearLock } from '../../core/applock.js';
 import { signOut } from '../../core/auth.js';
@@ -282,13 +283,15 @@ export default {
   id: 'settings',
   title: 'Settings',
   async render(container) {
-    container.innerHTML = SECTIONS.map((sec) => `
+    // A wall display has no money settings and no app lock.
+    const sections = SECTIONS.filter((sec) => !(isWall() && (sec.id === 'pay' || sec.id === 'lock')));
+    container.innerHTML = sections.map((sec) => `
       <details class="card set-sec" data-sec="${sec.id}">
         <summary class="set-head">${sec.title}</summary>
         <div class="set-body"></div>
       </details>`).join('');
 
-    for (const sec of SECTIONS) {
+    for (const sec of sections) {
       const el = container.querySelector(`[data-sec="${sec.id}"]`);
       const body = el.querySelector('.set-body');
       let loaded = false;

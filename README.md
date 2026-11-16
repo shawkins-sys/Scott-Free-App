@@ -21,7 +21,7 @@ Live: https://shawkins-sys.github.io/Scott-Free-App/
 - On the tablet: sign in, do or wait for the check-in, then Settings, Wall display, tick **This device is a wall display**. Only that device changes.
 - The wall has its own layout (Edit works as normal), a large clock, larger text and buttons, and keeps the screen awake while the app is open. It has no app lock.
 - It always counts as at home: morning music plays on the Sonos at 30%, and weather uses your saved home location.
-- Privacy on the wall: no finance line on Home, no money figures in the weekly review, and **Money and Settings need the hub PIN** (Wellbeing too if you tick "Also protect Wellbeing"). After the PIN, the hub relocks after 2 minutes without a touch or as soon as you leave it. 5 wrong PINs pause entry for 5 minutes. Plan stays open.
+- Privacy on the wall: **the Money hub is not on the wall at all** (Money is for your phone and PC). No finance line on Home, no money figures in the weekly review, and no Pay and income settings. **Settings needs the hub PIN** (Wellbeing too if you tick "Also protect Wellbeing"). After the PIN, the hub relocks after 2 minutes without a touch or as soon as you leave it. 5 wrong PINs pause entry for 5 minutes. Plan stays open.
 - The hub PIN (4 to 6 digits) is set or changed only from your phone or PC: Settings, Wall display. Only a scrambled (hashed) copy is stored.
 - The check-in is shared: doing it on your phone unlocks the wall within 5 minutes, or straight away when the wall screen is touched or woken.
 - To turn wall mode off, open Settings on the wall (needs the hub PIN) and untick the switch.

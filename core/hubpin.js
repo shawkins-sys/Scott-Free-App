@@ -1,7 +1,8 @@
 // Hub PIN for the wall display (brief 14.4).
 // - 4 to 6 digits, set and changed only on a non-wall device.
 // - Stored only as a salted PBKDF2 hash in the database (settings.data.hubPin).
-// - On wall devices it guards Money and Settings, and Wellbeing if chosen.
+// - On wall devices it guards Settings, and Wellbeing if chosen. (Money is not
+//   available on the wall at all.)
 // - After unlocking, the hub relocks after 2 minutes with no interaction, or
 //   straight away when you leave it.
 // - 5 wrong attempts pause PIN entry for 5 minutes on that device.
@@ -44,7 +45,7 @@ export async function setProtectWellbeing(on) {
 // Which hubs need the PIN on this device.
 export async function needsPin(hubId) {
   if (!isWall()) return false;
-  if (hubId === 'money' || hubId === 'settings') return true;
+  if (hubId === 'settings') return true;
   if (hubId === 'wellbeing') return (await getHubPinSettings()).protectWellbeing;
   return false;
 }

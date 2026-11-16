@@ -94,7 +94,8 @@ function renderHubBar(activeId) {
     </a>`;
   hubbar.innerHTML =
     btn('home', 'Home', 'home', '#/') +
-    hubs.filter((h) => !h.hidden).map((h) => btn(h.id, h.title, h.icon, `#/hub/${h.id}`)).join('');
+    // The Money hub does not exist on a wall display (Scott, 16/11/2026).
+    hubs.filter((h) => !h.hidden && !(isWall() && h.id === 'money')).map((h) => btn(h.id, h.title, h.icon, `#/hub/${h.id}`)).join('');
 }
 
 async function renderHome() {
@@ -138,7 +139,7 @@ async function renderHome() {
 
 async function renderHub(id) {
   const entry = hubs.find((h) => h.id === id);
-  if (!entry) { location.hash = '#/'; return; }
+  if (!entry || (isWall() && id === 'money')) { location.hash = '#/'; return; }
   gridCtl = null;
   view.innerHTML = `
     <section class="hub">
