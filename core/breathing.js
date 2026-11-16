@@ -28,10 +28,31 @@ const L = PAD;
 const R = SIZE - PAD;
 const CORNERS = [[L, R], [L, L], [R, L], [R, R], [L, R]];
 
+// Keeps the screen on for the exercise (Screen Wake Lock). Returns a release function.
+async function holdScreenOn() {
+  if (!('wakeLock' in navigator)) return () => {};
+  let lock = null;
+  let active = true;
+  const request = async () => {
+    try { if (active && document.visibilityState === 'visible') lock = await navigator.wakeLock.request('screen'); }
+    catch (err) { console.warn('Screen could not be kept on', err); }
+  };
+  // The browser drops the lock if the app is hidden, so ask again when it comes back.
+  const onVisible = () => { if (document.visibilityState === 'visible') request(); };
+  document.addEventListener('visibilitychange', onVisible);
+  await request();
+  return () => {
+    active = false;
+    document.removeEventListener('visibilitychange', onVisible);
+    if (lock && !lock.released) lock.release().catch(() => {});
+  };
+}
+
 export async function runBreathing() {
   let vibrate = true;
   try { vibrate = (await getBreathingSettings()).vibrate; } catch { /* default on */ }
   const canVibrate = vibrate && 'vibrate' in navigator;
+  const releaseScreen = await holdScreenOn();
 
   return new Promise((resolve) => {
     const el = document.createElement('div');
@@ -70,6 +91,7 @@ export async function runBreathing() {
       done = true;
       cancelAnimationFrame(raf);
       el.classList.add('closing');
+      releaseScreen();
       setTimeout(() => { el.remove(); resolve(); }, 250);
     };
     el.querySelector('.breathe-skip').addEventListener('click', finish);

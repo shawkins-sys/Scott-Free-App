@@ -168,5 +168,7 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - CSS body.wall: 19px base, 4.5rem clock, larger greeting/date/phrase in full text colour, 56px+ targets, 60px check-in dots, check-in in two columns, larger hub bar (76px), no selection or long-press callout. Checked in headless Chrome at 1280x800.
 - sw.js VERSION sf-v28.
 
+- (16/11/2026) Box breathing keeps the screen on (Screen Wake Lock) for the whole exercise, re-requested if the app is hidden and shown again, released on finish or Skip. Checked in headless Chrome. sw.js VERSION sf-v29.
+
 ## Next: section 14 part B
 Hub PIN (`core/hubpin.js`, set only on non-wall devices, hash in `settings.data.hubPin`) gating Money, Settings and optionally Wellbeing on the wall; relock after 2 min idle or leaving; 5 wrong = 5 min pause. No finance quiet line and weekly card without money on the wall. Settings controls. Tablet test steps (14.5) in ANDROID-TESTING and final summary.
