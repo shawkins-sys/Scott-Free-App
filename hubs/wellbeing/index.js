@@ -9,6 +9,7 @@ import { todayKey } from '../../core/date.js';
 import { dayLabel } from '../../core/calendar.js';
 import { formatKey } from '../../core/keydates.js';
 import { renderTrends } from './trends.js';
+import { isWall } from '../../core/device.js';
 import { runBreathing } from '../../core/breathing.js';
 import { listReviews, buildSnapshot, reviewHtml, weekStartOf, syncReviews } from '../../core/weekly.js';
 
@@ -29,7 +30,7 @@ async function renderWeekly(card) {
       const ws = weekStartOf(todayKey());
       openOverlay('This week so far', async (body) => {
         body.innerHTML = '<p class="muted">Working it out...</p>';
-        try { body.innerHTML = reviewHtml({ week_start: ws, snapshot: await buildSnapshot(ws) }); }
+        try { body.innerHTML = reviewHtml({ week_start: ws, snapshot: await buildSnapshot(ws) }, { showMoney: !isWall() }); }
         catch { body.innerHTML = '<p class="muted">Not available right now.</p>'; }
       });
       return;
@@ -37,7 +38,7 @@ async function renderWeekly(card) {
     const b = e.target.closest('[data-week]');
     if (!b) return;
     const r = reviews.find((x) => x.week_start === b.dataset.week);
-    openOverlay(`Week of ${formatKey(r.week_start)}`, (body) => { body.innerHTML = reviewHtml(r); });
+    openOverlay(`Week of ${formatKey(r.week_start)}`, (body) => { body.innerHTML = reviewHtml(r, { showMoney: !isWall() }); });
   };
 }
 

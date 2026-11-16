@@ -3,10 +3,12 @@
 import { listKeyDates, quietLineText } from './keydates.js';
 import { listPayments, quietFinanceText } from './money.js';
 import { esc } from './wellbeing.js';
+import { isWall } from './device.js';
 
 const providers = [
   // Finance: payments due in 7 days, renewals or cancel-by dates in 30. No amounts.
   async () => {
+    if (isWall()) return null; // never on the wall display (brief 14.4)
     const text = quietFinanceText(await listPayments());
     return text ? { text, href: '#/hub/money' } : null;
   },

@@ -15,6 +15,7 @@ import { renderWeeklyCard } from './weekly.js';
 import { ensureUnlocked, watchAway, clearLock } from './applock.js';
 import { isWall } from './device.js';
 import { startWallMode, tickClock } from './wall.js';
+import { needsPin, isUnlocked, noteRoute, setRelockHandler, renderPinGate } from './hubpin.js';
 import { renderQuietLines } from './quiet-lines.js';
 
 const view = document.getElementById('view');
@@ -66,7 +67,7 @@ async function setupCheckin() {
     try { await pickDailyPhrase(entry.metrics); } catch { /* shown as empty */ }
     showPhrase();
     renderQuietLines(document.getElementById('quiet-lines'));
-    renderWeeklyCard(document.getElementById('weekly-slot'));
+    renderWeeklyCard(document.getElementById('weekly-slot'), { showMoney: !isWall() });
     maybeReconnectPrompt(document.getElementById('music-slot'), todayKey());
     return;
   }
@@ -79,7 +80,7 @@ async function setupCheckin() {
       await afterCheckin(saved);
       showPhrase();
       renderQuietLines(document.getElementById('quiet-lines'));
-      renderWeeklyCard(document.getElementById('weekly-slot'));
+      renderWeeklyCard(document.getElementById('weekly-slot'), { showMoney: !isWall() });
     },
   });
 }
@@ -152,6 +153,11 @@ async function renderHub(id) {
     body.innerHTML = `<div class="card muted">${icons.lock} Complete this morning's check-in to open ${entry.title}.</div>`;
     return;
   }
+  // Wall display: Money, Settings (and Wellbeing if chosen) need the hub PIN.
+  if (!isUnlocked(id) && await needsPin(id)) {
+    await renderPinGate(body, id, entry.title, () => renderHub(id));
+    return;
+  }
   try {
     const mod = await import(new URL(entry.path, document.baseURI).href);
     await mod.default.render(body);
@@ -164,6 +170,7 @@ async function renderHub(id) {
 async function route() {
   const hash = location.hash || '#/';
   const match = hash.match(/^#\/hub\/([\w-]+)/);
+  noteRoute(match ? match[1] : 'home'); // leaving an unlocked hub locks it again
   if (match) {
     try { await getTodayCheckin(); } catch { /* treated as locked */ }
   }
@@ -225,6 +232,7 @@ requireAuth(view)
     if (isWall()) {
       // Wall display: no app lock (hub PIN protects Money, Settings and optionally Wellbeing).
       startWallMode({ onChange: () => route() });
+      setRelockHandler(() => route()); // 2 minutes idle in an unlocked hub
     } else {
       await ensureUnlocked({ onSignOut: signOutAndClear }); // fingerprint or PIN before anything shows
       watchAway({ onSignOut: signOutAndClear });

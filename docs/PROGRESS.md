@@ -19,7 +19,7 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Statement import: Scott uses PDF statements from the Lloyds app (15/11/2026). Scott runs Money, Pay & import, Check statement on a real PDF and pastes the masked layout (Copy layout) if anything is wrong; also send the employer payer description. Finalise `parseLines()` in `core/statement-pdf.js` and set the employer pattern. Do not ask for the raw statement.
 - Check gov.uk bank holidays fetch works from the browser (CORS). If not, move it to an Edge Function (fallback list covers 2026 to 2027).
 - Spotify: Client ID into `config.js`, secret `SPOTIFY_CLIENT_ID`, deploy `spotify` (docs/SPOTIFY-SETUP.md).
-- Brief section 14 (wall display and privacy), recorded 12/11/2026: action only after Phase 9. First review the code, give Scott a short plan of files to change plus decisions, and wait for "continue". Notes: 14.3 lock already comes from the database (`checkins` per London day), so only the wall re-check timing is new. Layout store needs a third device key `wall`.
+- Wall display: Scott runs the one-off SQL line (see Section 14 part A) and sets a hub PIN from his phone or PC, then follows the tablet steps in docs/ANDROID-TESTING.md.
 
 ## Decisions made
 - Home top section is fixed, only content tiles are movable.
@@ -170,5 +170,11 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 
 - (16/11/2026) Box breathing keeps the screen on (Screen Wake Lock) for the whole exercise, re-requested if the app is hidden and shown again, released on finish or Skip. Checked in headless Chrome. sw.js VERSION sf-v29.
 
-## Next: section 14 part B
-Hub PIN (`core/hubpin.js`, set only on non-wall devices, hash in `settings.data.hubPin`) gating Money, Settings and optionally Wellbeing on the wall; relock after 2 min idle or leaving; 5 wrong = 5 min pause. No finance quiet line and weekly card without money on the wall. Settings controls. Tablet test steps (14.5) in ANDROID-TESTING and final summary.
+## Section 14 part B: privacy and hub PIN (built 16/11/2026)
+- `core/hubpin.js`: `settings.data.hubPin` { salt, hash (PBKDF2-SHA256 150k), protectWellbeing }. `setHubPin` / `setProtectWellbeing` refuse on wall devices. `needsPin(hubId)`: wall only; money and settings always, wellbeing if protectWellbeing. One hub unlocked at a time; `noteRoute()` on every route change relocks when leaving; idle timer 2 min reset by pointerdown/keydown/scroll/wheel, then `setRelockHandler` re-routes. Wrong attempts per device in localStorage `sf-hubpin-fails`; 5 wrong = 5 min pause. `renderPinGate()` shows a keypad (4 to 6 digits, OK) inside the hub area; no PIN set shows "Set a hub PIN in Settings, Wall display, on your phone or PC first."
+- `core/app.js`: PIN gate in `renderHub()` after the check-in lock; weekly card `showMoney: !isWall()`. `core/quiet-lines.js`: finance provider returns null on wall. Wellbeing hub weekly views hide money on wall.
+- `hubs/settings/wall.js`: hub PIN set/change form and "Also protect Wellbeing" on non-wall devices; read-only note on the wall.
+- README wall section and settings table; `docs/ANDROID-TESTING.md` tablet section (14.5).
+- Tested in headless Chrome with a stateful Supabase stub: PIN set on normal device and refused on wall, hash only stored, Money gated, wrong PIN count, right PIN opens, leaving relocks, Settings gated, Plan and Wellbeing open, no finance quiet line, 2 min idle relock with touch resetting the timer (simulated clock). All 40 modules load. sw.js VERSION sf-v30.
+
+## Section 14 complete. Remaining: the "Before finishing" list (Scott's setup steps).

@@ -582,3 +582,6 @@ body.wall .hub-btn { height: 76px; min-width: 120px; font-size: 1rem; }
 body.wall .hub-btn svg { width: 30px; height: 30px; }
 body.wall { --bar-h: 92px; }
 body.wall .metric-ends { font-size: 0.85rem; }
+.pin-gate { max-width: 420px; margin: 0 auto; text-align: center; }
+.pin-gate .pin-pad button[data-k="ok"] { font-size: 1.1rem; font-weight: 600; background: var(--accent); color: #fff; }
+.wall-pin { margin-top: 14px; }

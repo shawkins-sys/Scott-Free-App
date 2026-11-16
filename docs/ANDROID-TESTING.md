@@ -41,3 +41,30 @@ Use Chrome on the phone with the app installed (Add to Home screen). After any u
 
 ## Midnight
 - [ ] Leave the app open overnight: next morning it asks for the new check-in and hubs are locked again.
+
+## Wall display (tablet), brief 14.5
+Before you start: run the one-off SQL line in Supabase (SQL Editor) so the wall layout can be saved:
+`alter table public.layouts drop constraint if exists layouts_device_check; alter table public.layouts add constraint layouts_device_check check (device in ('phone', 'desktop', 'wall'));`
+
+1. **Set the hub PIN first (phone or PC):** Settings, Wall display, enter a 4 to 6 digit PIN twice, Set PIN. Leave "Also protect Wellbeing" off for now.
+2. **Turn on wall mode (tablet):** open the app in Chrome on the tablet and install it (Add to Home screen). Sign in (password, then authenticator code), complete the check-in if it is a new day, then Settings, Wall display, tick "This device is a wall display" and confirm. The app reloads with a big clock and no app lock.
+   - [ ] Large clock, larger greeting, date and phrase; bottom bar larger.
+   - [ ] Screen does not dim or sleep while the app is open.
+   - [ ] Long-pressing a tile shows no menu and selects no text.
+3. **Edit the wall layout:** tap Edit, drag and resize tiles across the width, tap Done. Reopen the app on the tablet: layout kept. Check the phone layout is unchanged.
+4. **PIN flow (tablet):**
+   - [ ] Tap Money: PIN pad. A wrong PIN says how many tries are left. The right PIN opens Money.
+   - [ ] Leave Money (Home) and tap Money again: asks for the PIN again.
+   - [ ] Open Money, put the tablet down for over 2 minutes: it locks again.
+   - [ ] 5 wrong PINs: 5 minute pause with a countdown.
+   - [ ] Settings also asks for the PIN. Plan opens without it.
+   - [ ] On the phone, tick "Also protect Wellbeing". On the tablet, Wellbeing now asks for the PIN.
+   - [ ] On the tablet, Settings, Wall display shows the PIN cannot be changed there.
+5. **Check-in sync (next morning):** leave the tablet on Home showing the check-in. Do the check-in on your phone.
+   - [ ] Tablet unlocks within 5 minutes, or straight away when you touch the screen or wake it.
+6. **Money figures hidden (tablet):**
+   - [ ] No finance line on Home (the phone still shows it when something is due).
+   - [ ] On a Sunday, the weekly review card shows check-in averages and key dates but no spending, expenses owed or renewal lines. Wellbeing, Past reviews also hide them.
+7. **Home behaviour (tablet):**
+   - [ ] Weather label says "Home" (needs the home location set in Settings, Morning music), otherwise Cheltenham.
+   - [ ] Morning check-in on the tablet before 12:00 plays music on the Sonos at 30% (once Spotify is set up).
