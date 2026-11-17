@@ -1,12 +1,12 @@
 # Scott Free: Handover for a New Chat
 
-Last updated: 17/11/2026. Current release: `sw.js` VERSION `sf-v32` (commit `515b441`).
+Last updated: 17/11/2026. Current release: `sw.js` VERSION `sf-v33` (Shopping list).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
 ## 1. Starter prompt for the new chat
 
-> Continue building Scott Free. Read `claude/HANDOVER.md` and `claude/scott-free-build-prompt.md` in this Project. Attach `shawkins-sys/scott-free-app` with push access and clone it. Next feature: a Shopping List. Confirm the design decisions with me first before building.
+> Continue building Scott Free. Read `claude/HANDOVER.md` and `claude/scott-free-build-prompt.md` in this Project. Attach `shawkins-sys/scott-free-app` with push access and clone it. Next feature: <choose from the roadmap>. Confirm the design decisions with me first before building.
 
 ## 2. Project basics
 
@@ -71,11 +71,12 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/device.js`, `core/wall.js`, `core/hubpin.js`: wall display and hub PIN.
 - `core/money.js`, `core/payschedule.js`, `core/statement.js`, `core/statement-pdf.js`: money and statement import (PDF parser provisional).
 - `core/keydates.js`, `core/calendar.js`, `core/quiet-lines.js`.
+- `core/shopping.js`: shopping data, local copy and offline outbox.
 - `core/spotify.js`, `core/music.js`, `core/breathing.js`, `core/trends.js`, `core/weekly.js`.
 - `core/theme.css`: theme, `--lvl-1` to `--lvl-5`, `--alert`.
 
 **Hubs**
-- `hubs/wellbeing/` (index, trends), `hubs/plan/`, `hubs/money/` (index, import, spending), `hubs/settings/` (index, music, phrases, wall).
+- `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping), `hubs/money/` (index, import, spending), `hubs/settings/` (index, music, phrases, wall).
 - Settings sections: music, phrases, lock, wall, breathing, pay, photos (pay and lock hidden on the wall).
 
 **Tiles:** `tiles/weather`, `tiles/photos`, `tiles/calendar`.
@@ -105,16 +106,12 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
    alter table public.layouts add constraint layouts_device_check check (device in ('phone', 'desktop', 'wall'));
    ```
 
-## 10. Next step: Shopping List
+## 10. Shopping List (built 17/11/2026)
 
-Not started. Decisions to confirm with Scott before building:
+Section inside Plan. Multiple lists, items with quantity and notes, ticked items in a "Done" group with "Clear ticked", staples per list, editable on the wall, works offline with an outbox (latest change wins). Single user. SQL in `supabase/shopping.sql`. Details in `docs/PROGRESS.md`.
 
-- **Where it lives:** new "Shopping" hub, a section inside Plan, or a Home tile (or hub plus tile).
-- **Structure:** single list or multiple lists (for example weekly shop, household, one-off).
-- **Items:** name only, or also quantity, category/aisle, shop, notes.
-- **Ticking off:** ticked items move to the bottom, hide, or clear with a button. Option to re-add recurring staples.
-- **Staples / favourites:** saved quick-add items.
-- **Wall display:** visible and editable on the wall (useful in the kitchen), or phone only.
-- **Sharing:** single user (current model) or shared with someone else (would need a change to the RLS model, so flag this).
-- **Offline:** add and tick while offline in a shop, then sync when back online.
-- **Data:** new Supabase table(s) with RLS `owner_mfa`, plus the SQL for Scott to run.
+**Future: family sharing.** Scott wants to share lists with chosen family members later. Data is ready (items and staples hang off `list_id`). Needs a `shopping_list_members` table, new policies on the three shopping tables only, and a decision on whether family accounts must use MFA (the current policies require aal2).
+
+## 11. Next step
+
+Not chosen. Roadmap options: countdown timers, push notifications, positive news tile, home move hub, photo frame mode for the wall, family sharing for shopping lists.

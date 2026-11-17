@@ -42,6 +42,14 @@ Use Chrome on the phone with the app installed (Add to Home screen). After any u
 ## Midnight
 - [ ] Leave the app open overnight: next morning it asks for the new check-in and hubs are locked again.
 
+## Shopping list
+1. Open Plan and scroll to Shopping. Tap "Create list" (pre-filled "Weekly shop").
+2. Add a few items with and without a quantity. The keyboard should stay open between adds.
+3. Tap an item to tick it: it moves to "Done". Tap "Staple" on it, then tap its chip: it moves back up.
+4. Tap Edit on an item, add a note, save. Try "New list", switch tabs, rename and delete a list.
+5. Turn on aeroplane mode, add and tick items: "changes waiting to sync" shows. Turn it off: the line clears. Check the same items appear on the PC or wall display.
+6. On the wall display, open Plan and add or tick an item. The list refreshes on the phone when you reopen the app.
+
 ## Wall display (tablet), brief 14.5
 Before you start: run the one-off SQL line in Supabase (SQL Editor) so the wall layout can be saved:
 `alter table public.layouts drop constraint if exists layouts_device_check; alter table public.layouts add constraint layouts_device_check check (device in ('phone', 'desktop', 'wall'));`
