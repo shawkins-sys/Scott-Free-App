@@ -30,7 +30,7 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 
 ### Phase 2 decisions (06/11/2026)
 - Check-in metrics (all 1 to 5, in `checkins.metrics`): mood, sleep, energy, emotional_stress, work_stress, physical. Add more via `METRICS` in `core/wellbeing.js`.
-- Rating style: colour dots only, number shown on hover/press. Cool to warm scale (1 blue, 5 amber). Colour shows level, not good or bad.
+- Rating style: colour dots only, number shown on hover/press. (17/11/2026, Scott) Colours now mean how good the day is: soft red (1) to green (5), `--lvl-1..5` in theme.css. Emotional and work stress are reversed (`reverse: true` in METRICS, `levelOf(key, n)` in core/wellbeing.js), so low stress shows green. Darker number text on levels 3 and 4. Warnings (overdue key dates, money alerts) use their own `--alert` amber. History calendar legend reads 1 (low) to 5 (great). sw.js VERSION sf-v32.
 - Hours slept: stepper in 0.5 h steps (0 to 14), starts from last entry or 7. Exercise yesterday: Yes/No. Note optional. Done enabled once all ratings and exercise are set.
 - Phrase line is empty until the check-in is done. Picked once on Done and stored in `settings.data.dailyPhrase` ({ day, id }), fixed for the day.
 - Phrase order: pinned (only one at a time) > tough days phrase on a tough day > random normal phrase, avoiding yesterday's. Tough day with no tough phrases falls back to normal.

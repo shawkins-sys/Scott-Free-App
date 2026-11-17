@@ -9,10 +9,18 @@ export const METRICS = [
   { key: 'mood',             label: 'Mood',             low: 'Low',     high: 'Great' },
   { key: 'sleep',            label: 'Sleep quality',    low: 'Poor',    high: 'Great' },
   { key: 'energy',           label: 'Energy',           low: 'Drained', high: 'Energised' },
-  { key: 'emotional_stress', label: 'Emotional stress', low: 'Calm',    high: 'Very high' },
-  { key: 'work_stress',      label: 'Work stress',      low: 'Calm',    high: 'Very high' },
+  { key: 'emotional_stress', label: 'Emotional stress', low: 'Calm',    high: 'Very high', reverse: true },
+  { key: 'work_stress',      label: 'Work stress',      low: 'Calm',    high: 'Very high', reverse: true },
   { key: 'physical',         label: 'Physical feeling', low: 'Rough',   high: 'Great' },
 ];
+
+// Colour level for a rating: 1 = red (hard day) to 5 = green (good day).
+// For stress, a high number is a hard day, so its colours are reversed.
+export function levelOf(key, n) {
+  if (!n) return n;
+  const m = METRICS.find((x) => x.key === key);
+  return m && m.reverse ? 6 - n : n;
+}
 
 export const SEED_PHRASE =
   'Anxiety lives in the future. Depression lives in the past. Find the flow in between.';

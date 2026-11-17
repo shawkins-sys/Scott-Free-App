@@ -1,6 +1,6 @@
 // Morning check-in form. Used on Home (cannot be skipped) and in the
 // Wellbeing hub to edit today's entry.
-import { METRICS, saveCheckin, getLastCheckin, esc } from './wellbeing.js';
+import { METRICS, saveCheckin, getLastCheckin, esc, levelOf } from './wellbeing.js';
 
 const HOURS_MIN = 0;
 const HOURS_MAX = 14;
@@ -26,7 +26,7 @@ export async function renderCheckinForm(container, options = {}) {
   }
 
   const dots = (m) => [1, 2, 3, 4, 5].map((n) => `
-    <button type="button" class="dot dot-${n}${values[m.key] === n ? ' selected' : ''}"
+    <button type="button" class="dot dot-${levelOf(m.key, n)}${values[m.key] === n ? ' selected' : ''}"
       data-metric="${m.key}" data-value="${n}" title="${n} of 5"
       aria-label="${m.label} ${n} of 5" aria-pressed="${values[m.key] === n}">
       <span>${n}</span>

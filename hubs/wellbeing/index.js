@@ -2,7 +2,7 @@
 // Each day is coloured by that morning's mood; tap a day to see its check-in.
 // Phrase management moved to Settings (15/11/2026).
 // Phase 8: Trends card and a Box breathing button. Weekly review follows.
-import { METRICS, getTodayCheckin, listCheckins, esc } from '../../core/wellbeing.js';
+import { METRICS, getTodayCheckin, listCheckins, esc, levelOf } from '../../core/wellbeing.js';
 import { renderCheckinForm, sleepOutOfRange } from '../../core/checkin.js';
 import { openOverlay } from '../../core/overlay.js';
 import { todayKey } from '../../core/date.js';
@@ -49,7 +49,7 @@ const pad = (n) => String(n).padStart(2, '0');
 function summaryHtml(entry) {
   const m = entry.metrics || {};
   const rows = METRICS.map((x) => `
-    <li><span>${x.label}</span><span class="dot dot-${m[x.key]} mini" aria-label="${m[x.key]} of 5"><span>${m[x.key] ?? '-'}</span></span></li>`).join('');
+    <li><span>${x.label}</span><span class="dot dot-${levelOf(x.key, m[x.key])} mini" aria-label="${m[x.key]} of 5"><span>${m[x.key] ?? '-'}</span></span></li>`).join('');
   const hours = entry.hours_slept != null ? `${Number(entry.hours_slept)} h` : '-';
   return `
     <ul class="summary">${rows}
@@ -101,7 +101,7 @@ async function renderHistory(card, onToday) {
     </div>
     <div class="cal-grid cal-dow">${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((x) => `<span>${x}</span>`).join('')}</div>
     <div class="cal-grid">${cells.join('')}</div>
-    <p class="muted small cal-legend">Colour shows mood: <span class="dot dot-1 mini-dot"></span>1 to <span class="dot dot-5 mini-dot"></span>5.
+    <p class="muted small cal-legend">Colour shows mood: <span class="dot dot-1 mini-dot"></span>1 (low) to <span class="dot dot-5 mini-dot"></span>5 (great).
       ${entries.length} check-in${entries.length === 1 ? '' : 's'} this month. Tap a day to see it.</p>`;
 
   card.onclick = (ev) => {

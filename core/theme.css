@@ -269,13 +269,15 @@ button { font: inherit; color: inherit; }
 }
 
 /* ---------- Check-in (Phase 2) ---------- */
-/* Cool to warm scale: 1 blue through to 5 amber. Colour shows the level, not good or bad. */
+/* Soft red to green: 1 a hard day, 5 a good day (stress ratings are reversed in code).
+   Warnings use --alert so they never take a rating colour. */
 :root {
-  --lvl-1: #3f7fd9;
-  --lvl-2: #5fa6d4;
-  --lvl-3: #a7bfc2;
-  --lvl-4: #e7bb63;
-  --lvl-5: #e3962f;
+  --lvl-1: #d26a64;
+  --lvl-2: #e39a62;
+  --lvl-3: #e3c766;
+  --lvl-4: #9cc983;
+  --lvl-5: #4fa66e;
+  --alert: #d9822b;
 }
 .checkin { margin-bottom: var(--space); }
 .checkin-title, .card-title { font-size: 1.1rem; margin-bottom: 12px; }
@@ -386,7 +388,7 @@ button { font: inherit; color: inherit; }
 .kd-title { font-weight: 500; }
 .kd-when { font-size: 0.9rem; }
 .kd-item.soon .kd-when { color: var(--accent); }
-.kd-item.overdue .kd-when { color: var(--lvl-5); font-weight: 500; }
+.kd-item.overdue .kd-when { color: var(--alert); font-weight: 500; }
 .kd-kind { margin-bottom: 16px; }
 .field select {
   width: 100%; padding: 12px 14px; border-radius: var(--radius-sm);
@@ -409,7 +411,7 @@ button { font: inherit; color: inherit; }
 }
 .amt { font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; }
 .block { display: block; }
-.alert-row .row-btn { color: var(--lvl-5); }
+.alert-row .row-btn { color: var(--alert); }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 10px; }
 .chip { border: 1px solid var(--border); background: var(--card); border-radius: 999px; padding: 4px 12px; font-size: 0.85rem; cursor: pointer; }
 .chip.active { background: var(--accent); color: #fff; border-color: transparent; }
@@ -585,3 +587,6 @@ body.wall .metric-ends { font-size: 0.85rem; }
 .pin-gate { max-width: 420px; margin: 0 auto; text-align: center; }
 .pin-gate .pin-pad button[data-k="ok"] { font-size: 1.1rem; font-weight: 600; background: var(--accent); color: #fff; }
 .wall-pin { margin-top: 14px; }
+
+/* Darker numbers on the light yellow and light green levels so they stay readable */
+.dot-3 span, .dot-4 span, .cal-cell.has.dot-3, .cal-cell.has.dot-4 { color: #26302a; }
