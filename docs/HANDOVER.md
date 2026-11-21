@@ -1,6 +1,6 @@
 # Scott Free: Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v39` (Shopping list, habit questions).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v40` (Shopping list, habit questions).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 

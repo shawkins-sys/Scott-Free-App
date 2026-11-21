@@ -18,7 +18,7 @@ Use Chrome on the phone with the app installed (Add to Home screen). After any u
 - [ ] Check-in: Done stays grey until all six ratings and Exercise are set. Hours slept shows red below 7 or above 8.
 - [ ] After Done: hubs unlock, phrase appears, photos load.
 - [ ] Stress rating 5: box breathing runs (dot round the square, countdown, Round n of 4, vibration). Skip works.
-- [ ] Music (once Spotify is set up, before 12:00): plays on the Sonos at 30% at home, on the phone away. Location off: "Speaker or phone?". Spotify app closed: "Open in Spotify" card.
+- [ ] Music (once Spotify is set up, before 12:00): starts on a random track with shuffle on, at 20% where the device allows it. Plays on: Phone (default) always uses the phone; Speaker uses the speaker at home and the phone away (location off: "Speaker or phone?"). Spotify app closed: "Open in Spotify" card.
 - [ ] Do the check-in on the phone, then open the PC: the PC is unlocked too.
 
 ## Home
@@ -81,4 +81,4 @@ Before you start: run the one-off SQL line in Supabase (SQL Editor) so the wall 
    - [ ] On a Sunday, the weekly review card shows check-in averages and key dates but no spending, expenses owed or renewal lines. Wellbeing, Past reviews also hide them.
 7. **Home behaviour (tablet):**
    - [ ] Weather label says "Home" (needs the home location set in Settings, Morning music), otherwise Cheltenham.
-   - [ ] Morning check-in on the tablet before 12:00 plays music on the Sonos at 30% (once Spotify is set up).
+   - [ ] Morning check-in on the tablet before 12:00 plays music on the speaker at 20% (only when Morning music is set to Speaker).

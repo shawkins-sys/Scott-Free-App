@@ -5,7 +5,7 @@ import { supabase } from './supabase.js';
 import { CONFIG } from '../config.js';
 import { getSettings, updateSettings } from './wellbeing.js';
 
-const SCOPES = 'user-read-playback-state user-modify-playback-state';
+const SCOPES = 'user-read-playback-state user-modify-playback-state playlist-read-private';
 const PKCE_KEY = 'sf-spotify-pkce'; // localStorage, so it survives the trip to the Spotify app
 const RESULT_KEY = 'sf-spotify-return';
 

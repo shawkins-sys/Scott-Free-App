@@ -19,7 +19,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 const ALLOWED_ORIGINS = ['https://shawkins-sys.github.io', 'http://localhost:8000'];
 const API = 'https://api.spotify.com/v1';
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
-const SPEAKER_VOLUME = 30;
+const START_VOLUME = 20; // every device that allows it (Scott, 21/11/2026)
 const AUTH_LIFETIME_DAYS = 182; // refresh tokens expire six months after authorisation
 const WARN_DAYS = 14;
 
@@ -174,22 +174,39 @@ Deno.serve(async (req) => {
         if (!device) return json({ result: 'open', fellBack: body.target === 'speaker' });
       }
 
-      // Make the device active without playing, set shuffle and (speaker only) volume, then play.
+      // Make the device active without playing, set shuffle and volume, then play.
+      const dev = encodeURIComponent(device.id);
+      const setVolume = () => (device.volume !== false
+        ? api(token, `/me/player/volume?volume_percent=${START_VOLUME}&device_id=${dev}`, { method: 'PUT' }).catch(() => null)
+        : Promise.resolve(null)); // many phones do not allow it: play at the current volume
       await api(token, '/me/player', { method: 'PUT', body: JSON.stringify({ device_ids: [device.id], play: false }) });
       await sleep(600);
-      await api(token, `/me/player/shuffle?state=true&device_id=${encodeURIComponent(device.id)}`, { method: 'PUT' });
-      if (target === 'speaker' && device.volume !== false) {
-        await api(token, `/me/player/volume?volume_percent=${SPEAKER_VOLUME}&device_id=${encodeURIComponent(device.id)}`, { method: 'PUT' });
+      await api(token, `/me/player/shuffle?state=true&device_id=${dev}`, { method: 'PUT' });
+      await setVolume();
+
+      // Start on a random track: playing a playlist through the API otherwise
+      // tends to begin on the first track. Needs the track count; if Spotify
+      // will not give it (private or Spotify-made playlists), skip once instead.
+      let offset: number | null = null;
+      const meta = await api(token, `/playlists/${uri.split(':')[2]}?fields=tracks.total`).catch(() => null);
+      if (meta && meta.ok) {
+        const total = Number((await meta.json())?.tracks?.total) || 0;
+        if (total > 1) offset = Math.floor(Math.random() * total);
       }
-      const play = await api(token, `/me/player/play?device_id=${encodeURIComponent(device.id)}`, {
-        method: 'PUT', body: JSON.stringify({ context_uri: uri }),
+      const startPlay = (withOffset: boolean) => api(token, `/me/player/play?device_id=${dev}`, {
+        method: 'PUT',
+        body: JSON.stringify(withOffset && offset != null ? { context_uri: uri, offset: { position: offset } } : { context_uri: uri }),
       });
+      let play = await startPlay(true);
+      if (!play.ok && offset != null) { offset = null; play = await startPlay(false); }
       if (!play.ok) {
         console.error('Spotify play failed', play.status, await play.text());
         return json({ result: 'open', fellBack: true });
       }
       // Shuffle again once the playlist is the active context, in case the first call was ignored.
-      await api(token, `/me/player/shuffle?state=true&device_id=${encodeURIComponent(device.id)}`, { method: 'PUT' });
+      await api(token, `/me/player/shuffle?state=true&device_id=${dev}`, { method: 'PUT' });
+      if (offset == null) { await sleep(400); await api(token, `/me/player/next?device_id=${dev}`, { method: 'POST' }); }
+      await setVolume(); // some devices reset the volume when playback starts
       return json({ result: 'playing', target, deviceName: device.name, fellBack: body.target === 'speaker' && target === 'phone' });
     }
 
