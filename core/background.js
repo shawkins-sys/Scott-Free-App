@@ -1,6 +1,6 @@
 // Background art: one scene per day, the same on every device, never the
 // same as yesterday. Each scene has day (light mode) and night (dark mode)
-// images, for the phone and for the wall display. A scene is used once it
+// images, portrait (phone) and landscape (wall display and wide screens). A scene is used once it
 // has both phone images; a missing wall image falls back to the phone one.
 // Setting settings.data.background: 'rotate' (default) or a scene id.
 //
@@ -21,7 +21,8 @@ export const SCENES = [
     phone: { day: 'palms-phone-day.webp', night: 'palms-phone-night.webp' },
     wall: { day: 'palms-wall-day.webp', night: 'palms-wall-night.webp' } },
   { id: 'coral', label: 'Coral', v: 1,
-    phone: { day: 'coral-phone-day.webp', night: 'coral-phone-night.webp' }, wall: { day: null, night: null } },
+    phone: { day: 'coral-phone-day.webp', night: 'coral-phone-night.webp' },
+    wall: { day: 'coral-wall-day.webp', night: 'coral-wall-night.webp' } },
   { id: 'leaves', label: 'Leaves', v: 1, phone: { day: null, night: null }, wall: { day: null, night: null } },
 ];
 
@@ -59,11 +60,15 @@ const writePref = (v) => { try { localStorage.setItem(PREF_CACHE, v); } catch { 
 
 const url = (scene, file) => `${new URL(`assets/bg/${file}`, document.baseURI).href}?v=${scene.v}`;
 
+const isWide = () => window.innerWidth > window.innerHeight;
+
 function apply(pref) {
   const ready = readyScenes();
   const scene = (pref !== 'rotate' && ready.find((s) => s.id === pref)) || sceneForDay(todayKey(), ready);
   if (!scene) return;
-  const set = isWall() && scene.wall.day && scene.wall.night ? scene.wall : scene.phone;
+  // Landscape images on the wall display and on any wide screen (wider than
+  // tall), where the scene has them; portrait images otherwise.
+  const set = (isWall() || isWide()) && scene.wall.day && scene.wall.night ? scene.wall : scene.phone;
   const root = document.documentElement.style;
   root.setProperty('--bg-art-day', `url("${url(scene, set.day)}")`);
   root.setProperty('--bg-art-night', `url("${url(scene, set.night)}")`);
@@ -138,6 +143,13 @@ export function startBackground() {
     if (pref !== readPref()) { writePref(pref); apply(pref); }
   }).catch(() => { /* offline: keep the saved choice */ });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) apply(readPref()); });
+  // Switch between portrait and landscape images when the window shape changes.
+  let wide = isWide();
+  let t = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(t);
+    t = setTimeout(() => { if (isWide() !== wide) { wide = isWide(); apply(readPref()); } }, 250);
+  });
 }
 
 export const getBackgroundPref = readPref;
