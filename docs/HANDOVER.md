@@ -1,6 +1,6 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v73` (Google Photos set up and working; replace or add when choosing photos again).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v74` (Google Photos set up and working; replace or add when choosing again; slideshow speed and transition per device).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -126,9 +126,10 @@ Any number of scenes (Scott wants more than 4 over time); add an entry to `SCENE
 
 ## 11. Next step (end of 21/11/2026 session)
 
-**Google Photos Phase B and C (agreed with Scott 21/11/2026, not built yet):**
-- Phase B, slideshow settings: Settings, Customisation, Photos gets separate Phone and Wall settings (desktop follows phone), speed 5 to 30 s, transition Fade, Slow zoom or None, saved in `settings.data` so the wall follows changes made on the phone. Proposed defaults (Scott to confirm): phone 8 s Fade, wall 20 s Slow zoom.
-- Phase C, photo frame mode (wall only): after 5 minutes with no touches, and only after the day's check-in, photos go full screen with a small clock and date in a corner ("21:45, Sat 21/11"); tap returns Home. Overnight the photos keep going dimmed, hours set in Settings, Wall display. Proposed (Scott to confirm): 22:00 to 07:00 at about 30% brightness, on/off switch on by default. Reuse the existing wall Screen Wake Lock. New file goes in the sw.js precache.
+**Google Photos Phase B built (sf-v74):** slideshow speed and transition per device type (see PROGRESS.md).
+
+**Google Photos Phase C (agreed with Scott 21/11/2026, not built yet):**
+- Photo frame mode (wall only): after 5 minutes with no touches, and only after the day's check-in, photos go full screen with a small clock and date in a corner ("21:45, Sat 21/11"); tap returns Home. Overnight the photos keep going dimmed, hours set in Settings, Wall display. Defaults (confirmed by Scott): 22:00 to 07:00 at about 30% brightness, on/off switch on by default. Use the wall slideshow settings (speed and transition) from Phase B. Reuse the existing wall Screen Wake Lock. New file goes in the sw.js precache.
 
 Then suggested order:
 1. **Money section rethink** (FUTURE-UPDATES item 5): Scott wants the app to support his mental health, not feel like a job. Decide what to keep (if anything), whether money appears on Home, and what happens to existing money data. Biggest open design question.
