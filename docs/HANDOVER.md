@@ -1,12 +1,12 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v71` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v73` (Google Photos set up and working; replace or add when choosing photos again).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
 ## 1. Starter prompt for the new chat
 
-> Continue building Scott Hub (formerly Scott Free). Read `claude/HANDOVER.md` and `claude/scott-free-build-prompt.md` in this Project. Attach `shawkins-sys/scott-free-app` with push access and clone it. Next feature: <choose from the roadmap>. Confirm the design decisions with me first before building.
+> Continue building Scott Hub (formerly Scott Free). Read `claude/HANDOVER.md`, `claude/FUTURE-UPDATES.md` and `claude/scott-free-build-prompt.md` in this Project. Attach `shawkins-sys/scott-free-app` with push access and clone it. Next feature: <choose from the roadmap>. Confirm the design decisions with me first before building.
 
 ## 2. Project basics
 
@@ -102,7 +102,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 
 0. **Lights:** done 21/11/2026 (token set, `lights` deployed, tested). Open Hue goes to the Play Store page (Hue accepts no browser links).
 1. **Calendar:** done 21/11/2026 (secret set, `calendar-feed` deployed, Verify JWT off).
-2. **Google Photos:** put the Client ID in `config.js` `googleClientId`, deploy `photos-import`.
+2. **Google Photos:** done 21/11/2026 (Google Cloud project "Scott Hub" in Testing with Scott as test user, Client ID in `config.js`, `photos-import` deployed with Verify JWT off, first import of 6 photos worked).
 3. **Spotify:** done 21/11/2026 (connected, resume of last played confirmed working). Settings, Morning music has a "Plays on" switch (`settings.data.music.playOn`, default phone) because the Spotify Web API does not list Sonos; Scott uses phone and switches to the Sonos from his lock screen. Speaker mode keeps the original home/away logic. Possible later: Sonos Control API with Sonos Favourites.
 4. **Bank statement:** ON HOLD until the Money rethink is decided (see `claude/FUTURE-UPDATES.md` item 5).
 5. **Bank holidays:** confirm the gov.uk fetch works on the phone (CORS).
@@ -126,10 +126,14 @@ Any number of scenes (Scott wants more than 4 over time); add an entry to `SCENE
 
 ## 11. Next step (end of 21/11/2026 session)
 
-Suggested order for the next chat:
+**Google Photos Phase B and C (agreed with Scott 21/11/2026, not built yet):**
+- Phase B, slideshow settings: Settings, Customisation, Photos gets separate Phone and Wall settings (desktop follows phone), speed 5 to 30 s, transition Fade, Slow zoom or None, saved in `settings.data` so the wall follows changes made on the phone. Proposed defaults (Scott to confirm): phone 8 s Fade, wall 20 s Slow zoom.
+- Phase C, photo frame mode (wall only): after 5 minutes with no touches, and only after the day's check-in, photos go full screen with a small clock and date in a corner ("21:45, Sat 21/11"); tap returns Home. Overnight the photos keep going dimmed, hours set in Settings, Wall display. Proposed (Scott to confirm): 22:00 to 07:00 at about 30% brightness, on/off switch on by default. Reuse the existing wall Screen Wake Lock. New file goes in the sw.js precache.
+
+Then suggested order:
 1. **Money section rethink** (FUTURE-UPDATES item 5): Scott wants the app to support his mental health, not feel like a job. Decide what to keep (if anything), whether money appears on Home, and what happens to existing money data. Biggest open design question.
 2. **Northern lights background scene**: prompts given; Scott to generate four images (phone and landscape, day and night, aurora in the night versions). Add as a new `SCENES` entry.
-3. **Scott's setup**: Google Photos (Client ID and `photos-import`), wall display hub PIN and tablet test, confirm bank holidays load on the phone.
+3. **Scott's setup**: wall display hub PIN and tablet test, confirm bank holidays load on the phone.
 4. **Plan hub**: Key dates and Next 7 days could become collapsible like Lists (Scott said "Lists only for now").
-5. **Parked ideas** (FUTURE-UPDATES): News, Premier League scores, Alarm or timer, Tesla sync. Older roadmap: countdown timers, push notifications, home move hub, photo frame mode for the wall, family sharing for lists.
+5. **Parked ideas** (FUTURE-UPDATES): News, Premier League scores, Alarm or timer, Tesla sync. Older roadmap: countdown timers, push notifications, home move hub, family sharing for lists.
 
