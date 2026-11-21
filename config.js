@@ -18,7 +18,7 @@ export const CONFIG = {
 
   // Google OAuth client ID for the Photos Picker (see docs/GOOGLE-PHOTOS-SETUP.md).
   // A client ID is public by design and safe to commit. Never add a client secret.
-  googleClientId: '',
+  googleClientId: '105358466663-epc4bgnhpmatq0c8a347lmgq2d43cmjt.apps.googleusercontent.com',
 
   // Spotify app client ID for morning music (see docs/SPOTIFY-SETUP.md). Public, safe to commit.
   spotifyClientId: '102353d5634b48e6800a17334780abca',
