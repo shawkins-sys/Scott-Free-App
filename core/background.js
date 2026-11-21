@@ -27,6 +27,9 @@ export const SCENES = [
   { id: 'rainforest', label: 'Rainforest', v: 1,
     phone: { day: 'rainforest-phone-day.webp', night: 'rainforest-phone-night.webp' },
     wall: { day: 'rainforest-wall-day.webp', night: 'rainforest-wall-night.webp' } },
+  { id: 'winter', label: 'Winter', v: 1,
+    phone: { day: 'winter-phone-day.webp', night: 'winter-phone-night.webp' },
+    wall: { day: 'winter-wall-day.webp', night: 'winter-wall-night.webp' } },
 ];
 
 const PREF_CACHE = 'sf-background';
