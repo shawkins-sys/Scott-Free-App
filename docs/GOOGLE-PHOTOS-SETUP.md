@@ -2,15 +2,15 @@
 
 This lets the slideshow use photos you choose from Google Photos. About 10 minutes. Do it on a computer.
 
-Google no longer lets apps read an album directly, so the app uses Google's Photos Picker: you choose photos (or a whole album) in Settings, and the app saves resized copies (2048px, about 0.3 to 0.6 MB each) to the private `photos` bucket. Choosing again replaces the set. New photos added to the album later appear only when you choose again.
+Google no longer lets apps read an album directly, so the app uses Google's Photos Picker: you choose photos (or a whole album) in Settings, and the app saves resized copies (2048px, about 0.3 to 0.6 MB each) to the private `photos` bucket. Choosing again asks whether to replace the current set or add to it. New photos added to the album later appear only when you choose again.
 
 ## Part A: Google Cloud (gives the app a client ID)
 
 1. Go to https://console.cloud.google.com and sign in with the Google account that holds your photos.
-2. Top bar: project picker, then **New project**. Name it `Scott Free`, then **Create**. Make sure it is selected.
+2. Top bar: project picker, then **New project**. Name it `Scott Hub`, then **Create**. Make sure it is selected.
 3. Menu: **APIs & Services**, then **Library**. Search for **Photos Picker API**, open it and press **Enable**.
 4. Menu: **Google Auth Platform** (may be shown as **OAuth consent screen**), then **Get started**:
-   - App name: `Scott Free`. User support email: your email.
+   - App name: `Scott Hub`. User support email: your email.
    - Audience: **External**.
    - Contact email: your email. Agree, then **Create**.
 5. **Audience**, then **Test users**, then **Add users**: add your own Gmail address and save. Leave the app in **Testing**.
@@ -18,7 +18,7 @@ Google no longer lets apps read an album directly, so the app uses Google's Phot
    `https://www.googleapis.com/auth/photospicker.mediaitems.readonly`
    Press **Add to table**, **Update**, then **Save**.
 7. **Clients**, then **Create client**:
-   - Application type: **Web application**. Name: `Scott Free web`.
+   - Application type: **Web application**. Name: `Scott Hub web`.
    - Authorised JavaScript origins: `https://shawkins-sys.github.io`
    - Authorised redirect URIs: `https://shawkins-sys.github.io/Scott-Free-App/` (keep the trailing slash)
    - Press **Create**.
@@ -44,6 +44,6 @@ If choosing photos later fails with a sign-in error from the function, open the 
 2. Tap **Choose photos from Google Photos**. You are sent to Google to sign in.
    - Google will say "Google hasn't verified this app". That is expected for your own app in Testing: tap **Continue**.
 3. Back in the app, tap **Open Google Photos**, select your photos (in the picker you can open an album and select all), then tap **Done**.
-4. Return to the app. It shows progress while saving, then the slideshow uses the new set.
+4. Return to the app. If photos are already in the slideshow, tap **Replace current set** or **Add to current set**. It shows progress while saving, then the slideshow uses the new set.
 
 Videos are skipped. Up to 200 photos per choice.

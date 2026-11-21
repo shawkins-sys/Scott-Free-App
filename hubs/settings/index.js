@@ -77,7 +77,7 @@ async function renderPhotosSettings(container) {
     container.innerHTML = `
       <div>
         <p class="muted small" id="ph-status">Loading...</p>
-        <p class="muted small">Choose photos (or a whole album) from Google Photos. The app saves resized copies for the slideshow. Choosing again replaces the current set.</p>
+        <p class="muted small">Choose photos (or a whole album) from Google Photos. The app saves resized copies for the slideshow. Choosing again lets you replace the current set or add to it.</p>
         <div id="ph-action"></div>
         <p class="form-msg" id="ph-msg" aria-live="polite"></p>
       </div>`;
@@ -168,7 +168,7 @@ async function renderPhotosSettings(container) {
       if (document.visibilityState === 'visible' && sessionStorage.getItem(SESSION_KEY) && !actionEl.querySelector('button')) poll(); };
     document.addEventListener('visibilitychange', onVisible);
 
-    // Step 4: copy the chosen photos into the bucket and remove the old set.
+    // Step 4: read the selection, then ask whether to replace or add.
     async function importSelection(token, sessionId) {
       say('Reading your selection...');
       const items = [];
@@ -190,12 +190,31 @@ async function renderPhotosSettings(container) {
       }
 
       const existing = await bucketNames();
-      const keep = [];
+      if (existing.length) {
+        say(`${photos.length} photo${photos.length === 1 ? '' : 's'} selected. What should happen to the ${existing.length} already in the slideshow?`);
+        actionEl.innerHTML = `
+          <div class="btn-row" style="flex-wrap: wrap">
+            <button class="primary-btn" type="button" data-mode="replace">Replace current set</button>
+            <button class="primary-btn" type="button" data-mode="add">Add to current set</button>
+          </div>`;
+        actionEl.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+          actionEl.innerHTML = '';
+          saveSelection(token, sessionId, photos, existing, b.dataset.mode === 'add').catch(fail);
+        }));
+        return;
+      }
+      await saveSelection(token, sessionId, photos, existing, false);
+    }
+
+    // Step 5: copy the chosen photos in. Replace removes photos not in the new
+    // pick; add keeps everything already there.
+    async function saveSelection(token, sessionId, photos, existing, add) {
+      const keep = add ? [...existing] : [];
       const todo = [];
       for (const p of photos) {
         const prefix = `gp-${safeId(p.id)}.`;
         const found = existing.find((n) => n.startsWith(prefix));
-        if (found) keep.push(found); else todo.push({ id: p.id, baseUrl: p.mediaFile.baseUrl });
+        if (found) { if (!add) keep.push(found); } else todo.push({ id: p.id, baseUrl: p.mediaFile.baseUrl });
       }
 
       let failed = 0;
