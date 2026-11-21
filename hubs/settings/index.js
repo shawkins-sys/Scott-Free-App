@@ -265,20 +265,29 @@ async function renderBreathingSettings(body) {
   });
 }
 
-// ---------- Settings page: collapsible sections, each loaded when first opened ----------
+// ---------- Settings page: collapsible sections under group headings, ----------
+// ---------- each section loaded when first opened ----------
+
+// Groups agreed with Scott (21/11/2026). Sign out sits under Device and security.
+const GROUPS = [
+  { id: 'routine', title: 'Daily routine' },
+  { id: 'custom', title: 'Customisation' },
+  { id: 'money', title: 'Money' },
+  { id: 'device', title: 'Device and security' },
+];
 
 const SECTIONS = [
-  { id: 'music', title: 'Morning music', render: renderMusicSettings,
+  { id: 'music', group: 'routine', title: 'Morning music', render: renderMusicSettings,
     // Open automatically when coming back from Spotify.
     autoOpen: () => !!sessionStorage.getItem('sf-spotify-return') },
-  { id: 'phrases', title: 'Daily phrases', render: renderPhraseSettings },
-  { id: 'habits', title: 'Habits', render: renderHabitSettings },
-  { id: 'background', title: 'Background', render: renderBackgroundSettings },
-  { id: 'lock', title: 'App lock', render: renderLockSettings },
-  { id: 'wall', title: 'Wall display', render: renderWallSettings },
-  { id: 'breathing', title: 'Breathing', render: renderBreathingSettings },
-  { id: 'pay', title: 'Pay and income', render: renderPayIncomeSettings },
-  { id: 'photos', title: 'Photos', render: renderPhotosSettings,
+  { id: 'phrases', group: 'routine', title: 'Daily phrases', render: renderPhraseSettings },
+  { id: 'habits', group: 'routine', title: 'Habits', render: renderHabitSettings },
+  { id: 'background', group: 'custom', title: 'Background', render: renderBackgroundSettings },
+  { id: 'lock', group: 'device', title: 'App lock', render: renderLockSettings },
+  { id: 'wall', group: 'device', title: 'Wall display', render: renderWallSettings },
+  { id: 'breathing', group: 'routine', title: 'Breathing', render: renderBreathingSettings },
+  { id: 'pay', group: 'money', title: 'Pay and income', render: renderPayIncomeSettings },
+  { id: 'photos', group: 'custom', title: 'Photos', render: renderPhotosSettings,
     // Open automatically during the Google Photos flow.
     autoOpen: () => !!(sessionStorage.getItem('sf-g-resume') || sessionStorage.getItem('sf-g-session')) },
 ];
@@ -289,12 +298,18 @@ export default {
   async render(container) {
     // A wall display has no money settings and no app lock.
     const sections = SECTIONS.filter((sec) => !(isWall() && (sec.id === 'pay' || sec.id === 'lock')));
-    container.innerHTML = sections.map((sec) => `
+    const secHtml = (sec) => `
       <details class="card set-sec" data-sec="${sec.id}">
         <summary class="set-head">${sec.title}</summary>
         <div class="set-body"></div>
-      </details>`).join('') + `
-      <p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>`;
+      </details>`;
+    // Groups in order; a group with no sections on this device (Money on the wall) is left out.
+    container.innerHTML = GROUPS.map((g) => {
+      const inGroup = sections.filter((sec) => sec.group === g.id);
+      const signout = g.id === 'device' ? '<p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>' : '';
+      if (!inGroup.length && !signout) return '';
+      return `<section class="set-group"><h2 class="set-group-title">${g.title}</h2>${inGroup.map(secHtml).join('')}${signout}</section>`;
+    }).join('');
     // Sign out lives here (moved from Home, Scott 21/11/2026). Clears this device's app lock too.
     container.querySelector('#signout-btn').addEventListener('click', () => {
       if (!confirm('Sign out of Scott Hub on this device?')) return;

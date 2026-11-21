@@ -1,6 +1,6 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v64` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v65` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -82,7 +82,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 
 **Hubs**
 - `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping), `hubs/money/` (index, import, spending), `hubs/settings/` (index, music, phrases, habits, wall).
-- Settings sections: music, phrases, habits, lock, wall, breathing, pay, photos (pay and lock hidden on the wall).
+- Settings sections, grouped under headings (21/11/2026): Daily routine (music, phrases, habits, breathing), Customisation (background, photos), Money (pay), Device and security (lock, wall, Sign out). Pay and lock hidden on the wall. New sections need a `group` in `SECTIONS`.
 
 **Tiles:** `tiles/weather`, `tiles/photos`, `tiles/calendar`, `tiles/music`, `tiles/lights`.
 
