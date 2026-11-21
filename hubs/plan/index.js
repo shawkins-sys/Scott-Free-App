@@ -193,9 +193,9 @@ export default {
   title: 'Plan',
   async render(container) {
     container.innerHTML = `
+      <div class="card" id="plan-shopping"></div>
       <div class="card"><h2 class="card-title">Next 7 days</h2><div id="plan-agenda"></div></div>
-      <div class="card" id="plan-keydates"></div>
-      <div class="card" id="plan-shopping"></div>`;
+      <div class="card" id="plan-keydates"></div>`;
     await Promise.all([
       renderAgenda(container.querySelector('#plan-agenda'), 8),
       renderKeyDates(container.querySelector('#plan-keydates')),

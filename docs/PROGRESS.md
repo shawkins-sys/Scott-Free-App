@@ -200,3 +200,4 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 
 - (21/11/2026) Scott ran the shopping, habits and wall SQL in Supabase. Pushed live as sf-v34.
 - (21/11/2026, Scott) Check-in questions made consistent: Exercise moved into the "Yesterday" section with the habits, one label style, equal-height one-line buttons. Units moved into the question so answers fit. Pattern sentences drop the bracketed unit. sw.js VERSION sf-v35.
+- (21/11/2026, Scott) Shopping card moved to the top of the Plan hub. sw.js VERSION sf-v36.
