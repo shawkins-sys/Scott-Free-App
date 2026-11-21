@@ -1,6 +1,6 @@
 # Scott Free: Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v44` (Shopping list, habit questions, Music tile, background art rotation).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v45` (Shopping list, habit questions, Music tile, background art rotation, Lights tile).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -43,7 +43,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 
 ## 5. Standing behaviour rules
 
-- Everything, Settings included, stays locked until the day's check-in is complete. No exceptions.
+- Everything, Settings included, stays locked until the day's check-in is complete. No exceptions. This applies to every tile and every future build (Scott, 21/11/2026): new tiles must wait for the check-in like Photos, Music and Lights.
 - App lock (phone and desktop): 4-digit PIN or fingerprint, asked on open and after 1 minute away. 5 wrong tries cause a 5-minute wait. Applies on every device except the wall display.
 - Wall display (tablet/TV): no app lock. Settings needs the hub PIN (Wellbeing optionally). Plan stays open. **Money hub is fully hidden on the wall** (not in the hub bar, route redirects Home, no money lines in the weekly card or quiet lines).
 - Mood colours run soft red (1) to green (5). Emotional and work stress are reversed (1 = green). Warnings use the separate amber `--alert`.
@@ -59,7 +59,8 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - Screen Wake Lock for the wall display and breathing exercise.
 - Libraries pinned on jsDelivr: Chart.js 4.6.1, PapaParse 5.7.0 (+esm), pdf.js 6.5.438 (blob module worker).
 - Integrations: Spotify Web API (PKCE, needs Premium), Google Photos Picker API (OAuth implicit redirect, `detectSessionInUrl: false` on supabase-js), ical.js 2.1.0 in the calendar function, Open-Meteo weather, gov.uk bank holidays with a 2026 to 2027 fallback list.
-- Edge Functions: `calendar-feed`, `spotify`, `photos-import`.
+- Edge Functions: `calendar-feed`, `spotify`, `photos-import`, `lights`.
+- Lights: Hue through Alexa via the Voice Monkey skill (free plan, 3 triggers: Living room on, Bedroom on, All off). Device IDs in `supabase/functions/lights/index.ts`, token in secret `VOICEMONKEY_TOKEN`. Setup in `docs/LIGHTS-SETUP.md`.
 
 ## 7. File map (repo root)
 
@@ -82,11 +83,11 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping), `hubs/money/` (index, import, spending), `hubs/settings/` (index, music, phrases, habits, wall).
 - Settings sections: music, phrases, habits, lock, wall, breathing, pay, photos (pay and lock hidden on the wall).
 
-**Tiles:** `tiles/weather`, `tiles/photos`, `tiles/calendar`, `tiles/music`.
+**Tiles:** `tiles/weather`, `tiles/photos`, `tiles/calendar`, `tiles/music`, `tiles/lights`.
 
-**Server:** `supabase/functions/{calendar-feed,spotify,photos-import}/index.ts`.
+**Server:** `supabase/functions/{calendar-feed,spotify,photos-import,lights}/index.ts`.
 
-**Docs:** `README.md`, `docs/PROGRESS.md`, `docs/ANDROID-TESTING.md` (includes tablet section), `docs/CALENDAR-SETUP.md`, `docs/SPOTIFY-SETUP.md`, `docs/GOOGLE-PHOTOS-SETUP.md`.
+**Docs:** `README.md`, `docs/PROGRESS.md`, `docs/ANDROID-TESTING.md` (includes tablet section), `docs/CALENDAR-SETUP.md`, `docs/SPOTIFY-SETUP.md`, `docs/GOOGLE-PHOTOS-SETUP.md`, `docs/LIGHTS-SETUP.md`.
 
 ## 8. Testing approach
 
@@ -98,6 +99,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 
 ## 9. Scott's outstanding setup (remind him at the end of the build)
 
+0. **Lights:** set `VOICEMONKEY_TOKEN`, deploy `lights` (Verify JWT off), test the 3 buttons and Open Hue on Android.
 1. **Calendar:** done 21/11/2026 (secret set, `calendar-feed` deployed, Verify JWT off).
 2. **Google Photos:** put the Client ID in `config.js` `googleClientId`, deploy `photos-import`.
 3. **Spotify:** Client ID in `config.js`, secret set and `spotify` deployed (21/11/2026). Scott to connect in Settings and add playlists. Settings, Morning music has a "Plays on" switch (`settings.data.music.playOn`, default phone) because the Spotify Web API does not list Sonos; Scott uses phone and switches to the Sonos from his lock screen. Speaker mode keeps the original home/away logic. Possible later: Sonos Control API with Sonos Favourites.

@@ -222,3 +222,12 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Files renamed to `assets/bg/<scene>-<phone|wall>-<day|night>.webp`. sw.js: cache-first `sf-bg` cache for `/assets/bg/`, kept across releases; beach phone images precached as the offline fallback (`BG_FALLBACK`, keep `?v=` in step).
 - `hubs/settings/background.js`: Rotate daily plus scene buttons (scenes without images show "coming soon", disabled), today's scene shown.
 - sw.js VERSION sf-v44.
+
+## Lights tile (built 21/11/2026)
+- Decisions (Scott): Hue lights through his existing Alexa pairing, using the Voice Monkey skill (Alexa routine triggers over HTTP). Token held in a Supabase secret behind an Edge Function. Living room and Bedroom. Shown on the wall display too. Waits for the check-in (standing rule for every tile and future build).
+- Voice Monkey free plan allows 3 triggers, so 3 commands: Living room on, Bedroom on, All off. Per-room off and dimming through the Hue app ("Open Hue" link). Commands only: no live on/off state.
+- `supabase/functions/lights/index.ts`: owner plus aal2 check, accepts `cmd` = `living-room-on` | `bedroom-on` | `all-off` only, maps to Scott's trigger device IDs (`DEVICES`, overridable with `VM_*` secrets), POSTs to `https://api-v3.voicemonkey.io/trigger`. Results: ok, busy (429), notset (no token, 401, 404), error. Secret: `VOICEMONKEY_TOKEN`.
+- `tiles/lights/index.js`: On buttons per room, full-width All off, "Sending..." then a tick, all buttons locked while sending, plain messages on failure. "Open Hue": Android intent to `com.philips.lighting.hue2` with Play Store fallback; iPhone goes to the App Store (no public deep link). Wall size 4 x 3, larger buttons on the wall.
+- Setup guide: `docs/LIGHTS-SETUP.md`.
+- Tested in headless Chrome with stubs: render, sending state, button lock, tick, busy message, check-in gate. Light and dark checked. sw.js VERSION sf-v45.
+- Possible later: Hue Remote API (OAuth through an Edge Function) for live state, per-room off and brightness without the trigger limit.

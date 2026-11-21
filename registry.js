@@ -16,4 +16,5 @@ export const tiles = [
   { id: 'calendar', path: './tiles/calendar/index.js' },
   { id: 'weather',  path: './tiles/weather/index.js' },
   { id: 'music',    path: './tiles/music/index.js' },
+  { id: 'lights',   path: './tiles/lights/index.js' },
 ];
