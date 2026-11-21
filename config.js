@@ -21,5 +21,5 @@ export const CONFIG = {
   googleClientId: '',
 
   // Spotify app client ID for morning music (see docs/SPOTIFY-SETUP.md). Public, safe to commit.
-  spotifyClientId: '',
+  spotifyClientId: '102353d5634b48e6800a17334780abca',
 };
