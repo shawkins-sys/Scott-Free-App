@@ -678,9 +678,8 @@ body.wall .live-dot { width: 12px; height: 12px; }
 body.wall .mu-btn { width: 56px; height: 56px; }
 body.wall .mu-main-btn { width: 68px; height: 68px; }
 
-/* Background art (light mode). A soft white veil keeps text readable,
-   strongest at the top where the greeting sits. Dark mode keeps the plain
-   background until a night image is added. */
+/* Background art: day image in light mode, night image in dark mode. A soft
+   veil keeps text readable, strongest at the top where the greeting sits. */
 @media (prefers-color-scheme: light) {
   body { background: transparent; }
   body::before {
@@ -688,5 +687,14 @@ body.wall .mu-main-btn { width: 68px; height: 68px; }
     background:
       linear-gradient(180deg, rgba(247, 249, 253, 0.62) 0%, rgba(247, 249, 253, 0.38) 30%, rgba(247, 249, 253, 0.18) 65%, rgba(247, 249, 253, 0.08) 100%),
       url(../assets/bg/phone-day.webp) center / cover no-repeat;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  body { background: transparent; }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(12, 19, 30, 0.55) 0%, rgba(12, 19, 30, 0.35) 30%, rgba(12, 19, 30, 0.2) 65%, rgba(12, 19, 30, 0.15) 100%),
+      url(../assets/bg/phone-night.webp) center / cover no-repeat;
   }
 }
