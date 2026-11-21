@@ -8,10 +8,10 @@ import { getSettings, updateSettings } from './wellbeing.js';
 const CACHE = 'sf-habits';
 
 export const DEFAULT_HABITS = [
-  { key: 'alcohol', label: 'Alcohol', options: ['None', '1 to 2 drinks', '3 or more'], active: true },
+  { key: 'alcohol', label: 'Alcohol (drinks)', options: ['None', '1 to 2', '3 or more'], active: true },
   { key: 'social', label: 'Social media', options: ['None', 'A bit', 'Too much'], active: true },
   { key: 'caffeine_pm', label: 'Caffeine after 2pm', options: ['No', 'Yes'], active: true },
-  { key: 'screens_bed', label: 'Screens in bed', options: ['None', 'Under 30 min', '30 min or more'], active: true },
+  { key: 'screens_bed', label: 'Screens in bed (mins)', options: ['None', 'Under 30', '30 or more'], active: true },
 ];
 
 const readCache = () => { try { return JSON.parse(localStorage.getItem(CACHE)); } catch { return null; } };

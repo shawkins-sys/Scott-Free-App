@@ -99,7 +99,7 @@ export function habitPatterns(entries, habits = []) {
       if (!best || strength > best.strength) best = { t, gap, strength };
     }
     if (!best) continue;
-    const after = `after days with ${h.label.toLowerCase()}`;
+    const after = `after days with ${h.label.replace(/\s*\(.*\)\s*$/, "").toLowerCase()}`;
     const dir = best.gap > 0 ? 'higher' : 'lower';
     out.push(best.t.key === 'hours'
       ? `You tend to sleep about ${Math.abs(best.gap).toFixed(1)} hours ${best.gap > 0 ? 'more' : 'less'} ${after}.`

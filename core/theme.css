@@ -634,13 +634,15 @@ body.wall .shop-item.done .shop-tick::after { left: 19px; top: 9px; width: 12px;
 body.wall .shop-item { padding: 14px 0; }
 body.wall .shop-add input { min-height: 56px; }
 
-/* Habit questions (check-in) */
-.habits-head { margin: 8px 0 10px; padding-top: 12px; border-top: 1px solid var(--border); }
-.habit-row { margin-bottom: 14px; }
-.habit-label { font-size: 0.9rem; color: var(--muted); margin-bottom: 6px; }
-.habit-opts { flex-wrap: wrap; }
-.habit-opts .pill-btn { min-width: 0; flex: 1 1 0; padding: 6px 10px; }
-.habit-opts { max-width: 440px; }
+/* Habit questions (check-in): Exercise and habits share one layout */
+.habits-head { font-size: 0.95rem; font-weight: 600; margin: 8px 0 12px; padding-top: 14px; border-top: 1px solid var(--border); }
+.habit-row { margin-bottom: 16px; max-width: 440px; }
+.habit-label { font-size: 0.95rem; font-weight: 500; margin-bottom: 8px; }
+.habit-opts { gap: 8px; }
+.habit-opts .pill-btn {
+  flex: 1 1 0; min-width: 0; min-height: 44px; padding: 6px 8px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 /* Settings: habits */
 .habit-set-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 0; border-top: 1px solid var(--border); }
 .habit-set-item.off .habit-set-main { opacity: 0.55; }

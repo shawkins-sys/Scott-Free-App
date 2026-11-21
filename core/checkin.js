@@ -55,15 +55,15 @@ export async function renderCheckinForm(container, options = {}) {
           <button type="button" class="icon-btn" data-hours="1" aria-label="More hours">+</button>
         </div>
       </div>
-      <div class="checkin-row">
-        <div class="metric-label">Exercise yesterday</div>
-        <div class="yesno">
+      <div class="habits-head">Yesterday</div>
+      <div class="habit-row" role="group" aria-label="Exercise yesterday">
+        <div class="habit-label">Exercise</div>
+        <div class="yesno habit-opts">
           <button type="button" class="pill-btn" data-ex="true">Yes</button>
           <button type="button" class="pill-btn" data-ex="false">No</button>
         </div>
       </div>
-      ${habits.length ? `<div class="habits-head metric-label">Yesterday</div>
-      ${habits.map((h) => `
+      ${habits.length ? `${habits.map((h) => `
         <div class="habit-row" role="group" aria-label="${esc(h.label)} yesterday">
           <div class="habit-label">${esc(h.label)}</div>
           <div class="yesno habit-opts">${habitOrder(h).map((i) => `

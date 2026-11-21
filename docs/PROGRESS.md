@@ -191,7 +191,7 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 
 ## Habit questions in the check-in (built 21/11/2026)
 - Decisions (Scott): habits about yesterday, required; answer scale; managed in Settings; patterns need 14 check-ins and at least 5 days with and 5 without the habit. Two-answer habits show Yes first, like Exercise.
-- Defaults: Alcohol (None / 1 to 2 drinks / 3 or more), Social media (None / A bit / Too much), Caffeine after 2pm (No / Yes), Screens in bed (None / Under 30 min / 30 min or more).
+- Defaults: Alcohol (drinks) (None / 1 to 2 / 3 or more), Social media (None / A bit / Too much), Caffeine after 2pm (No / Yes), Screens in bed (mins) (None / Under 30 / 30 or more).
 - SQL: `supabase/habits.sql` adds `checkins.habits` jsonb { key: answer index }, index 0 = did not. Folded into `schema.sql`. `saveCheckin` retries without habits if the column is missing, so the lock cannot get stuck.
 - `core/habits.js`: definitions in `settings.data.habits` (defaults if unset), cached in localStorage `sf-habits` for offline check-ins. Keys never reused.
 - `core/checkin.js`: "Yesterday" section, Done needs every active habit. `hubs/settings/habits.js`: Settings, Habits: add (2 or 3 answers), edit, move up, turn off (history kept).
@@ -199,3 +199,4 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Tested in headless Chrome (check-in lock, save without column, Settings add and turn off) and with sample data in Node. sw.js VERSION sf-v34.
 
 - (21/11/2026) Scott ran the shopping, habits and wall SQL in Supabase. Pushed live as sf-v34.
+- (21/11/2026, Scott) Check-in questions made consistent: Exercise moved into the "Yesterday" section with the habits, one label style, equal-height one-line buttons. Units moved into the question so answers fit. Pattern sentences drop the bracketed unit. sw.js VERSION sf-v35.
