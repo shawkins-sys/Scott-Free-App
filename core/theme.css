@@ -699,7 +699,9 @@ body.wall .tile-applink { font-size: 1rem; }
 body.wall .li-btn { min-width: 88px; min-height: 56px; font-size: 1.05rem; }
 
 /* Background art (scene chosen in core/background.js): day image in light
-   mode, night image in dark mode. A soft
+   mode, night image in dark mode. Veil colours and top opacity are mirrored in
+   VEIL in core/background.js (status bar colour); change both together.
+   A soft
    veil keeps text readable, strongest at the top where the greeting sits. */
 @media (prefers-color-scheme: light) {
   body { background: transparent; }

@@ -62,6 +62,59 @@ function apply(pref) {
   root.setProperty('--bg-art-day', `url("${url(scene, set.day)}")`);
   root.setProperty('--bg-art-night', `url("${url(scene, set.night)}")`);
   document.documentElement.dataset.bgScene = scene.id;
+  matchStatusBar(url(scene, set.day), url(scene, set.night));
+}
+
+// Phone status bar: match the colour at the top of the screen (the image's
+// top edge under the veil from theme.css), so the bar blends with the art
+// instead of showing a pale strip. Worked out once per image and saved.
+const VEIL = {
+  light: { rgb: [247, 249, 253], a: 0.62 },
+  dark: { rgb: [12, 19, 30], a: 0.55 },
+};
+const BAR_CACHE = 'sf-statusbar';
+
+function topColour(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas');
+        c.width = 24; c.height = 4;
+        const g = c.getContext('2d', { willReadFrequently: true });
+        // Top 4% of the image, averaged down to a small strip.
+        g.drawImage(img, 0, 0, img.naturalWidth, Math.max(1, img.naturalHeight * 0.04), 0, 0, 24, 4);
+        const d = g.getImageData(0, 0, 24, 4).data;
+        const sum = [0, 0, 0];
+        for (let i = 0; i < d.length; i += 4) { sum[0] += d[i]; sum[1] += d[i + 1]; sum[2] += d[i + 2]; }
+        const n = d.length / 4;
+        resolve(sum.map((v) => v / n));
+      } catch { resolve(null); }
+    };
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+const hex = (rgb) => `#${rgb.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('')}`;
+const blend = (img, veil) => img.map((v, i) => veil.rgb[i] * veil.a + v * (1 - veil.a));
+
+function setBar(mode, colour) {
+  const meta = document.querySelector(`meta[name="theme-color"][media*="${mode}"]`);
+  if (meta && colour) meta.setAttribute('content', colour);
+}
+
+async function matchStatusBar(daySrc, nightSrc) {
+  let cache = {};
+  try { cache = JSON.parse(localStorage.getItem(BAR_CACHE) || '{}'); } catch { /* ignore */ }
+  for (const [mode, src] of [['light', daySrc], ['dark', nightSrc]]) {
+    if (cache[src]) { setBar(mode, cache[src]); continue; }
+    const rgb = await topColour(src);
+    if (!rgb) continue;
+    cache[src] = hex(blend(rgb, VEIL[mode]));
+    setBar(mode, cache[src]);
+  }
+  try { localStorage.setItem(BAR_CACHE, JSON.stringify(cache)); } catch { /* ignore */ }
 }
 
 // Before sign-in: use this device's saved choice straight away.
