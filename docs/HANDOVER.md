@@ -1,6 +1,6 @@
 # Scott Free: Handover for a New Chat
 
-Last updated: 17/11/2026. Current release: `sw.js` VERSION `sf-v34` (Shopping list, habit questions).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v34` (Shopping list, habit questions).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -77,8 +77,8 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/theme.css`: theme, `--lvl-1` to `--lvl-5`, `--alert`.
 
 **Hubs**
-- `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping), `hubs/money/` (index, import, spending), `hubs/settings/` (index, music, phrases, wall).
-- Settings sections: music, phrases, lock, wall, breathing, pay, photos (pay and lock hidden on the wall).
+- `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping), `hubs/money/` (index, import, spending), `hubs/settings/` (index, music, phrases, habits, wall).
+- Settings sections: music, phrases, habits, lock, wall, breathing, pay, photos (pay and lock hidden on the wall).
 
 **Tiles:** `tiles/weather`, `tiles/photos`, `tiles/calendar`.
 
@@ -101,11 +101,9 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 3. **Spotify:** put the Client ID in `config.js` `spotifyClientId`, add the `SPOTIFY_CLIENT_ID` secret, deploy `spotify`.
 4. **Bank statement:** run "Check statement" on a Lloyds PDF, send the masked layout if needed, plus the employer payer description. Then finalise `parseLines()` and the employer pattern.
 5. **Bank holidays:** confirm the gov.uk fetch works on the phone (CORS).
-6. **Wall display:** run this SQL once, set the hub PIN from the phone, then test on a tablet:
-   ```sql
-   alter table public.layouts drop constraint if exists layouts_device_check;
-   alter table public.layouts add constraint layouts_device_check check (device in ('phone', 'desktop', 'wall'));
-   ```
+6. **Wall display:** SQL done (21/11/2026). Set the hub PIN from the phone, then test on a tablet.
+
+Done 21/11/2026: shopping, habits and wall SQL run by Scott; `sf-v34` pushed live.
 
 ## 10. Shopping List (built 17/11/2026)
 

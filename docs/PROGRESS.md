@@ -19,7 +19,7 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Statement import: Scott uses PDF statements from the Lloyds app (15/11/2026). Scott runs Money, Pay & import, Check statement on a real PDF and pastes the masked layout (Copy layout) if anything is wrong; also send the employer payer description. Finalise `parseLines()` in `core/statement-pdf.js` and set the employer pattern. Do not ask for the raw statement.
 - Check gov.uk bank holidays fetch works from the browser (CORS). If not, move it to an Edge Function (fallback list covers 2026 to 2027).
 - Spotify: Client ID into `config.js`, secret `SPOTIFY_CLIENT_ID`, deploy `spotify` (docs/SPOTIFY-SETUP.md).
-- Wall display: Scott runs the one-off SQL line (see Section 14 part A) and sets a hub PIN from his phone or PC, then follows the tablet steps in docs/ANDROID-TESTING.md.
+- Wall display: SQL run 21/11/2026. Scott sets a hub PIN from his phone or PC, then follows the tablet steps in docs/ANDROID-TESTING.md.
 
 ## Decisions made
 - Home top section is fixed, only content tiles are movable.
@@ -197,3 +197,5 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - `core/checkin.js`: "Yesterday" section, Done needs every active habit. `hubs/settings/habits.js`: Settings, Habits: add (2 or 3 answers), edit, move up, turn off (history kept).
 - `core/trends.js` `habitPatterns()`: per habit, the clearest difference in mood, sleep quality, energy (0.3+) or hours slept (0.5+ h) on days after the habit vs not. Shown under "Habits" in Wellbeing trends.
 - Tested in headless Chrome (check-in lock, save without column, Settings add and turn off) and with sample data in Node. sw.js VERSION sf-v34.
+
+- (21/11/2026) Scott ran the shopping, habits and wall SQL in Supabase. Pushed live as sf-v34.
