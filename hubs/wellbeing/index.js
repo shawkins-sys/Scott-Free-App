@@ -1,4 +1,4 @@
-// Wellbeing hub: today's check-in and a history calendar.
+// Wellbeing hub: history calendar (tap today to view or edit today's check-in).
 // Each day is coloured by that morning's mood; tap a day to see its check-in.
 // Phrase management moved to Settings (15/11/2026).
 // Phase 8: Trends card and a Box breathing button. Weekly review follows.
@@ -125,7 +125,6 @@ export default {
   title: 'Wellbeing',
   async render(container) {
     container.innerHTML = `
-      <div class="card"><h2 class="card-title">Today</h2><div id="wb-today"><p class="muted">Loading...</p></div></div>
       <div class="card" id="wb-history"></div>
       <div class="card" id="wb-trends"></div>
       <div class="card" id="wb-weekly"></div>
@@ -133,7 +132,6 @@ export default {
         <p class="muted small">Breathe in 4, hold 4, out 4, hold 4. Four rounds, about a minute.</p>
         <button class="pill-btn" data-breathe>Start</button></div>`;
     container.querySelector('[data-breathe]').addEventListener('click', () => runBreathing());
-    const todayEl = container.querySelector('#wb-today');
     const historyEl = container.querySelector('#wb-history');
 
     const editToday = async () => {
@@ -142,19 +140,12 @@ export default {
       const close = openOverlay("Edit today's check-in", (body) => renderCheckinForm(body, {
         existing: entry,
         submitLabel: 'Save changes',
-        onSaved: async () => { close(); await loadToday(); await renderHistory(historyEl, editToday); },
+        onSaved: async () => { close(); await renderHistory(historyEl, editToday); },
       }));
     };
 
-    const loadToday = async () => {
-      const entry = await getTodayCheckin({ refresh: true });
-      todayEl.innerHTML = entry
-        ? `${summaryHtml(entry)}<button class="pill-btn" data-edit-checkin>Edit today's check-in</button>`
-        : '<p class="muted">No check-in yet today.</p>';
-      const btn = todayEl.querySelector('[data-edit-checkin]');
-      if (btn) btn.addEventListener('click', editToday);
-    };
-
-    await Promise.all([loadToday(), renderHistory(historyEl, editToday), renderTrends(container.querySelector('#wb-trends')), renderWeekly(container.querySelector('#wb-weekly'))]);
+    // The Today card was removed (Scott, 21/11/2026): tap today in the History
+    // calendar to view and edit today's check-in.
+    await Promise.all([renderHistory(historyEl, editToday), renderTrends(container.querySelector('#wb-trends')), renderWeekly(container.querySelector('#wb-weekly'))]);
   },
 };
