@@ -231,3 +231,9 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - Setup guide: `docs/LIGHTS-SETUP.md`.
 - Tested in headless Chrome with stubs: render, sending state, button lock, tick, busy message, check-in gate. Light and dark checked. sw.js VERSION sf-v45.
 - Possible later: Hue Remote API (OAuth through an Edge Function) for live state, per-room off and brightness without the trigger limit.
+
+## Simpler Music tile and app links (built 21/11/2026)
+- Decisions (Scott): Music tile is one row: small artwork, song and artist, previous / play-pause / next, plus "Open Spotify". Device switching and playlist chips removed from the tile (playlists stay in Settings for morning music). Nothing playing: "Nothing playing" with the same controls; Play resumes the last session if Spotify is open on a device, otherwise the usual "not open" message. Expanded view is the same tile, stacked and larger. Calendar tile gets "Open Calendar" (Google Calendar).
+- `core/applink.js`: `appLink()` and `appLinkHtml(app, label)`. Android opens the app with an intent (falls back to the website or Play Store); iPhone and computers get the web link (open.spotify.com opens the Spotify app on iPhone; Google Calendar web). Used by the Music, Calendar and Lights tiles (`.tile-applink`).
+- Music tile default size 4 x 2 (phone), wall 4 x 3. Saved layouts keep their current size.
+- Tested in headless Chrome with stubs (Android and desktop user agents): playing, pause, nothing playing with the no-device message, expanded view, both links. Light and dark checked. sw.js VERSION sf-v46.

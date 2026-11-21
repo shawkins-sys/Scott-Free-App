@@ -4,26 +4,12 @@
 // Waits for the morning check-in, like Photos and Music. Shown on the wall too.
 import { supabase } from '../../core/supabase.js';
 import { getTodayCheckin, checkinDoneToday } from '../../core/wellbeing.js';
+import { appLinkHtml } from '../../core/applink.js';
 
 const ROOMS = [
   { name: 'Living room', cmd: 'living-room-on' },
   { name: 'Bedroom', cmd: 'bedroom-on' },
 ];
-const HUE_PACKAGE = 'com.philips.lighting.hue2';
-const PLAY_URL = `https://play.google.com/store/apps/details?id=${HUE_PACKAGE}`;
-const APP_STORE_URL = 'https://apps.apple.com/gb/app/philips-hue/id1055281310';
-
-// Android: open the Hue app, or the Play Store if it is not installed.
-// iPhone: no public link into the Hue app, so the App Store page for now.
-function hueLink() {
-  const ua = navigator.userAgent;
-  if (/Android/i.test(ua)) {
-    return `intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=${HUE_PACKAGE};S.browser_fallback_url=${encodeURIComponent(PLAY_URL)};end`;
-  }
-  if (/iPhone|iPad|iPod/i.test(ua)) return APP_STORE_URL;
-  return PLAY_URL;
-}
-
 async function send(cmd) {
   try {
     const { data, error } = await supabase.functions.invoke('lights', { body: { cmd } });
@@ -56,7 +42,7 @@ async function startView(container) {
     </div>`).join('')}
     <button class="pill-btn li-btn li-alloff" data-cmd="all-off">All off</button>
     <p class="muted small li-msg" aria-live="polite"></p>
-    <a class="link-btn li-hue" href="${hueLink()}" rel="noopener">Open Hue</a>
+    ${appLinkHtml('hue', 'Open Hue')}
   </div>`;
 
   const msgEl = container.querySelector('.li-msg');

@@ -12,7 +12,7 @@ const COLUMNS = { phone: 4, desktop: 12, wall: 12 };
 
 // Wall display defaults: same order as the phone, tiles side by side across
 // the width (12 columns, in 72px height blocks like other defaults).
-const WALL_DEFAULTS = { photos: { w: 4, h: 6 }, calendar: { w: 4, h: 6 }, weather: { w: 4, h: 6 }, music: { w: 4, h: 4 }, lights: { w: 4, h: 3 } };
+const WALL_DEFAULTS = { photos: { w: 4, h: 6 }, calendar: { w: 4, h: 6 }, weather: { w: 4, h: 6 }, music: { w: 4, h: 3 }, lights: { w: 4, h: 3 } };
 
 export function currentDevice() {
   if (isWall()) return 'wall';

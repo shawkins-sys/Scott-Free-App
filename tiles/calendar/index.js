@@ -1,9 +1,10 @@
 // Calendar tile: today's events (read-only, edited in Google Calendar),
 // with today's key dates shown first. Finished events are dimmed.
-// Expand for today plus the next 7 days.
+// Expand for today plus the next 7 days. "Open Calendar" opens Google Calendar.
 import { getEvents, eventRows, bindEventClicks, renderAgenda, getKeyDatesSafe } from '../../core/calendar.js';
 import { keyDateRows } from '../../core/keydates.js';
 import { todayKey } from '../../core/date.js';
+import { appLinkHtml } from '../../core/applink.js';
 
 export default {
   id: 'calendar',
@@ -23,7 +24,8 @@ export default {
       : result.stale ? 'Showing the last saved calendar.' : '';
     container.innerHTML = `
       ${rows ? `<ul class="ev-list">${rows}</ul>` : (result && result.configured ? '<p class="muted">Nothing in the calendar today.</p>' : '')}
-      ${note ? `<p class="muted small">${note}</p>` : ''}`;
+      ${note ? `<p class="muted small">${note}</p>` : ''}
+      ${appLinkHtml('calendar', 'Open Calendar')}`;
     bindEventClicks(container, events);
   },
   renderExpanded(container) {

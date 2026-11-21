@@ -1,6 +1,6 @@
 # Scott Free: Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v45` (Shopping list, habit questions, Music tile, background art rotation, Lights tile).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v46` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -75,6 +75,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/shopping.js`: shopping data, local copy and offline outbox.
 - `core/habits.js`: habit definitions for the check-in.
 - `core/livedot.js`: green/red status dot above the Home greeting.
+- `core/applink.js`: "Open <app>" links on tiles (Android intent, web fallback). Add new apps to `APPS`.
 - `core/background.js`: daily background scene rotation (see section 12).
 - `core/spotify.js`, `core/music.js`, `core/breathing.js`, `core/trends.js`, `core/weekly.js`.
 - `core/theme.css`: theme, `--lvl-1` to `--lvl-5`, `--alert`.
