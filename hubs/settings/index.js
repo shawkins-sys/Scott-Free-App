@@ -11,6 +11,7 @@ import { renderPhraseSettings } from './phrases.js';
 import { renderHabitSettings } from './habits.js';
 import { renderBackgroundSettings } from './background.js';
 import { renderWallSettings } from './wall.js';
+import { renderBackupSettings } from './backup.js';
 import { isWall } from '../../core/device.js';
 import { getBreathingSettings, saveBreathingSettings } from '../../core/breathing.js';
 import { biometricAvailable, biometricOn, enableBiometric, disableBiometric, changePin, lockNow, clearLock } from '../../core/applock.js';
@@ -285,6 +286,7 @@ const SECTIONS = [
   { id: 'background', group: 'custom', title: 'Background', render: renderBackgroundSettings },
   { id: 'lock', group: 'device', title: 'App lock', render: renderLockSettings },
   { id: 'wall', group: 'device', title: 'Wall display', render: renderWallSettings },
+  { id: 'backup', group: 'device', title: 'Backup and export', render: renderBackupSettings },
   { id: 'breathing', group: 'routine', title: 'Breathing', render: renderBreathingSettings },
   { id: 'pay', group: 'money', title: 'Pay and income', render: renderPayIncomeSettings },
   { id: 'photos', group: 'custom', title: 'Photos', render: renderPhotosSettings,
