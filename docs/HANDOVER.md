@@ -103,8 +103,8 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 0. **Lights:** done 21/11/2026 (token set, `lights` deployed, tested). Open Hue goes to the Play Store page (Hue accepts no browser links).
 1. **Calendar:** done 21/11/2026 (secret set, `calendar-feed` deployed, Verify JWT off).
 2. **Google Photos:** put the Client ID in `config.js` `googleClientId`, deploy `photos-import`.
-3. **Spotify:** Client ID in `config.js`, secret set and `spotify` deployed (21/11/2026). Scott to connect in Settings and add playlists. Settings, Morning music has a "Plays on" switch (`settings.data.music.playOn`, default phone) because the Spotify Web API does not list Sonos; Scott uses phone and switches to the Sonos from his lock screen. Speaker mode keeps the original home/away logic. Possible later: Sonos Control API with Sonos Favourites.
-4. **Bank statement:** run "Check statement" on a Lloyds PDF, send the masked layout if needed, plus the employer payer description. Then finalise `parseLines()` and the employer pattern.
+3. **Spotify:** done 21/11/2026 (connected, resume of last played confirmed working). Settings, Morning music has a "Plays on" switch (`settings.data.music.playOn`, default phone) because the Spotify Web API does not list Sonos; Scott uses phone and switches to the Sonos from his lock screen. Speaker mode keeps the original home/away logic. Possible later: Sonos Control API with Sonos Favourites.
+4. **Bank statement:** ON HOLD until the Money rethink is decided (see `claude/FUTURE-UPDATES.md` item 5).
 5. **Bank holidays:** confirm the gov.uk fetch works on the phone (CORS).
 6. **Wall display:** SQL done (21/11/2026). Set the hub PIN from the phone, then test on a tablet.
 
@@ -124,8 +124,12 @@ Required questions about yesterday in the check-in (alcohol, social media, caffe
 
 Any number of scenes (Scott wants more than 4 over time); add an entry to `SCENES` in `core/background.js`. Live: beach, palms ("Palm trees"), coral, rainforest, winter, mountains ("Misty mountains"). Planned: northern lights (with aurora). Each needs phone day, phone night, wall day (landscape 16:10), wall night. Done: all six scenes, phone and wall, day and night (21/11/2026; beach replaced with a new set, v 2). Landscape (wall) images are used on the wall display and on any screen wider than tall. To add one: compress to WebP (quality about 78, phone up to 1080 px wide, wall up to 2560 px), save as `assets/bg/<scene>-<phone|wall>-<day|night>.webp`, fill the path in `SCENES` in `core/background.js`, bump that scene's `v` if replacing. If the beach `v` changes, update `BG_FALLBACK` in sw.js. Bump sw.js VERSION. Keep composition: plain top, detail at edges and bottom.
 
-## 11. Next step
+## 11. Next step (end of 21/11/2026 session)
 
-Not chosen. Music tile and live status dot built 21/11/2026 (see PROGRESS).
+Suggested order for the next chat:
+1. **Money section rethink** (FUTURE-UPDATES item 5): Scott wants the app to support his mental health, not feel like a job. Decide what to keep (if anything), whether money appears on Home, and what happens to existing money data. Biggest open design question.
+2. **Northern lights background scene**: prompts given; Scott to generate four images (phone and landscape, day and night, aurora in the night versions). Add as a new `SCENES` entry.
+3. **Scott's setup**: Google Photos (Client ID and `photos-import`), wall display hub PIN and tablet test, confirm bank holidays load on the phone.
+4. **Plan hub**: Key dates and Next 7 days could become collapsible like Lists (Scott said "Lists only for now").
+5. **Parked ideas** (FUTURE-UPDATES): News, Premier League scores, Alarm or timer, Tesla sync. Older roadmap: countdown timers, push notifications, home move hub, photo frame mode for the wall, family sharing for lists.
 
-Other roadmap options: countdown timers, push notifications, positive news tile, home move hub, photo frame mode for the wall, family sharing for shopping lists.
