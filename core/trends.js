@@ -72,3 +72,38 @@ export function patterns(entries) {
   }
   return out.slice(0, 4);
 }
+
+// Habit patterns: for each habit, compares the day after it (any answer other
+// than the first) with days after not doing it. One line per habit, using the
+// clearest difference. Needs 14+ check-ins and at least 5 days on each side.
+const HABIT_TARGETS = [
+  { key: 'mood', name: 'mood', min: 0.3 },
+  { key: 'sleep', name: 'sleep quality', min: 0.3 },
+  { key: 'energy', name: 'energy', min: 0.3 },
+  { key: 'hours', name: 'hours', min: 0.5 },
+];
+
+export function habitPatterns(entries, habits = []) {
+  if (entries.length < MIN_ENTRIES) return [];
+  const out = [];
+  for (const h of habits) {
+    const did = (e) => {
+      const v = (e.habits || {})[h.key];
+      return Number.isInteger(v) ? v > 0 : null;
+    };
+    let best = null;
+    for (const t of HABIT_TARGETS) {
+      const gap = compare(entries, t.key, did);
+      if (gap == null || Math.abs(gap) < t.min) continue;
+      const strength = Math.abs(gap) / t.min;
+      if (!best || strength > best.strength) best = { t, gap, strength };
+    }
+    if (!best) continue;
+    const after = `after days with ${h.label.toLowerCase()}`;
+    const dir = best.gap > 0 ? 'higher' : 'lower';
+    out.push(best.t.key === 'hours'
+      ? `You tend to sleep about ${Math.abs(best.gap).toFixed(1)} hours ${best.gap > 0 ? 'more' : 'less'} ${after}.`
+      : `Your ${best.t.name} tends to be ${dir} ${after}.`);
+  }
+  return out;
+}

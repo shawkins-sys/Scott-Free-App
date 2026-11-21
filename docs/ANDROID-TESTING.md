@@ -50,6 +50,11 @@ Use Chrome on the phone with the app installed (Add to Home screen). After any u
 5. Turn on aeroplane mode, add and tick items: "changes waiting to sync" shows. Turn it off: the line clears. Check the same items appear on the PC or wall display.
 6. On the wall display, open Plan and add or tick an item. The list refreshes on the phone when you reopen the app.
 
+## Habit questions
+1. Next morning's check-in shows a "Yesterday" section. Done stays greyed out until every habit is answered.
+2. Settings, Habits: add one (for example Takeaway, No / Yes), turn one off, move one up. Edit today's check-in in Wellbeing to see the change.
+3. After 14 check-ins, Wellbeing trends shows a "Habits" list once a habit has at least 5 days with and 5 without.
+
 ## Wall display (tablet), brief 14.5
 Before you start: run the one-off SQL line in Supabase (SQL Editor) so the wall layout can be saved:
 `alter table public.layouts drop constraint if exists layouts_device_check; alter table public.layouts add constraint layouts_device_check check (device in ('phone', 'desktop', 'wall'));`

@@ -9,6 +9,9 @@ const HOURS_STEP = 0.5;
 // Hours outside this range show in red (best sleep is around 7.5 hours).
 export const SLEEP_OK_MIN = 7;
 export const SLEEP_OK_MAX = 8;
+// Two-answer habits show Yes first, like Exercise. Index 0 still means "did not".
+const habitOrder = (h) => (h.options.length === 2 ? [1, 0] : h.options.map((_, i) => i));
+
 export const sleepOutOfRange = (h) => h < SLEEP_OK_MIN || h > SLEEP_OK_MAX;
 
 // options: { existing, title, submitLabel, onSaved(entry) }
@@ -63,8 +66,8 @@ export async function renderCheckinForm(container, options = {}) {
       ${habits.map((h) => `
         <div class="habit-row" role="group" aria-label="${esc(h.label)} yesterday">
           <div class="habit-label">${esc(h.label)}</div>
-          <div class="yesno habit-opts">${h.options.map((o, i) => `
-            <button type="button" class="pill-btn" data-habit="${esc(h.key)}" data-hv="${i}">${esc(o)}</button>`).join('')}
+          <div class="yesno habit-opts">${habitOrder(h).map((i) => `
+            <button type="button" class="pill-btn" data-habit="${esc(h.key)}" data-hv="${i}">${esc(h.options[i])}</button>`).join('')}
           </div>
         </div>`).join('')}` : ''}
       <label class="field">

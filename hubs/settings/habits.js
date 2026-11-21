@@ -62,7 +62,7 @@ function openForm(habit, onSave) {
 
 export async function renderHabitSettings(container) {
   container.innerHTML = `
-    <p class="muted small">Asked in the morning check-in about yesterday, to spot patterns with mood and sleep. The first answer always means you did not. Turning a habit off keeps its history.</p>
+    <p class="muted small">Asked in the morning check-in about yesterday, to spot patterns with mood and sleep. The first answer always means you did not. Habits with two answers show Yes first in the check-in. Turning a habit off keeps its history.</p>
     <button class="pill-btn" data-add>Add habit</button>
     <p class="form-msg" aria-live="polite"></p>
     <ul class="phrase-list habit-set-list"></ul>`;

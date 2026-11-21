@@ -188,3 +188,12 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - `hubs/plan/shopping.js`: Shopping card below Key dates. List tabs, New list, Rename, Delete. Add box (name and qty) keeps focus between adds. Tick circle or tap the row to tick. Edit overlay: name, qty, notes, Save as staple, Delete. Staple chips with Manage (tap to remove). "X changes waiting to sync" line. Last list remembered in `sf-shop-list`. 56px ticks on the wall.
 - Tested in headless Chrome with a Supabase stub: add, focus kept, tick, staple save, staple untick and duplicate message, offline queue (2 pending) then sync on reconnect, clear ticked on server, second list, local persistence. No console errors. Light, dark and wall checked.
 - sw.js VERSION sf-v33 (adds core/shopping.js and hubs/plan/shopping.js to the precache).
+
+## Habit questions in the check-in (built 21/11/2026)
+- Decisions (Scott): habits about yesterday, required; answer scale; managed in Settings; patterns need 14 check-ins and at least 5 days with and 5 without the habit. Two-answer habits show Yes first, like Exercise.
+- Defaults: Alcohol (None / 1 to 2 drinks / 3 or more), Social media (None / A bit / Too much), Caffeine after 2pm (No / Yes), Screens in bed (None / Under 30 min / 30 min or more).
+- SQL: `supabase/habits.sql` adds `checkins.habits` jsonb { key: answer index }, index 0 = did not. Folded into `schema.sql`. `saveCheckin` retries without habits if the column is missing, so the lock cannot get stuck.
+- `core/habits.js`: definitions in `settings.data.habits` (defaults if unset), cached in localStorage `sf-habits` for offline check-ins. Keys never reused.
+- `core/checkin.js`: "Yesterday" section, Done needs every active habit. `hubs/settings/habits.js`: Settings, Habits: add (2 or 3 answers), edit, move up, turn off (history kept).
+- `core/trends.js` `habitPatterns()`: per habit, the clearest difference in mood, sleep quality, energy (0.3+) or hours slept (0.5+ h) on days after the habit vs not. Shown under "Habits" in Wellbeing trends.
+- Tested in headless Chrome (check-in lock, save without column, Settings add and turn off) and with sample data in Node. sw.js VERSION sf-v34.

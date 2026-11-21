@@ -1,7 +1,8 @@
 // Wellbeing hub Trends card: one chart, pick the metric, 7 or 30 days,
 // plus plain-English patterns once 14+ check-ins exist.
-import { METRICS, listCheckins } from '../../core/wellbeing.js';
-import { series, patterns, MIN_ENTRIES } from '../../core/trends.js';
+import { METRICS, listCheckins, esc } from '../../core/wellbeing.js';
+import { getHabits } from '../../core/habits.js';
+import { series, patterns, habitPatterns, MIN_ENTRIES } from '../../core/trends.js';
 import { todayKey } from '../../core/date.js';
 
 const CHART_JS = 'https://cdn.jsdelivr.net/npm/chart.js@4.6.1/auto/+esm';
@@ -16,6 +17,7 @@ export async function renderTrends(card) {
   card.innerHTML = '<h2 class="card-title">Trends</h2><p class="muted small">Loading...</p>';
   const today = todayKey();
   let entries;
+  const habits = await getHabits();
   try { entries = await listCheckins(addDays(today, -365), addDays(today, 1)); } catch (err) {
     console.error(err);
     card.innerHTML = '<h2 class="card-title">Trends</h2><p class="muted small">Trends are not available right now.</p>';
@@ -26,6 +28,7 @@ export async function renderTrends(card) {
     const s = series(entries, view.key, view.days, today);
     const choice = CHOICES.find((c) => c.key === view.key);
     const found = patterns(entries);
+    const habitFound = habitPatterns(entries, habits);
     card.innerHTML = `
       <h2 class="card-title">Trends</h2>
       <div class="chips">${CHOICES.map((c) => `<button class="chip${c.key === view.key ? ' active' : ''}" data-key="${c.key}">${c.label}</button>`).join('')}</div>
@@ -37,7 +40,10 @@ export async function renderTrends(card) {
       <p class="muted small">${s.average != null ? `${choice.label} averaged <strong>${view.key === 'hours' ? `${s.average} h` : s.average}</strong> over ${s.count} check-in${s.count === 1 ? '' : 's'}.` : 'No check-ins in this period.'}</p>
       <h3 class="w-head">Patterns</h3>
       ${found.length ? `<ul class="pattern-list">${found.map((p) => `<li>${p}</li>`).join('')}</ul>`
-        : `<p class="muted small">${entries.length < MIN_ENTRIES ? `Patterns appear after ${MIN_ENTRIES} check-ins (${entries.length} so far).` : 'No clear patterns yet.'}</p>`}`;
+        : `<p class="muted small">${entries.length < MIN_ENTRIES ? `Patterns appear after ${MIN_ENTRIES} check-ins (${entries.length} so far).` : 'No clear patterns yet.'}</p>`}
+      <h3 class="w-head">Habits</h3>
+      ${habitFound.length ? `<ul class="pattern-list">${habitFound.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>`
+        : `<p class="muted small">Habit patterns appear once there are ${MIN_ENTRIES} check-ins, with at least 5 days with and 5 without each habit.</p>`}`;
 
     if (chart) { chart.destroy(); chart = null; }
     const canvas = card.querySelector('canvas');

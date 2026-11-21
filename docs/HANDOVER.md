@@ -1,6 +1,6 @@
 # Scott Free: Handover for a New Chat
 
-Last updated: 17/11/2026. Current release: `sw.js` VERSION `sf-v33` (Shopping list).
+Last updated: 17/11/2026. Current release: `sw.js` VERSION `sf-v34` (Shopping list, habit questions).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -72,6 +72,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/money.js`, `core/payschedule.js`, `core/statement.js`, `core/statement-pdf.js`: money and statement import (PDF parser provisional).
 - `core/keydates.js`, `core/calendar.js`, `core/quiet-lines.js`.
 - `core/shopping.js`: shopping data, local copy and offline outbox.
+- `core/habits.js`: habit definitions for the check-in.
 - `core/spotify.js`, `core/music.js`, `core/breathing.js`, `core/trends.js`, `core/weekly.js`.
 - `core/theme.css`: theme, `--lvl-1` to `--lvl-5`, `--alert`.
 
@@ -111,6 +112,10 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 Section inside Plan. Multiple lists, items with quantity and notes, ticked items in a "Done" group with "Clear ticked", staples per list, editable on the wall, works offline with an outbox (latest change wins). Single user. SQL in `supabase/shopping.sql`. Details in `docs/PROGRESS.md`.
 
 **Future: family sharing.** Scott wants to share lists with chosen family members later. Data is ready (items and staples hang off `list_id`). Needs a `shopping_list_members` table, new policies on the three shopping tables only, and a decision on whether family accounts must use MFA (the current policies require aal2).
+
+## 10b. Habit questions (built 21/11/2026)
+
+Required questions about yesterday in the check-in (alcohol, social media, caffeine after 2pm, screens in bed), managed in Settings, Habits. Patterns in Wellbeing trends after 14 check-ins with 5+ days each side. SQL in `supabase/habits.sql`.
 
 ## 11. Next step
 
