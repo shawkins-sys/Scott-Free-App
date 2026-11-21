@@ -5,7 +5,7 @@ import { supabase } from './supabase.js';
 import { CONFIG } from '../config.js';
 import { getSettings, updateSettings } from './wellbeing.js';
 
-const SCOPES = 'user-read-playback-state user-modify-playback-state playlist-read-private';
+const SCOPES = 'user-read-playback-state user-modify-playback-state playlist-read-private user-read-recently-played';
 const PKCE_KEY = 'sf-spotify-pkce'; // localStorage, so it survives the trip to the Spotify app
 const RESULT_KEY = 'sf-spotify-return';
 
@@ -76,6 +76,8 @@ export const spotifyPlay = (opts) => call({ action: 'play', ...opts });
 export const spotifyNow = () => call({ action: 'now' });
 export const spotifyControl = (cmd) => call({ action: 'control', cmd });
 export const spotifyTransfer = (deviceId) => call({ action: 'transfer', deviceId });
+export const spotifyRecent = () => call({ action: 'recent' });
+export const spotifyResume = (t) => call({ action: 'resume', trackUri: t.uri, contextUri: t.contextUri || '' });
 
 // ---------- Music settings (settings.data.music) ----------
 

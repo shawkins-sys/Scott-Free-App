@@ -13,6 +13,9 @@
 //   { action: 'control', cmd: 'play'|'pause'|'next'|'previous' }
 //   { action: 'transfer', deviceId }                   move playback to a device
 //   'play' also accepts deviceId to play on a chosen device.
+//   { action: 'recent' }                               last played track (Music tile, nothing playing)
+//   { action: 'resume', trackUri, contextUri? }        play that track on the phone (or any open device)
+// 'recent' needs scope user-read-recently-played (added 21/11/2026; reconnect once).
 //
 // Responses never contain raw Spotify errors. `result` tells the app what to do:
 //   'playing' | 'open' (open the playlist in the Spotify app) | 'reconnect' | 'error'
@@ -178,8 +181,55 @@ Deno.serve(async (req) => {
           artist: item?.artists ? item.artists.map((a: any) => a.name).join(', ') : (item?.show?.name ?? null),
           art,
           device: p.device ? { id: p.device.id, name: p.device.name, type: p.device.type } : null,
+          uri: item?.uri ?? null,
+          contextUri: p.context?.uri ?? null,
         },
       });
+    }
+
+    if (body.action === 'recent') {
+      const res = await api(token, '/me/player/recently-played?limit=1');
+      if (res.status === 401 || res.status === 403) return json({ result: 'scope' }); // needs reconnect
+      if (!res.ok) return json({ result: 'error' });
+      const it = (await res.json())?.items?.[0];
+      if (!it?.track) return json({ result: 'ok', recent: null });
+      const t = it.track;
+      const images = t.album?.images ?? [];
+      return json({
+        result: 'ok',
+        recent: {
+          track: t.name ?? null,
+          artist: (t.artists ?? []).map((a: any) => a.name).join(', '),
+          art: images.length ? images[images.length > 1 ? 1 : 0].url : null,
+          uri: t.uri ?? null,
+          contextUri: it.context?.uri ?? null,
+        },
+      });
+    }
+
+    if (body.action === 'resume') {
+      const trackUri = String(body.trackUri ?? '');
+      const contextUri = String(body.contextUri ?? '');
+      if (!/^spotify:(track|episode):[A-Za-z0-9]+$/.test(trackUri)) return json({ result: 'error' });
+      const ctxOk = /^spotify:(playlist|album|artist|show):[A-Za-z0-9]+$/.test(contextUri);
+      const list = (await devices(token)).filter((d: any) => !d.restricted);
+      const phones = list.filter((d: any) => d.type === 'Smartphone');
+      const device = list.find((d: any) => d.active) ?? phones[0] ?? list[0];
+      if (!device) return json({ result: 'open' });
+      const dev = encodeURIComponent(device.id);
+      await api(token, '/me/player', { method: 'PUT', body: JSON.stringify({ device_ids: [device.id], play: false }) });
+      await sleep(600);
+      const start = (withContext: boolean) => api(token, `/me/player/play?device_id=${dev}`, {
+        method: 'PUT',
+        body: JSON.stringify(withContext ? { context_uri: contextUri, offset: { uri: trackUri } } : { uris: [trackUri] }),
+      });
+      let play = ctxOk ? await start(true) : await start(false);
+      if (!play.ok && ctxOk) play = await start(false); // track no longer in that playlist
+      if (!play.ok) {
+        console.error('Spotify resume failed', play.status, await play.text());
+        return json({ result: 'open' });
+      }
+      return json({ result: 'playing', deviceName: device.name });
     }
 
     if (body.action === 'control') {

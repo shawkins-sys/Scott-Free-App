@@ -670,7 +670,8 @@ body.wall .live-dot { width: 12px; height: 12px; }
 .mu-btn svg { width: 16px; height: 16px; }
 .mu-main-btn { width: 44px; height: 44px; background: var(--accent); border-color: var(--accent); color: #fff; }
 .mu-main-btn svg { width: 20px; height: 20px; }
-.mu-msg { margin-top: 6px; }
+.mu-msg { margin-top: 4px; }
+.mu-tile .tile-applink { margin-top: 6px; }
 .mu-msg:empty { display: none; }
 .mu-tile.full .mu-row { flex-direction: column; text-align: center; gap: 14px; }
 .mu-tile.full .mu-meta { align-items: center; max-width: 100%; }
