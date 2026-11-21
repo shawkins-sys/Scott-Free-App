@@ -237,3 +237,8 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - `core/applink.js`: `appLink()` and `appLinkHtml(app, label)`. Android opens the app with an intent (falls back to the website or Play Store); iPhone and computers get the web link (open.spotify.com opens the Spotify app on iPhone; Google Calendar web). Used by the Music, Calendar and Lights tiles (`.tile-applink`).
 - Music tile default size 4 x 2 (phone), wall 4 x 3. Saved layouts keep their current size.
 - Tested in headless Chrome with stubs (Android and desktop user agents): playing, pause, nothing playing with the no-device message, expanded view, both links. Light and dark checked. sw.js VERSION sf-v46.
+
+## Check-in gate for every tile (built 21/11/2026)
+- Decision (Scott): every tile follows the rule that the app is locked until the day's check-in. Calendar and Weather showed before the check-in; now they wait too.
+- `core/grid.js` `renderTile()`: before rendering any tile, checks today's check-in (cached); if not done, shows "<Title> will appear after this morning's check-in." and renders when `sf:checkin-done` fires. The expand button does nothing until the check-in is done. Applies to all current and future tiles automatically. The self-checks inside Photos, Music and Lights stay as a second guard.
+- Tested in headless Chrome with GridStack and stubs: both tiles locked before, shown after the check-in event. sw.js VERSION sf-v47.

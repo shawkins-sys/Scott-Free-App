@@ -6,6 +6,28 @@ import { loadLayout, saveLayout } from './layout-store.js';
 import { icons } from './icons.js';
 import { openOverlay } from './overlay.js';
 import { isWall } from './device.js';
+import { getTodayCheckin, checkinDoneToday } from './wellbeing.js';
+
+// Standing rule (Scott, 21/11/2026): every tile waits for the day's check-in.
+// Enforced here for all tiles, current and future, so no tile can skip it.
+async function checkinDone() {
+  try { await getTodayCheckin(); } catch { /* treated as not done */ }
+  return checkinDoneToday();
+}
+
+async function renderTile(tile, body) {
+  if (!(await checkinDone())) {
+    body.innerHTML = `<p class="muted">${tile.title} will appear after this morning's check-in.</p>`;
+    window.addEventListener('sf:checkin-done', () => { if (body.isConnected) renderTile(tile, body); }, { once: true });
+    return;
+  }
+  try {
+    await tile.render(body);
+  } catch (err) {
+    console.error(`Tile "${tile.id}" failed to render`, err);
+    body.innerHTML = '<p class="muted">Not available right now.</p>';
+  }
+}
 
 const GS = window.GridStack && (window.GridStack.GridStack || window.GridStack);
 const COLUMNS = { phone: 4, desktop: 12, wall: 12 };
@@ -46,7 +68,8 @@ function tileShell(tile) {
       </header>
       <div class="tile-body"></div>
     </div>`;
-  el.querySelector('.tile-expand').addEventListener('click', () => {
+  el.querySelector('.tile-expand').addEventListener('click', async () => {
+    if (!(await checkinDone())) return;
     openOverlay(tile.title, (container) => tile.renderExpanded(container));
   });
   return el;
@@ -108,12 +131,7 @@ export async function mountGrid(container) {
     grid.makeWidget(el, pos
       ? { id: tile.id, x: pos.x, y: Math.round(pos.y * k), w: pos.w, h: Math.round(pos.h * k), minH: MIN_ROWS }
       : { id: tile.id, w: size.w, h: size.h * ROW_SCALE, minH: MIN_ROWS });
-    try {
-      await tile.render(el.querySelector('.tile-body'));
-    } catch (err) {
-      console.error(`Tile "${tile.id}" failed to render`, err);
-      el.querySelector('.tile-body').innerHTML = '<p class="muted">Not available right now.</p>';
-    }
+    await renderTile(tile, el.querySelector('.tile-body'));
   }
   grid.batchUpdate(false);
 

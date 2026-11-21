@@ -1,6 +1,6 @@
 # Scott Free: Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v46` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v47` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -43,7 +43,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 
 ## 5. Standing behaviour rules
 
-- Everything, Settings included, stays locked until the day's check-in is complete. No exceptions. This applies to every tile and every future build (Scott, 21/11/2026): new tiles must wait for the check-in like Photos, Music and Lights.
+- Everything, Settings included, stays locked until the day's check-in is complete. No exceptions. This applies to every tile and every future build (Scott, 21/11/2026): enforced for every tile in `core/grid.js` (`renderTile()`), so new tiles are covered automatically.
 - App lock (phone and desktop): 4-digit PIN or fingerprint, asked on open and after 1 minute away. 5 wrong tries cause a 5-minute wait. Applies on every device except the wall display.
 - Wall display (tablet/TV): no app lock. Settings needs the hub PIN (Wellbeing optionally). Plan stays open. **Money hub is fully hidden on the wall** (not in the hub bar, route redirects Home, no money lines in the weekly card or quiet lines).
 - Mood colours run soft red (1) to green (5). Emotional and work stress are reversed (1 = green). Warnings use the separate amber `--alert`.
