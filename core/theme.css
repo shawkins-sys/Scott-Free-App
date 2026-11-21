@@ -16,6 +16,9 @@
   --radius-sm: 12px;
   --space: 16px;
   --bar-h: 64px;
+  --bar-bg: #dde5f0;
+  --bar-border: rgba(28, 37, 51, 0.1);
+  --bar-active: #ffffff;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
@@ -28,6 +31,9 @@
     --bg: #0f1724;
     --bg-grad: linear-gradient(180deg, #111a29 0%, #0c131e 100%);
     --card: #172234;
+    --bar-bg: #0b111b;
+    --bar-border: rgba(255, 255, 255, 0.08);
+    --bar-active: #1d2e4a;
     --card-grad: linear-gradient(180deg, #1a2639 0%, #162131 100%);
     --text: #e6ecf5;
     --muted: #8d9bb0;
@@ -214,8 +220,8 @@ button { font: inherit; color: inherit; }
   display: flex; gap: 2px;
   width: max-content; max-width: calc(100% - 24px);
   padding: 6px;
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: var(--bar-bg);
+  border: 1px solid var(--bar-border);
   border-radius: 999px;
   box-shadow: var(--shadow);
   z-index: 50;
@@ -228,7 +234,7 @@ button { font: inherit; color: inherit; }
   color: var(--muted); text-decoration: none; font-size: 0.7rem;
 }
 .hub-btn svg { width: 22px; height: 22px; }
-.hub-btn.active { background: var(--accent-soft); color: var(--accent); }
+.hub-btn.active { background: var(--bar-active); color: var(--accent); }
 .hub-btn.locked { opacity: 0.45; }
 
 /* Overlay */
