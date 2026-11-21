@@ -7,7 +7,7 @@
 // being rethought). Spotify tokens never leave the server; photos come from
 // Google Photos and can be chosen again.
 import { supabase } from './supabase.js';
-import { METRICS } from './wellbeing.js';
+import { METRICS, getSettings, updateSettings } from './wellbeing.js';
 import { getHabits } from './habits.js';
 import { todayKey } from './date.js';
 
@@ -48,6 +48,62 @@ export async function buildBackup() {
     if (r.snapshot) delete r.snapshot.money;
   }
   return { app: 'Scott Hub', format: BACKUP_FORMAT, exportedAt: new Date().toISOString(), tables };
+}
+
+// ---------- Restore (add back only) ----------
+// Anything in the backup that is missing from the account is added back.
+// Nothing is deleted and nothing already there is changed.
+
+// The column(s) that identify a row, so existing rows are left alone.
+const CONFLICT = {
+  layouts: 'user_id,device',
+  checkins: 'user_id,day',
+  weekly_reviews: 'user_id,week_start',
+};
+
+export function readBackupFile(text) {
+  let j;
+  try { j = JSON.parse(text); } catch { throw new Error('This is not a Scott Hub backup file.'); }
+  if (!j || j.app !== 'Scott Hub' || !j.tables || typeof j.tables !== 'object') {
+    throw new Error('This is not a Scott Hub backup file.');
+  }
+  if (j.format > BACKUP_FORMAT) throw new Error('This backup was made by a newer version of the app. Update the app and try again.');
+  return j;
+}
+
+export async function restoreBackup(backup, onProgress = () => {}) {
+  const added = {};
+  for (const table of BACKUP_TABLES) {
+    const rows = (backup.tables[table] || []).map(strip); // user_id is set by the database
+    if (!rows.length) { added[table] = 0; continue; }
+    onProgress(table);
+    if (table === 'settings') {
+      // Only add settings that are not set on this account.
+      const current = await getSettings();
+      const fromFile = rows[0].data || {};
+      const missing = {};
+      for (const [k, v] of Object.entries(fromFile)) {
+        if (!(k in current) && !MONEY_SETTING_KEYS.includes(k)) missing[k] = v;
+      }
+      if (Object.keys(missing).length) await updateSettings(missing);
+      added[table] = Object.keys(missing).length;
+      continue;
+    }
+    let count = 0;
+    for (let i = 0; i < rows.length; i += 200) {
+      const chunk = rows.slice(i, i + 200);
+      const { data, error } = await supabase.from(table)
+        .upsert(chunk, { onConflict: CONFLICT[table] || 'id', ignoreDuplicates: true })
+        .select();
+      if (error) {
+        if (/does not exist|schema cache/i.test(error.message || '')) break; // table not set up: skip
+        throw error;
+      }
+      count += (data || []).length; // only rows that were actually added come back
+    }
+    added[table] = count;
+  }
+  return added;
 }
 
 // ---------- CSV ----------

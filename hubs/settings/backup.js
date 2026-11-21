@@ -1,6 +1,15 @@
-// Settings: Backup and export. Downloads only for now; restore (add back only)
-// is the next step.
-import { buildBackup, wellbeingCsv, weeklyCsv, download, fileStamp } from '../../core/backup.js';
+// Settings: Backup and export. Three downloads, plus Restore from a full
+// backup (add back only: restores anything missing, never deletes or changes).
+import { buildBackup, wellbeingCsv, weeklyCsv, download, fileStamp, readBackupFile, restoreBackup } from '../../core/backup.js';
+
+const LABELS = {
+  settings: ['setting', 'settings'], layouts: ['tile layout', 'tile layouts'], checkins: ['check-in', 'check-ins'],
+  phrases: ['phrase', 'phrases'], weekly_reviews: ['weekly review', 'weekly reviews'], key_dates: ['key date', 'key dates'],
+  playlists: ['playlist', 'playlists'], shopping_lists: ['shopping list', 'shopping lists'],
+  shopping_items: ['shopping item', 'shopping items'], shopping_staples: ['staple', 'staples'],
+};
+const count = (t, n) => { const l = LABELS[t] || [t, t]; return `${n} ${n === 1 ? l[0] : l[1]}`; };
+const label = (t) => (LABELS[t] || [t, t])[1];
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
@@ -12,10 +21,35 @@ export async function renderBackupSettings(body) {
       <button class="pill-btn" data-export="daily">Download wellbeing spreadsheet</button>
       <button class="pill-btn" data-export="weekly">Download weekly reviews spreadsheet</button>
     </div>
-    <p class="muted small">The full backup is for restoring the app. Restore is coming next.</p>
+    <h3 class="w-head">Restore</h3>
+    <p class="muted small">Choose a full backup file. Anything missing is added back. Nothing is deleted and nothing already in the app is changed.</p>
+    <label class="pill-btn backup-file">Choose backup file<input type="file" accept=".json,application/json" hidden></label>
     <p class="form-msg" aria-live="polite"></p>`;
   const msg = body.querySelector('.form-msg');
   const say = (t, err = false) => { msg.textContent = t; msg.classList.toggle('error', err); };
+
+  body.querySelector('input[type=file]').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = ''; // allow choosing the same file again
+    if (!file) return;
+    let backup;
+    try { backup = readBackupFile(await file.text()); }
+    catch (err) { say(err.message, true); return; }
+    const when = backup.exportedAt ? new Date(backup.exportedAt).toLocaleDateString('en-GB') : 'an unknown date';
+    const inFile = Object.entries(backup.tables).filter(([, rows]) => rows && rows.length)
+      .map(([t, rows]) => count(t, rows.length)).join(', ');
+    if (!confirm(`Restore from the backup made on ${when}?\n\nIt contains: ${inFile || 'nothing'}.\n\nOnly missing items are added. Nothing is deleted or changed.`)) return;
+    say('Restoring...');
+    try {
+      const added = await restoreBackup(backup, (t) => say(`Restoring ${label(t)}...`));
+      const parts = Object.entries(added).filter(([, n]) => n > 0).map(([t, n]) => count(t, n));
+      say(parts.length ? `Restore complete. Added: ${parts.join(', ')}. Close and reopen the app to see everything.`
+        : 'Restore complete. Nothing was missing, so nothing needed adding.');
+    } catch (err) {
+      console.error('Restore failed', err);
+      say('The restore stopped part way. Anything added so far is kept. Check your connection and try again; it is safe to run again.', true);
+    }
+  });
 
   body.addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-export]');

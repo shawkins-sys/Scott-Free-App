@@ -480,6 +480,7 @@ button { font: inherit; color: inherit; }
 .set-group { margin-bottom: 18px; }
 .set-group-title { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text); margin: 0 4px 8px; text-shadow: 0 0 2px var(--bg), 0 0 8px var(--bg); }
 .set-group .signout { margin-top: 12px; }
+.backup-file { display: inline-block; cursor: pointer; margin: 6px 0 4px; }
 .backup-btns { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin: 10px 0; }
 .set-head { list-style: none; cursor: pointer; padding: var(--space); font-weight: 600; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center; }
 .set-head::-webkit-details-marker { display: none; }

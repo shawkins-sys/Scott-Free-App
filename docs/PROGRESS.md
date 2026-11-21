@@ -275,3 +275,8 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - `hubs/settings/backup.js`: Settings, Device and security, "Backup and export": three download buttons with a result line.
 - Tested in headless Chrome with sample data: all three downloads, money removed, CSV quoting. sw.js VERSION sf-v68 (both new files precached).
 - Next: Restore from backup (add back only).
+
+## Backup and export, part 2: Restore (built 21/11/2026)
+- Settings, Backup and export, "Choose backup file": checks the file is a Scott Hub backup (`app`, `format`, `tables`), shows what it contains and asks to confirm, then adds back anything missing.
+- `core/backup.js` `restoreBackup()`: tables in order (lists before items). Rows upserted with `ignoreDuplicates` on their identifying columns (`layouts` user_id,device; `checkins` user_id,day; `weekly_reviews` user_id,week_start; others id), so existing rows are never changed; user_id comes from the database default. Settings: only keys not already set are added (money keys never restored). Chunks of 200. Reports what was added per table; safe to run again.
+- Tested in headless Chrome with an in-memory stub: missing rows added, an existing check-in for the same day left unchanged, existing settings kept, second run adds nothing, wrong file rejected with a plain message. sw.js VERSION sf-v69.
