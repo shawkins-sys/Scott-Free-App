@@ -120,12 +120,10 @@ async function renderHome() {
       <div id="grid-slot"></div>
       <div id="quiet-lines"></div>
       <div id="weekly-slot"></div>
-      <p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>
     </section>`;
   startLiveDot();
   startBackground();
   tickClock();
-  document.getElementById('signout-btn').addEventListener('click', signOutAndClear);
 
   setupCheckin();
   gridCtl = await mountGrid(document.getElementById('grid-slot'));

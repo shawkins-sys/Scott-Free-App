@@ -293,7 +293,14 @@ export default {
       <details class="card set-sec" data-sec="${sec.id}">
         <summary class="set-head">${sec.title}</summary>
         <div class="set-body"></div>
-      </details>`).join('');
+      </details>`).join('') + `
+      <p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>`;
+    // Sign out lives here (moved from Home, Scott 21/11/2026). Clears this device's app lock too.
+    container.querySelector('#signout-btn').addEventListener('click', () => {
+      if (!confirm('Sign out of Scott Hub on this device?')) return;
+      clearLock();
+      signOut();
+    });
 
     for (const sec of sections) {
       const el = container.querySelector(`[data-sec="${sec.id}"]`);
