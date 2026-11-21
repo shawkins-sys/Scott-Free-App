@@ -1,6 +1,6 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v59` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v60` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -122,7 +122,7 @@ Required questions about yesterday in the check-in (alcohol, social media, caffe
 
 ## 12. Background images (in progress)
 
-Any number of scenes (Scott wants more than 4 over time); add an entry to `SCENES` in `core/background.js`. Live: beach, palms ("Palm trees"), coral, rainforest. No placeholders left. Each needs phone day, phone night, wall day (landscape 16:10), wall night. Done: all four scenes phone day and night; palms, coral and rainforest wall day and night (21/11/2026). Wall images still needed for beach. Landscape (wall) images are used on the wall display and on any screen wider than tall. To add one: compress to WebP (quality about 78, phone up to 1080 px wide, wall up to 2560 px), save as `assets/bg/<scene>-<phone|wall>-<day|night>.webp`, fill the path in `SCENES` in `core/background.js`, bump that scene's `v` if replacing. If the beach `v` changes, update `BG_FALLBACK` in sw.js. Bump sw.js VERSION. Keep composition: plain top, detail at edges and bottom.
+Any number of scenes (Scott wants more than 4 over time); add an entry to `SCENES` in `core/background.js`. Live: beach, palms ("Palm trees"), coral, rainforest. No placeholders left. Each needs phone day, phone night, wall day (landscape 16:10), wall night. Done: all four scenes, phone and wall, day and night (21/11/2026; beach replaced with a new set, v 2). Landscape (wall) images are used on the wall display and on any screen wider than tall. To add one: compress to WebP (quality about 78, phone up to 1080 px wide, wall up to 2560 px), save as `assets/bg/<scene>-<phone|wall>-<day|night>.webp`, fill the path in `SCENES` in `core/background.js`, bump that scene's `v` if replacing. If the beach `v` changes, update `BG_FALLBACK` in sw.js. Bump sw.js VERSION. Keep composition: plain top, detail at edges and bottom.
 
 ## 11. Next step
 

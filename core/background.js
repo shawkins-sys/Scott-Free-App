@@ -15,8 +15,9 @@ import { todayKey } from './date.js';
 import { isWall } from './device.js';
 
 export const SCENES = [
-  { id: 'beach', label: 'Beach', v: 1,
-    phone: { day: 'beach-phone-day.webp', night: 'beach-phone-night.webp' }, wall: { day: null, night: null } },
+  { id: 'beach', label: 'Beach', v: 2,
+    phone: { day: 'beach-phone-day.webp', night: 'beach-phone-night.webp' },
+    wall: { day: 'beach-wall-day.webp', night: 'beach-wall-night.webp' } },
   { id: 'palms', label: 'Palm trees', v: 1,
     phone: { day: 'palms-phone-day.webp', night: 'palms-phone-night.webp' },
     wall: { day: 'palms-wall-day.webp', night: 'palms-wall-night.webp' } },

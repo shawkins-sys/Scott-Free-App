@@ -723,7 +723,7 @@ body.wall .li-btn { min-width: 88px; min-height: 56px; font-size: 1.05rem; }
     content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background:
       linear-gradient(180deg, rgba(247, 249, 253, 0.62) 0%, rgba(247, 249, 253, 0.38) 30%, rgba(247, 249, 253, 0.18) 65%, rgba(247, 249, 253, 0.08) 100%),
-      var(--bg-art-day, url(../assets/bg/beach-phone-day.webp?v=1)) center / cover no-repeat;
+      var(--bg-art-day, url(../assets/bg/beach-phone-day.webp?v=2)) center / cover no-repeat;
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -732,7 +732,7 @@ body.wall .li-btn { min-width: 88px; min-height: 56px; font-size: 1.05rem; }
     content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background:
       linear-gradient(180deg, rgba(12, 19, 30, 0.55) 0%, rgba(12, 19, 30, 0.35) 30%, rgba(12, 19, 30, 0.2) 65%, rgba(12, 19, 30, 0.15) 100%),
-      var(--bg-art-night, url(../assets/bg/beach-phone-night.webp?v=1)) center / cover no-repeat;
+      var(--bg-art-night, url(../assets/bg/beach-phone-night.webp?v=2)) center / cover no-repeat;
   }
 }
 .bg-choices { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }

@@ -3,13 +3,13 @@
 // the offline fallback. Pinned CDN libraries: cache first. Supabase and other
 // APIs are never cached here.
 
-const VERSION = 'sf-v59';
+const VERSION = 'sf-v60';
 const SHELL_CACHE = `${VERSION}-shell`;
 // Pinned library versions never change, so this cache survives app updates.
 const CDN_CACHE = 'sf-cdn';
 const BG_CACHE = 'sf-bg'; // background art: saved on first view, kept across releases
 // Keep in step with core/background.js (same ?v= values).
-const BG_FALLBACK = ['./assets/bg/beach-phone-day.webp?v=1', './assets/bg/beach-phone-night.webp?v=1'];
+const BG_FALLBACK = ['./assets/bg/beach-phone-day.webp?v=2', './assets/bg/beach-phone-night.webp?v=2'];
 
 const SHELL = [
   './',
