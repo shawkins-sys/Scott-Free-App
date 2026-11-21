@@ -9,6 +9,10 @@
 //   { action: 'devices' }
 //   { action: 'play', playlistUri, target: 'speaker' | 'phone', speakerId, speakerName }
 //   { action: 'disconnect' }
+//   { action: 'now' }                                  what is playing (Music tile)
+//   { action: 'control', cmd: 'play'|'pause'|'next'|'previous' }
+//   { action: 'transfer', deviceId }                   move playback to a device
+//   'play' also accepts deviceId to play on a chosen device.
 //
 // Responses never contain raw Spotify errors. `result` tells the app what to do:
 //   'playing' | 'open' (open the playlist in the Spotify app) | 'reconnect' | 'error'
@@ -158,13 +162,57 @@ Deno.serve(async (req) => {
 
     if (body.action === 'devices') return json({ result: 'ok', devices: await devices(token) });
 
+    if (body.action === 'now') {
+      const res = await api(token, '/me/player?additional_types=track,episode');
+      if (res.status === 204) return json({ result: 'ok', now: null });
+      if (!res.ok) return json({ result: 'error' });
+      const p = await res.json();
+      const item = p.item ?? null;
+      const images = item?.album?.images ?? item?.images ?? [];
+      const art = images.length ? (images[images.length > 1 ? 1 : 0].url as string) : null;
+      return json({
+        result: 'ok',
+        now: {
+          playing: !!p.is_playing,
+          track: item?.name ?? null,
+          artist: item?.artists ? item.artists.map((a: any) => a.name).join(', ') : (item?.show?.name ?? null),
+          art,
+          device: p.device ? { id: p.device.id, name: p.device.name, type: p.device.type } : null,
+        },
+      });
+    }
+
+    if (body.action === 'control') {
+      const cmd = String(body.cmd ?? '');
+      const call = cmd === 'play' ? api(token, '/me/player/play', { method: 'PUT' })
+        : cmd === 'pause' ? api(token, '/me/player/pause', { method: 'PUT' })
+        : cmd === 'next' ? api(token, '/me/player/next', { method: 'POST' })
+        : cmd === 'previous' ? api(token, '/me/player/previous', { method: 'POST' })
+        : null;
+      if (!call) return json({ result: 'error' });
+      const res = await call;
+      if (res.status === 404) return json({ result: 'nodevice' });
+      return json({ result: res.ok ? 'ok' : 'error' });
+    }
+
+    if (body.action === 'transfer') {
+      const id = String(body.deviceId ?? '');
+      if (!id) return json({ result: 'error' });
+      const res = await api(token, '/me/player', { method: 'PUT', body: JSON.stringify({ device_ids: [id], play: true }) });
+      return json({ result: res.ok ? 'ok' : 'error' });
+    }
+
     if (body.action === 'play') {
       const uri = String(body.playlistUri ?? '');
       if (!/^spotify:playlist:[A-Za-z0-9]+$/.test(uri)) return json({ result: 'error', message: 'Not a playlist' });
       const list = await devices(token);
-      let target = body.target === 'speaker' ? 'speaker' : 'phone';
+      let target: string = body.target === 'speaker' ? 'speaker' : 'phone';
       let device = null as any;
-      if (target === 'speaker') {
+      if (body.deviceId) {
+        device = list.find((d: any) => d.id === body.deviceId && !d.restricted) ?? null;
+        if (device) target = 'device';
+      }
+      if (!device && target === 'speaker') {
         device = list.find((d: any) => d.id === body.speakerId) ?? list.find((d: any) => body.speakerName && d.name === body.speakerName);
         if (!device) target = 'phone'; // speaker not available: fall back to the phone
       }
