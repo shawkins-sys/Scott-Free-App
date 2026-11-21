@@ -100,7 +100,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 
 ## 9. Scott's outstanding setup (remind him at the end of the build)
 
-0. **Lights:** set `VOICEMONKEY_TOKEN`, deploy `lights` (Verify JWT off), test the 3 buttons and Open Hue on Android.
+0. **Lights:** done 21/11/2026 (token set, `lights` deployed, tested). Open Hue goes to the Play Store page (Hue accepts no browser links).
 1. **Calendar:** done 21/11/2026 (secret set, `calendar-feed` deployed, Verify JWT off).
 2. **Google Photos:** put the Client ID in `config.js` `googleClientId`, deploy `photos-import`.
 3. **Spotify:** Client ID in `config.js`, secret set and `spotify` deployed (21/11/2026). Scott to connect in Settings and add playlists. Settings, Morning music has a "Plays on" switch (`settings.data.music.playOn`, default phone) because the Spotify Web API does not list Sonos; Scott uses phone and switches to the Sonos from his lock screen. Speaker mode keeps the original home/away logic. Possible later: Sonos Control API with Sonos Favourites.

@@ -6,6 +6,8 @@
 // iPhone: the app's own link scheme; if nothing opens within 1.5 seconds, the
 // App Store page. Computer: the website.
 export const APPS = {
+  // Hue: no link opens the app from a browser on Android (6 tried 21/11/2026),
+  // so it lands on the Play Store page; Scott taps Open (his choice).
   hue: {
     android: 'intent://#Intent;scheme=hue2;package=com.philips.lighting.hue2',
     play: 'https://play.google.com/store/apps/details?id=com.philips.lighting.hue2',
