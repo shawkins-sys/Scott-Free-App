@@ -117,4 +117,6 @@ Required questions about yesterday in the check-in (alcohol, social media, caffe
 
 ## 11. Next step
 
-Not chosen. Roadmap options: countdown timers, push notifications, positive news tile, home move hub, photo frame mode for the wall, family sharing for shopping lists.
+**Music section on Home (Scott, 21/11/2026):** control Spotify from the app (now playing, play/pause, skip, volume, switch device). Confirm design decisions with Scott first. Likely needs scope `user-read-currently-playing` (reconnect) and new `spotify` function actions. Sonos is not in the Web API device list.
+
+Other roadmap options: countdown timers, push notifications, positive news tile, home move hub, photo frame mode for the wall, family sharing for shopping lists.
