@@ -20,7 +20,7 @@ Live: https://shawkins-sys.github.io/Scott-Free-App/
 ## Wall display (tablet or screen at home)
 - On the tablet: sign in, do or wait for the check-in, then Settings, Wall display, tick **This device is a wall display**. Only that device changes.
 - The wall has its own layout (Edit works as normal), a large clock, larger text and buttons, and keeps the screen awake while the app is open. It has no app lock.
-- Weather uses your saved home location. Morning music does not start from the wall display (music plays on your phone only).
+- Weather uses your saved home location. Morning music starts from the wall display only when Settings, Morning music is set to Speaker (it then always uses the speaker).
 - Privacy on the wall: **the Money hub is not on the wall at all** (Money is for your phone and PC). No finance line on Home, no money figures in the weekly review, and no Pay and income settings. **Settings needs the hub PIN** (Wellbeing too if you tick "Also protect Wellbeing"). After the PIN, the hub relocks after 2 minutes without a touch or as soon as you leave it. 5 wrong PINs pause entry for 5 minutes. Plan stays open.
 - The hub PIN (4 to 6 digits) is set or changed only from your phone or PC: Settings, Wall display. Only a scrambled (hashed) copy is stored.
 - The check-in is shared: doing it on your phone unlocks the wall within 5 minutes, or straight away when the wall screen is touched or woken.
@@ -31,7 +31,7 @@ Live: https://shawkins-sys.github.io/Scott-Free-App/
 | What | Where |
 | --- | --- |
 | Daily phrases (add, edit, pin, tough days) | Settings, Daily phrases |
-| Spotify connect / reconnect, home location, playlists | Settings, Morning music |
+| Spotify connect / reconnect, plays on (phone or speaker), speaker, home location, playlists | Settings, Morning music |
 | App lock: change PIN, fingerprint on/off, lock now (per device) | Settings, App lock |
 | Wall display switch (per device); hub PIN and "Also protect Wellbeing" (phone or PC only) | Settings, Wall display |
 | Breathing vibration on or off | Settings, Breathing |

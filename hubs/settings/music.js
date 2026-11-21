@@ -1,5 +1,5 @@
-// Settings: Morning music. Spotify connection, playlists and home location.
-// Speaker choice is hidden while music is phone only (see core/music.js).
+// Settings: Morning music. Spotify connection, plays on (phone or speaker),
+// speaker choice, home location and playlists.
 import { spotifyConfigured, startSpotifyConnect, finishSpotifyConnect, spotifyStatus, spotifyDevices,
   spotifyDisconnect, getMusicSettings, saveMusicSettings, currentPosition } from '../../core/spotify.js';
 import { formatDate } from '../../core/date.js';
@@ -126,17 +126,31 @@ export async function renderMusicSettings(card) {
 
   // ---------- Speaker ----------
   const speakerEl = card.querySelector('#mu-speaker');
-  speakerEl.hidden = true; // phone only for now
   const drawSpeaker = () => {
+    const onSpeaker = settings.playOn === 'speaker';
     speakerEl.innerHTML = `
+      <h3 class="w-head">Morning music plays on</h3>
+      <div class="yesno">
+        <button class="pill-btn${onSpeaker ? '' : ' active'}" data-playon="phone" aria-pressed="${!onSpeaker}">Phone</button>
+        <button class="pill-btn${onSpeaker ? ' active' : ''}" data-playon="speaker" aria-pressed="${onSpeaker}">Speaker</button>
+      </div>
+      <p class="muted small">${onSpeaker ? 'Speaker at home, phone when you are away or if the speaker is not found.' : 'Always your phone. Switch to a speaker from your lock screen.'}</p>
       <h3 class="w-head">Home speaker</h3>
-      <p class="small">${settings.speakerName ? `Sonos: <strong>${esc(settings.speakerName)}</strong>` : '<span class="muted">No speaker chosen yet.</span>'}</p>
+      <p class="small">${settings.speakerName ? `Speaker: <strong>${esc(settings.speakerName)}</strong>` : '<span class="muted">No speaker chosen yet.</span>'}</p>
       <button class="pill-btn" data-act="find">${settings.speakerName ? 'Change speaker' : 'Choose speaker'}</button>
       <ul class="row-list" id="mu-devices"></ul>`;
   };
   speakerEl.addEventListener('click', async (e) => {
     const find = e.target.closest('[data-act=find]');
     const pick = e.target.closest('[data-device]');
+    const playOn = e.target.closest('[data-playon]');
+    if (playOn) {
+      settings.playOn = playOn.dataset.playon;
+      try { await saveMusicSettings({ playOn: settings.playOn }); say(settings.playOn === 'speaker' ? 'Morning music will use the speaker at home.' : 'Morning music will play on your phone.'); }
+      catch { say('That did not save. Please try again.', true); }
+      drawSpeaker();
+      return;
+    }
     const list = speakerEl.querySelector('#mu-devices');
     if (find) {
       list.innerHTML = '<li class="muted small">Looking for devices...</li>';
@@ -163,7 +177,7 @@ export async function renderMusicSettings(card) {
   const drawHome = () => {
     homeEl.innerHTML = `
       <h3 class="w-head">Home location</h3>
-      <p class="small">${settings.home ? `Set on ${formatDate(new Date(settings.home.at))}. Used for the weather on the wall display.` : '<span class="muted">Not set. Used for the weather on the wall display.</span>'}</p>
+      <p class="small">${settings.home ? `Set on ${formatDate(new Date(settings.home.at))}. Used to tell when you are home (Speaker setting) and for the wall weather.` : '<span class="muted">Not set. Used to tell when you are home (Speaker setting) and for the wall weather.</span>'}</p>
       <button class="pill-btn" data-act="home">Use my current location as home</button>`;
   };
   homeEl.addEventListener('click', async (e) => {

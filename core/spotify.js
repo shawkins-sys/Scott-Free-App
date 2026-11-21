@@ -78,7 +78,7 @@ export const spotifyPlay = (opts) => call({ action: 'play', ...opts });
 
 export async function getMusicSettings() {
   const s = await getSettings();
-  return { speakerId: null, speakerName: null, home: null, ...(s.music || {}) };
+  return { playOn: 'phone', speakerId: null, speakerName: null, home: null, ...(s.music || {}) };
 }
 export async function saveMusicSettings(patch) {
   const current = await getMusicSettings();

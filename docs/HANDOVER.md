@@ -1,6 +1,6 @@
 # Scott Free: Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v38` (Shopping list, habit questions).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v39` (Shopping list, habit questions).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -98,7 +98,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 
 1. **Calendar:** add the `CALENDAR_FEEDS` secret in Supabase and deploy `calendar-feed`.
 2. **Google Photos:** put the Client ID in `config.js` `googleClientId`, deploy `photos-import`.
-3. **Spotify:** Client ID in `config.js`, secret set and `spotify` deployed (21/11/2026). Scott to connect in Settings and add playlists. Music is phone only: the Spotify Web API does not list Sonos, so Scott switches to the Sonos from his lock screen. Speaker code kept behind `PHONE_ONLY` in `core/music.js`. Possible later: Sonos Control API with Sonos Favourites.
+3. **Spotify:** Client ID in `config.js`, secret set and `spotify` deployed (21/11/2026). Scott to connect in Settings and add playlists. Settings, Morning music has a "Plays on" switch (`settings.data.music.playOn`, default phone) because the Spotify Web API does not list Sonos; Scott uses phone and switches to the Sonos from his lock screen. Speaker mode keeps the original home/away logic. Possible later: Sonos Control API with Sonos Favourites.
 4. **Bank statement:** run "Check statement" on a Lloyds PDF, send the masked layout if needed, plus the employer payer description. Then finalise `parseLines()` and the employer pattern.
 5. **Bank holidays:** confirm the gov.uk fetch works on the phone (CORS).
 6. **Wall display:** SQL done (21/11/2026). Set the hub PIN from the phone, then test on a tablet.
