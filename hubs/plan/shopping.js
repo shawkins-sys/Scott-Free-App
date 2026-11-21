@@ -5,7 +5,6 @@ import * as shop from '../../core/shopping.js';
 import { esc } from '../../core/wellbeing.js';
 import { openOverlay } from '../../core/overlay.js';
 
-const LAST_LIST = 'sf-shop-list';
 
 function nameForm(title, value, onSave) {
   const close = openOverlay(title, (body) => {
@@ -82,27 +81,30 @@ export async function renderShopping(card) {
     <div class="card-row"><h2 class="card-title">Shopping</h2><button class="pill-btn" data-new-list>New list</button></div>
     <div class="shop-body"></div>`;
   const bodyEl = card.querySelector('.shop-body');
-  let listId = null;
+  // Lists show as collapsed rows; tap one to open it (one at a time, all
+  // closed on arrival; Scott, 21/11/2026).
+  let listId = null; // the open list, or null when all are closed
   let manageStaples = false;
-  let shownId; // list the shell was last drawn for
+  let shownKey; // open list plus list names the shell was last drawn for
 
   const lists = () => shop.listsSorted();
   const current = () => lists().find((l) => l.id === listId) || null;
 
   const pickList = () => {
-    const all = lists();
-    if (!all.some((l) => l.id === listId)) {
-      const saved = localStorage.getItem(LAST_LIST);
-      listId = (all.find((l) => l.id === saved) || all[0] || {}).id || null;
-    }
+    if (listId && !lists().some((l) => l.id === listId)) listId = null; // open list was deleted
+  };
+  const shellKey = () => `${listId}|${lists().map((l) => `${l.id}:${l.name}`).join(',')}`;
+  const countText = (id) => {
+    const { todo, done } = shop.itemsFor(id);
+    if (todo.length) return `${todo.length} item${todo.length === 1 ? '' : 's'}`;
+    return done.length ? 'All done' : 'Empty';
   };
 
-  // Shell: rebuilt only when the list changes, so the add box keeps focus.
+  // Shell: rebuilt only when the open list or the lists change, so the add box keeps focus.
   const drawShell = () => {
     pickList();
-    shownId = listId;
-    const list = current();
-    if (!list) {
+    shownKey = shellKey();
+    if (!lists().length) {
       bodyEl.innerHTML = `
         <p class="muted">No shopping lists yet.</p>
         <form class="shop-add" data-first-list novalidate>
@@ -114,13 +116,12 @@ export async function renderShopping(card) {
         const name = e.target.elements.name.value.trim();
         if (!name) return;
         listId = shop.addList(name).id;
-        localStorage.setItem(LAST_LIST, listId);
         drawShell();
       });
       return;
     }
-    bodyEl.innerHTML = `
-      <div class="shop-tabs" role="tablist"></div>
+    const panel = `
+      <div class="shop-panel">
       <div class="shop-list-actions">
         <button class="link-btn" data-rename>Rename list</button>
         <button class="link-btn" data-delete-list>Delete list</button>
@@ -134,8 +135,21 @@ export async function renderShopping(card) {
       <p class="form-msg" aria-live="polite"></p>
       <ul class="shop-list shop-todo"></ul>
       <div class="shop-done-wrap"></div>
+      </div>`;
+    bodyEl.innerHTML = `
+      <ul class="shop-lists">${lists().map((l) => `
+        <li class="shop-list-row${l.id === listId ? ' open' : ''}">
+          <button class="shop-list-head" data-list="${l.id}" aria-expanded="${l.id === listId}">
+            <span class="shop-list-name">${esc(l.name)}</span>
+            <span class="muted small" data-count="${l.id}"></span>
+            <span class="shop-chev" aria-hidden="true"></span>
+          </button>
+          ${l.id === listId ? panel : ''}
+        </li>`).join('')}
+      </ul>
       <p class="muted small shop-sync"></p>`;
 
+    if (!listId) { drawDynamic(); return; }
     const f = bodyEl.querySelector('.shop-add');
     f.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -156,15 +170,16 @@ export async function renderShopping(card) {
     drawDynamic();
   };
 
-  // Tabs, staples, items and sync status: redrawn on every change.
+  // Counts, staples, items and sync status: redrawn on every change.
   const drawDynamic = () => {
     if (!card.isConnected) return;
     pickList();
-    if (listId !== shownId) { drawShell(); return; }
-    const tabs = bodyEl.querySelector('.shop-tabs');
-    if (!tabs) return;
-
-    tabs.innerHTML = lists().map((l) => `<button class="pill-btn${l.id === listId ? ' active' : ''}" role="tab" aria-selected="${l.id === listId}" data-list="${l.id}">${esc(l.name)}</button>`).join('');
+    if (shellKey() !== shownKey) { drawShell(); return; }
+    bodyEl.querySelectorAll('[data-count]').forEach((el) => { el.textContent = countText(el.dataset.count); });
+    const sync = bodyEl.querySelector('.shop-sync');
+    const n = shop.pendingCount();
+    if (sync) sync.textContent = n ? `${n} change${n === 1 ? '' : 's'} waiting to sync${navigator.onLine ? '' : ' (offline)'}.` : '';
+    if (!listId || !bodyEl.querySelector('.shop-panel')) return;
 
     const staples = shop.staplesFor(listId);
     bodyEl.querySelector('.shop-staples').innerHTML = staples.length
@@ -185,11 +200,6 @@ export async function renderShopping(card) {
            <button class="pill-btn" data-clear>Clear ticked</button></div>
          <ul class="shop-list shop-done">${done.map((i) => itemRow(i, isStaple(i))).join('')}</ul>`
       : '';
-
-    const n = shop.pendingCount();
-    bodyEl.querySelector('.shop-sync').textContent = n
-      ? `${n} change${n === 1 ? '' : 's'} waiting to sync${navigator.onLine ? '' : ' (offline)'}.`
-      : '';
   };
 
   const say = (text) => { const m = bodyEl.querySelector('.form-msg'); if (m) { m.classList.remove('error'); m.textContent = text; } };
@@ -197,7 +207,7 @@ export async function renderShopping(card) {
   bodyEl.addEventListener('click', (e) => {
     const t = e.target;
     const tab = t.closest('[data-list]');
-    if (tab) { listId = tab.dataset.list; localStorage.setItem(LAST_LIST, listId); manageStaples = false; drawShell(); return; }
+    if (tab) { listId = listId === tab.dataset.list ? null : tab.dataset.list; manageStaples = false; drawShell(); return; }
     if (t.closest('[data-manage]')) { manageStaples = !manageStaples; drawDynamic(); return; }
     const chip = t.closest('[data-staple]');
     if (chip) {
@@ -217,7 +227,7 @@ export async function renderShopping(card) {
     if (act.dataset.act === 'staple') { shop.addStaple(listId, { name: item.name, qty: item.qty }); say(`${item.name} saved as a staple.`); }
   });
   card.querySelector('[data-new-list]').addEventListener('click', () =>
-    nameForm('New list', '', (name) => { listId = shop.addList(name).id; localStorage.setItem(LAST_LIST, listId); drawShell(); }));
+    nameForm('New list', '', (name) => { listId = shop.addList(name).id; drawShell(); }));
 
   const off = shop.onChange(() => { if (!card.isConnected) { off(); return; } drawDynamic(); });
   shop.startAutoSync();

@@ -758,3 +758,17 @@ body.wall .li-btn { min-width: 88px; min-height: 56px; font-size: 1.05rem; }
 @media (prefers-color-scheme: dark) { .bg-thumb-day { display: none; } .bg-thumb-night { display: block; } }
 .bg-label { font-size: 0.85rem; text-align: center; line-height: 1.2; }
 body.wall .bg-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+
+/* Plan: shopping lists as collapsible rows (one open at a time) */
+.shop-lists { list-style: none; padding: 0; margin: 6px 0 0; }
+.shop-list-row { border-top: 1px solid var(--border); }
+.shop-list-row:first-child { border-top: 0; }
+.shop-list-head {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 8px 2px;
+  background: none; border: 0; color: var(--text); font: inherit; text-align: left; cursor: pointer;
+}
+.shop-list-name { font-weight: 600; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shop-chev { width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 6px 4px; transition: transform 0.15s; }
+.shop-list-row.open .shop-chev { transform: rotate(-135deg); margin-bottom: -2px; }
+.shop-panel { padding: 0 0 12px; }
+body.wall .shop-list-head { min-height: 60px; font-size: 1.1rem; }
