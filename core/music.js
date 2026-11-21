@@ -87,11 +87,15 @@ function askTarget(slot) {
 // ---------- Flow ----------
 
 const isPhone = () => window.innerWidth < CONFIG.phoneBreakpoint;
-// A wall display is always treated as at home (brief 14.2).
+// Phone only (Scott, 21/11/2026): the Spotify Web API does not list Sonos
+// speakers, so music always plays on the phone and Scott switches to the Sonos
+// from the lock screen. The wall display does not start music. The speaker
+// code below is kept, switched off by PHONE_ONLY, in case a Sonos route is added.
+const PHONE_ONLY = true;
 
 export async function startMorningMusic(entry, slot) {
   try {
-    if (!spotifyConfigured() || !(isPhone() || isWall()) || londonParts().hour >= MUSIC_BEFORE_HOUR) return;
+    if (!spotifyConfigured() || (PHONE_ONLY ? (isWall() || !isPhone()) : !(isPhone() || isWall())) || londonParts().hour >= MUSIC_BEFORE_HOUR) return;
     const mood = entry && entry.metrics && entry.metrics.mood;
     if (!mood) return;
     const playlists = await listPlaylists();
@@ -108,7 +112,7 @@ export async function startMorningMusic(entry, slot) {
     // At home within 150m of the saved home location: speaker. Otherwise phone.
     const settings = await getMusicSettings();
     let target;
-    if (!settings.speakerId) target = 'phone';
+    if (PHONE_ONLY || !settings.speakerId) target = 'phone';
     else if (isWall()) target = 'speaker'; // no location check on the wall
     else {
       card(slot, '<p class="music-line muted">Starting your music...</p>');

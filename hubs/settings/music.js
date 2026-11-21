@@ -1,4 +1,5 @@
-// Settings: Morning music. Spotify connection, speaker choice and home location.
+// Settings: Morning music. Spotify connection, playlists and home location.
+// Speaker choice is hidden while music is phone only (see core/music.js).
 import { spotifyConfigured, startSpotifyConnect, finishSpotifyConnect, spotifyStatus, spotifyDevices,
   spotifyDisconnect, getMusicSettings, saveMusicSettings, currentPosition } from '../../core/spotify.js';
 import { formatDate } from '../../core/date.js';
@@ -125,6 +126,7 @@ export async function renderMusicSettings(card) {
 
   // ---------- Speaker ----------
   const speakerEl = card.querySelector('#mu-speaker');
+  speakerEl.hidden = true; // phone only for now
   const drawSpeaker = () => {
     speakerEl.innerHTML = `
       <h3 class="w-head">Home speaker</h3>
@@ -161,7 +163,7 @@ export async function renderMusicSettings(card) {
   const drawHome = () => {
     homeEl.innerHTML = `
       <h3 class="w-head">Home location</h3>
-      <p class="small">${settings.home ? `Set on ${formatDate(new Date(settings.home.at))}. Music plays on the speaker within about 150m of it.` : '<span class="muted">Not set. Music will ask "Speaker or phone?" until it is.</span>'}</p>
+      <p class="small">${settings.home ? `Set on ${formatDate(new Date(settings.home.at))}. Used for the weather on the wall display.` : '<span class="muted">Not set. Used for the weather on the wall display.</span>'}</p>
       <button class="pill-btn" data-act="home">Use my current location as home</button>`;
   };
   homeEl.addEventListener('click', async (e) => {

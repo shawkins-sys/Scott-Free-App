@@ -202,3 +202,4 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - (21/11/2026, Scott) Check-in questions made consistent: Exercise moved into the "Yesterday" section with the habits, one label style, equal-height one-line buttons. Units moved into the question so answers fit. Pattern sentences drop the bracketed unit. sw.js VERSION sf-v35.
 - (21/11/2026, Scott) Shopping card moved to the top of the Plan hub. sw.js VERSION sf-v36.
 - (21/11/2026) Spotify Client ID added to config.js (public by design). sw.js VERSION sf-v37.
+- (21/11/2026, Scott) Spotify secret set and function deployed. Sonos does not appear in the Spotify Web API device list (known Spotify limitation), so morning music is phone only (`PHONE_ONLY` in core/music.js): no location check, wall display does not start music, speaker choice hidden in Settings. Home location kept for wall weather. sw.js VERSION sf-v38.
