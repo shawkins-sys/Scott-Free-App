@@ -140,6 +140,12 @@ export function startBackground() {
 
 export const getBackgroundPref = readPref;
 
+// Phone image URLs for a scene (Settings previews). Null if not added yet.
+export const sceneImages = (scene) => ({
+  day: scene.phone.day ? url(scene, scene.phone.day) : null,
+  night: scene.phone.night ? url(scene, scene.phone.night) : null,
+});
+
 export async function setBackgroundPref(pref) {
   await updateSettings({ background: pref });
   writePref(pref);
