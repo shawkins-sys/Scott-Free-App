@@ -19,7 +19,8 @@ export const SCENES = [
     phone: { day: 'beach-phone-day.webp', night: 'beach-phone-night.webp' }, wall: { day: null, night: null } },
   { id: 'palms', label: 'Palm trees', v: 1,
     phone: { day: 'palms-phone-day.webp', night: 'palms-phone-night.webp' }, wall: { day: null, night: null } },
-  { id: 'coral', label: 'Coral', v: 1, phone: { day: null, night: null }, wall: { day: null, night: null } },
+  { id: 'coral', label: 'Coral', v: 1,
+    phone: { day: 'coral-phone-day.webp', night: 'coral-phone-night.webp' }, wall: { day: null, night: null } },
   { id: 'leaves', label: 'Leaves', v: 1, phone: { day: null, night: null }, wall: { day: null, night: null } },
 ];
 
