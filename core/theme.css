@@ -677,3 +677,16 @@ body.wall .live-dot { width: 12px; height: 12px; }
 .mu-msg:empty { display: none; }
 body.wall .mu-btn { width: 56px; height: 56px; }
 body.wall .mu-main-btn { width: 68px; height: 68px; }
+
+/* Background art (light mode). A soft white veil keeps text readable,
+   strongest at the top where the greeting sits. Dark mode keeps the plain
+   background until a night image is added. */
+@media (prefers-color-scheme: light) {
+  body { background: transparent; }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(247, 249, 253, 0.62) 0%, rgba(247, 249, 253, 0.38) 30%, rgba(247, 249, 253, 0.18) 65%, rgba(247, 249, 253, 0.08) 100%),
+      url(../assets/bg/phone-day.webp) center / cover no-repeat;
+  }
+}
