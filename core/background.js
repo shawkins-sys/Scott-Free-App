@@ -23,7 +23,9 @@ export const SCENES = [
   { id: 'coral', label: 'Coral', v: 1,
     phone: { day: 'coral-phone-day.webp', night: 'coral-phone-night.webp' },
     wall: { day: 'coral-wall-day.webp', night: 'coral-wall-night.webp' } },
-  { id: 'leaves', label: 'Leaves', v: 1, phone: { day: null, night: null }, wall: { day: null, night: null } },
+  { id: 'rainforest', label: 'Rainforest', v: 1,
+    phone: { day: 'rainforest-phone-day.webp', night: 'rainforest-phone-night.webp' },
+    wall: { day: 'rainforest-wall-day.webp', night: 'rainforest-wall-night.webp' } },
 ];
 
 const PREF_CACHE = 'sf-background';
