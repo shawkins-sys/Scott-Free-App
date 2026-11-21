@@ -1,6 +1,6 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v70` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v71` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -112,7 +112,7 @@ Done 21/11/2026: shopping, habits and wall SQL run by Scott; `sf-v34` pushed liv
 
 ## 10. Shopping List (built 17/11/2026)
 
-Section inside Plan. Lists are collapsible rows (one open at a time, all closed on arrival). Multiple lists, items with quantity and notes, ticked items in a "Done" group with "Clear ticked", staples per list, editable on the wall, works offline with an outbox (latest change wins). Single user. SQL in `supabase/shopping.sql`. Details in `docs/PROGRESS.md`.
+Section inside Plan, shown as "Lists" (renamed 21/11/2026; code and tables keep shopping_ names). Lists are collapsible rows (one open at a time, all closed on arrival). Multiple lists, items with quantity and notes, ticked items in a "Done" group with "Clear ticked", staples per list, editable on the wall, works offline with an outbox (latest change wins). Single user. SQL in `supabase/shopping.sql`. Details in `docs/PROGRESS.md`.
 
 **Future: family sharing.** Scott wants to share lists with chosen family members later. Data is ready (items and staples hang off `list_id`). Needs a `shopping_list_members` table, new policies on the three shopping tables only, and a decision on whether family accounts must use MFA (the current policies require aal2).
 

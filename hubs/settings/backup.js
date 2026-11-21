@@ -5,8 +5,8 @@ import { buildBackup, wellbeingCsv, weeklyCsv, download, fileStamp, readBackupFi
 const LABELS = {
   settings: ['setting', 'settings'], layouts: ['tile layout', 'tile layouts'], checkins: ['check-in', 'check-ins'],
   phrases: ['phrase', 'phrases'], weekly_reviews: ['weekly review', 'weekly reviews'], key_dates: ['key date', 'key dates'],
-  playlists: ['playlist', 'playlists'], shopping_lists: ['shopping list', 'shopping lists'],
-  shopping_items: ['shopping item', 'shopping items'], shopping_staples: ['staple', 'staples'],
+  playlists: ['playlist', 'playlists'], shopping_lists: ['list', 'lists'],
+  shopping_items: ['list item', 'list items'], shopping_staples: ['staple', 'staples'],
 };
 const count = (t, n) => { const l = LABELS[t] || [t, t]; return `${n} ${n === 1 ? l[0] : l[1]}`; };
 const label = (t) => (LABELS[t] || [t, t])[1];

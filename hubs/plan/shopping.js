@@ -78,7 +78,7 @@ function itemRow(item, staple) {
 
 export async function renderShopping(card) {
   card.innerHTML = `
-    <div class="card-row"><h2 class="card-title">Shopping</h2><button class="pill-btn" data-new-list>New list</button></div>
+    <div class="card-row"><h2 class="card-title">Lists</h2><button class="pill-btn" data-new-list>New list</button></div>
     <div class="shop-body"></div>`;
   const bodyEl = card.querySelector('.shop-body');
   // Lists show as collapsed rows; tap one to open it (one at a time, all
@@ -106,9 +106,9 @@ export async function renderShopping(card) {
     shownKey = shellKey();
     if (!lists().length) {
       bodyEl.innerHTML = `
-        <p class="muted">No shopping lists yet.</p>
+        <p class="muted">No lists yet.</p>
         <form class="shop-add" data-first-list novalidate>
-          <input name="name" maxlength="40" value="Weekly shop" aria-label="List name">
+          <input name="name" maxlength="40" value="To do" aria-label="List name">
           <button class="pill-btn active" type="submit">Create list</button>
         </form>`;
       bodyEl.querySelector('[data-first-list]').addEventListener('submit', (e) => {
