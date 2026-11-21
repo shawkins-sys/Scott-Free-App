@@ -74,14 +74,19 @@ export async function getLastCheckin() {
   return data;
 }
 
-export async function saveCheckin({ metrics, hours_slept, exercised, note }) {
+export async function saveCheckin({ metrics, hours_slept, exercised, note, habits }) {
   const day = todayKey();
   const user_id = await currentUserId();
-  const { data, error } = await supabase
-    .from('checkins')
-    .upsert({ user_id, day, metrics, hours_slept, exercised, note: note || null },
-            { onConflict: 'user_id,day' })
-    .select().single();
+  const row = { user_id, day, metrics, hours_slept, exercised, note: note || null };
+  if (habits) row.habits = habits;
+  const send = (r) => supabase.from('checkins').upsert(r, { onConflict: 'user_id,day' }).select().single();
+  let { data, error } = await send(row);
+  // If the habits column has not been added yet, save without it so the
+  // check-in (and the hub lock) never gets stuck.
+  if (error && habits && /habits/i.test(error.message || '')) {
+    delete row.habits;
+    ({ data, error } = await send(row));
+  }
   if (error) throw error;
   todayCache = { day, entry: data };
   rememberCheckin(data);

@@ -8,6 +8,7 @@ import { googleConfigured, startGoogleSignIn, googleToken, clearGoogleToken, tak
 import { resetPhotos } from '../../tiles/photos/index.js';
 import { renderMusicSettings } from './music.js';
 import { renderPhraseSettings } from './phrases.js';
+import { renderHabitSettings } from './habits.js';
 import { renderWallSettings } from './wall.js';
 import { isWall } from '../../core/device.js';
 import { getBreathingSettings, saveBreathingSettings } from '../../core/breathing.js';
@@ -270,6 +271,7 @@ const SECTIONS = [
     // Open automatically when coming back from Spotify.
     autoOpen: () => !!sessionStorage.getItem('sf-spotify-return') },
   { id: 'phrases', title: 'Daily phrases', render: renderPhraseSettings },
+  { id: 'habits', title: 'Habits', render: renderHabitSettings },
   { id: 'lock', title: 'App lock', render: renderLockSettings },
   { id: 'wall', title: 'Wall display', render: renderWallSettings },
   { id: 'breathing', title: 'Breathing', render: renderBreathingSettings },

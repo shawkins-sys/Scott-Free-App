@@ -1,6 +1,7 @@
 // Morning check-in form. Used on Home (cannot be skipped) and in the
 // Wellbeing hub to edit today's entry.
 import { METRICS, saveCheckin, getLastCheckin, esc, levelOf } from './wellbeing.js';
+import { getHabits, activeHabits } from './habits.js';
 
 const HOURS_MIN = 0;
 const HOURS_MAX = 14;
@@ -16,6 +17,8 @@ export async function renderCheckinForm(container, options = {}) {
   const values = { ...(existing ? existing.metrics : {}) };
   let exercised = existing ? existing.exercised : null;
   let hours = existing && existing.hours_slept != null ? Number(existing.hours_slept) : null;
+  const habits = activeHabits(await getHabits());
+  const habitVals = { ...((existing && existing.habits) || {}) };
 
   if (hours == null) {
     // Start from the last entry's hours, or 7.
@@ -56,6 +59,14 @@ export async function renderCheckinForm(container, options = {}) {
           <button type="button" class="pill-btn" data-ex="false">No</button>
         </div>
       </div>
+      ${habits.length ? `<div class="habits-head metric-label">Yesterday</div>
+      ${habits.map((h) => `
+        <div class="habit-row" role="group" aria-label="${esc(h.label)} yesterday">
+          <div class="habit-label">${esc(h.label)}</div>
+          <div class="yesno habit-opts">${h.options.map((o, i) => `
+            <button type="button" class="pill-btn" data-habit="${esc(h.key)}" data-hv="${i}">${esc(o)}</button>`).join('')}
+          </div>
+        </div>`).join('')}` : ''}
       <label class="field">
         <span>One good thing that happened yesterday (optional)</span>
         <input type="text" name="note" maxlength="140" autocomplete="off" value="${esc(existing ? existing.note : '')}">
@@ -77,7 +88,13 @@ export async function renderCheckinForm(container, options = {}) {
       b.classList.toggle('active', on);
       b.setAttribute('aria-pressed', String(on));
     });
-    const complete = METRICS.every((m) => values[m.key]) && exercised !== null;
+    form.querySelectorAll('[data-habit]').forEach((b) => {
+      const on = habitVals[b.dataset.habit] === Number(b.dataset.hv);
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    const complete = METRICS.every((m) => values[m.key]) && exercised !== null
+      && habits.every((h) => Number.isInteger(habitVals[h.key]));
     submit.disabled = !complete;
   };
 
@@ -100,7 +117,9 @@ export async function renderCheckinForm(container, options = {}) {
       return;
     }
     const ex = e.target.closest('[data-ex]');
-    if (ex) { exercised = ex.dataset.ex === 'true'; refresh(); }
+    if (ex) { exercised = ex.dataset.ex === 'true'; refresh(); return; }
+    const hb = e.target.closest('[data-habit]');
+    if (hb) { habitVals[hb.dataset.habit] = Number(hb.dataset.hv); refresh(); }
   });
 
   form.addEventListener('submit', async (e) => {
@@ -115,6 +134,7 @@ export async function renderCheckinForm(container, options = {}) {
         hours_slept: hours,
         exercised,
         note: form.note.value.trim(),
+        habits: { ...habitVals },
       });
       msg.textContent = '';
       if (options.onSaved) await options.onSaved(entry);

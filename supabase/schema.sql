@@ -44,6 +44,7 @@ create table if not exists public.checkins (
   hours_slept numeric(3,1),
   exercised boolean,
   note text,
+  habits jsonb not null default '{}'::jsonb,       -- { habit_key: answer index }, 0 = did not
   created_at timestamptz not null default now(),
   unique (user_id, day)
 );
