@@ -3,7 +3,7 @@
 // the offline fallback. Pinned CDN libraries: cache first. Supabase and other
 // APIs are never cached here.
 
-const VERSION = 'sf-v40';
+const VERSION = 'sf-v41';
 const SHELL_CACHE = `${VERSION}-shell`;
 // Pinned library versions never change, so this cache survives app updates.
 const CDN_CACHE = 'sf-cdn';
@@ -28,6 +28,7 @@ const SHELL = [
   './core/keydates.js',
   './core/shopping.js',
   './core/habits.js',
+  './core/livedot.js',
   './core/quiet-lines.js',
   './core/google.js',
   './core/money.js',
@@ -59,6 +60,7 @@ const SHELL = [
   './tiles/calendar/index.js',
   './tiles/photos/index.js',
   './tiles/weather/index.js',
+  './tiles/music/index.js',
   './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',

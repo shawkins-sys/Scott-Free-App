@@ -55,6 +55,12 @@ Use Chrome on the phone with the app installed (Add to Home screen). After any u
 2. Settings, Habits: add one (for example Takeaway, No / Yes), turn one off, move one up. Edit today's check-in in Wellbeing to see the change.
 3. After 14 check-ins, Wellbeing trends shows a "Habits" list once a habit has at least 5 days with and 5 without.
 
+## Music tile and status dot
+1. A small green dot shows above the greeting. Turn on aeroplane mode: it turns red within a moment. Turn it off: green again.
+2. After the check-in, the Music tile shows your playlists when nothing is playing. Tap one: it starts on your phone.
+3. Pause, play, previous and next work. Tap "On <device>" and pick another device to switch.
+4. Tap the tile title to expand: larger artwork and a Devices list.
+
 ## Wall display (tablet), brief 14.5
 Before you start: run the one-off SQL line in Supabase (SQL Editor) so the wall layout can be saved:
 `alter table public.layouts drop constraint if exists layouts_device_check; alter table public.layouts add constraint layouts_device_check check (device in ('phone', 'desktop', 'wall'));`

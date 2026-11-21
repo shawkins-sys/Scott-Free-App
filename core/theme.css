@@ -647,3 +647,33 @@ body.wall .shop-add input { min-height: 56px; }
 .habit-set-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 0; border-top: 1px solid var(--border); }
 .habit-set-item.off .habit-set-main { opacity: 0.55; }
 .habit-set-main { display: flex; flex-direction: column; gap: 2px; }
+
+/* Live status dot (Home, above the greeting) */
+.live-dot {
+  display: block; width: 8px; height: 8px; border-radius: 50%; margin: 0 0 8px 2px;
+  background: #3fa865; box-shadow: 0 0 0 3px rgba(63, 168, 101, 0.18);
+}
+.live-dot.down { background: #d9534f; box-shadow: 0 0 0 3px rgba(217, 83, 79, 0.18); }
+body.wall .live-dot { width: 12px; height: 12px; }
+
+/* Music tile */
+.mu-now { display: flex; gap: 12px; align-items: center; min-width: 0; }
+.mu-art { width: 56px; height: 56px; border-radius: var(--radius-sm); object-fit: cover; flex: 0 0 auto; background: var(--border); }
+.mu-tile.full .mu-art { width: 120px; height: 120px; }
+.mu-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mu-track, .mu-artist { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mu-track { font-weight: 600; }
+.mu-device { align-self: flex-start; padding: 0; font-size: 0.85rem; }
+.mu-controls { display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 10px; }
+.mu-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: transparent;
+  color: var(--text); display: grid; place-items: center; cursor: pointer; padding: 0;
+}
+.mu-btn svg { width: 18px; height: 18px; }
+.mu-main-btn { width: 52px; height: 52px; background: var(--accent); border-color: var(--accent); color: #fff; }
+.mu-main-btn svg { width: 22px; height: 22px; }
+.mu-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.mu-devlist, .mu-devs { margin-top: 10px; }
+.mu-msg:empty { display: none; }
+body.wall .mu-btn { width: 56px; height: 56px; }
+body.wall .mu-main-btn { width: 68px; height: 68px; }

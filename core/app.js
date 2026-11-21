@@ -17,6 +17,7 @@ import { isWall } from './device.js';
 import { startWallMode, tickClock } from './wall.js';
 import { needsPin, isUnlocked, noteRoute, setRelockHandler, renderPinGate } from './hubpin.js';
 import { renderQuietLines } from './quiet-lines.js';
+import { startLiveDot, liveDotHtml } from './livedot.js';
 
 const view = document.getElementById('view');
 const hubbar = document.getElementById('hubbar');
@@ -104,6 +105,7 @@ async function renderHome() {
     <section class="home">
       <header class="home-head">
         <div>
+          ${liveDotHtml()}
           ${isWall() ? '<p class="wall-clock" id="wall-clock" aria-live="off"></p>' : ''}
           <h1 class="greeting">${greeting(now)}, ${CONFIG.ownerName}</h1>
           <p class="today">${friendlyDate(now)}</p>
@@ -119,6 +121,7 @@ async function renderHome() {
       <div id="weekly-slot"></div>
       <p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>
     </section>`;
+  startLiveDot();
   tickClock();
   document.getElementById('signout-btn').addEventListener('click', signOutAndClear);
 

@@ -73,6 +73,9 @@ export const spotifyStatus = () => call({ action: 'status' });
 export const spotifyDevices = () => call({ action: 'devices' });
 export const spotifyDisconnect = () => call({ action: 'disconnect' });
 export const spotifyPlay = (opts) => call({ action: 'play', ...opts });
+export const spotifyNow = () => call({ action: 'now' });
+export const spotifyControl = (cmd) => call({ action: 'control', cmd });
+export const spotifyTransfer = (deviceId) => call({ action: 'transfer', deviceId });
 
 // ---------- Music settings (settings.data.music) ----------
 

@@ -1,6 +1,6 @@
 # Scott Free: Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v40` (Shopping list, habit questions).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v41` (Shopping list, habit questions, Music tile).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -73,6 +73,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/keydates.js`, `core/calendar.js`, `core/quiet-lines.js`.
 - `core/shopping.js`: shopping data, local copy and offline outbox.
 - `core/habits.js`: habit definitions for the check-in.
+- `core/livedot.js`: green/red status dot above the Home greeting.
 - `core/spotify.js`, `core/music.js`, `core/breathing.js`, `core/trends.js`, `core/weekly.js`.
 - `core/theme.css`: theme, `--lvl-1` to `--lvl-5`, `--alert`.
 
@@ -80,7 +81,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping), `hubs/money/` (index, import, spending), `hubs/settings/` (index, music, phrases, habits, wall).
 - Settings sections: music, phrases, habits, lock, wall, breathing, pay, photos (pay and lock hidden on the wall).
 
-**Tiles:** `tiles/weather`, `tiles/photos`, `tiles/calendar`.
+**Tiles:** `tiles/weather`, `tiles/photos`, `tiles/calendar`, `tiles/music`.
 
 **Server:** `supabase/functions/{calendar-feed,spotify,photos-import}/index.ts`.
 
@@ -96,7 +97,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 
 ## 9. Scott's outstanding setup (remind him at the end of the build)
 
-1. **Calendar:** add the `CALENDAR_FEEDS` secret in Supabase and deploy `calendar-feed`.
+1. **Calendar:** done 21/11/2026 (secret set, `calendar-feed` deployed, Verify JWT off).
 2. **Google Photos:** put the Client ID in `config.js` `googleClientId`, deploy `photos-import`.
 3. **Spotify:** Client ID in `config.js`, secret set and `spotify` deployed (21/11/2026). Scott to connect in Settings and add playlists. Settings, Morning music has a "Plays on" switch (`settings.data.music.playOn`, default phone) because the Spotify Web API does not list Sonos; Scott uses phone and switches to the Sonos from his lock screen. Speaker mode keeps the original home/away logic. Possible later: Sonos Control API with Sonos Favourites.
 4. **Bank statement:** run "Check statement" on a Lloyds PDF, send the masked layout if needed, plus the employer payer description. Then finalise `parseLines()` and the employer pattern.
@@ -117,6 +118,6 @@ Required questions about yesterday in the check-in (alcohol, social media, caffe
 
 ## 11. Next step
 
-**Music section on Home (Scott, 21/11/2026):** control Spotify from the app (now playing, play/pause, skip, volume, switch device). Confirm design decisions with Scott first. Likely needs scope `user-read-currently-playing` (reconnect) and new `spotify` function actions. Sonos is not in the Web API device list.
+Not chosen. Music tile and live status dot built 21/11/2026 (see PROGRESS).
 
 Other roadmap options: countdown timers, push notifications, positive news tile, home move hub, photo frame mode for the wall, family sharing for shopping lists.
