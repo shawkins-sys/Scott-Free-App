@@ -12,6 +12,7 @@ import { renderHabitSettings } from './habits.js';
 import { renderBackgroundSettings } from './background.js';
 import { renderWallSettings } from './wall.js';
 import { renderBackupSettings } from './backup.js';
+import { renderSlideshowSettings } from './slideshow.js';
 import { isWall } from '../../core/device.js';
 import { getBreathingSettings, saveBreathingSettings } from '../../core/breathing.js';
 import { biometricAvailable, biometricOn, enableBiometric, disableBiometric, changePin, lockNow, clearLock } from '../../core/applock.js';
@@ -80,7 +81,9 @@ async function renderPhotosSettings(container) {
         <p class="muted small">Choose photos (or a whole album) from Google Photos. The app saves resized copies for the slideshow. Choosing again lets you replace the current set or add to it.</p>
         <div id="ph-action"></div>
         <p class="form-msg" id="ph-msg" aria-live="polite"></p>
+        <div id="ph-slideshow"></div>
       </div>`;
+    renderSlideshowSettings(container.querySelector('#ph-slideshow'));
 
     const statusEl = container.querySelector('#ph-status');
     const actionEl = container.querySelector('#ph-action');

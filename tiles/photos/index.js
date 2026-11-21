@@ -1,15 +1,58 @@
 // Photos tile. Shuffled slideshow from the private `photos` bucket
 // (filled from Google Photos via Settings, or uploaded in Supabase).
-// 8 seconds per photo, swipe to skip, tap for full screen, pause button.
+// Speed and transition per device type (phone or wall) from Settings,
+// swipe to skip, tap for full screen, pause button.
 // Each photo is saved to Cache Storage the first time it is shown, so it
 // is only downloaded once. Shown after the morning check-in.
 import { supabase } from '../../core/supabase.js';
-import { getTodayCheckin, checkinDoneToday } from '../../core/wellbeing.js';
+import { getTodayCheckin, checkinDoneToday, getSettings } from '../../core/wellbeing.js';
 import { openOverlay } from '../../core/overlay.js';
+import { isWall } from '../../core/device.js';
 
 const BUCKET = 'photos';
 const CACHE_NAME = 'sf-photos'; // kept across app updates (see sw.js)
-const SLIDE_MS = 8000;
+const FADE_S = 1.2; // matches the CSS transition
+const CFG_KEY = 'sf-slideshow';
+const CFG_REFRESH_MS = 5 * 60 * 1000;
+
+// Slideshow settings: settings.data.slideshow = { phone: {...}, wall: {...} }.
+// Computers use the phone settings.
+export const SPEEDS = [5, 8, 10, 15, 20, 30];
+export const EFFECTS = [['fade', 'Fade'], ['zoom', 'Slow zoom'], ['none', 'None']];
+export const SLIDESHOW_DEFAULTS = { phone: { secs: 8, effect: 'fade' }, wall: { secs: 20, effect: 'zoom' } };
+
+export function slideshowFrom(saved) {
+  const out = {};
+  for (const kind of ['phone', 'wall']) {
+    const s = (saved && saved[kind]) || {};
+    out[kind] = {
+      secs: SPEEDS.includes(s.secs) ? s.secs : SLIDESHOW_DEFAULTS[kind].secs,
+      effect: EFFECTS.some(([id]) => id === s.effect) ? s.effect : SLIDESHOW_DEFAULTS[kind].effect,
+    };
+  }
+  return out;
+}
+
+function readLocalCfg() {
+  try { return slideshowFrom(JSON.parse(localStorage.getItem(CFG_KEY))); } catch { return slideshowFrom(null); }
+}
+
+// Called by Settings after a change, and by the refresh below.
+export function applySlideshow(all) {
+  const clean = slideshowFrom(all);
+  try { localStorage.setItem(CFG_KEY, JSON.stringify(clean)); } catch { /* ignore */ }
+  state.cfg = clean[isWall() ? 'wall' : 'phone'];
+  state.cfgAt = Date.now();
+  liveViews().forEach(styleView);
+  schedule();
+}
+
+// Picks up changes made on another device (for example the phone, for the wall).
+function refreshCfg() {
+  if (Date.now() - state.cfgAt < CFG_REFRESH_MS) return;
+  state.cfgAt = Date.now();
+  getSettings().then((d) => applySlideshow(d.slideshow)).catch(() => {});
+}
 const SIGNED_URL_SECONDS = 3600;
 const IMAGE_EXT = /\.(jpe?g|png|webp|gif|avif)$/i; // HEIC is not supported by Chrome
 
@@ -17,7 +60,8 @@ const PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" wi
 const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.9l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5z"/></svg>';
 
 // One shared slideshow, so the tile and full screen view stay in step.
-const state = { photos: [], index: 0, paused: false, views: new Set(), timer: null, urls: new Map() };
+const state = { photos: [], index: 0, paused: false, views: new Set(), timer: null, urls: new Map(), cfg: null, cfgAt: 0 };
+state.cfg = readLocalCfg()[isWall() ? 'wall' : 'phone'];
 let listPromise = null;
 
 const openCache = () => ('caches' in window ? caches.open(CACHE_NAME) : Promise.resolve(null));
@@ -103,22 +147,42 @@ async function show() {
   if (i !== state.index) return; // moved on while loading
   for (const v of liveViews()) {
     v.root.classList.toggle('photo-failed', !url);
-    if (url) v.img.src = url;
+    if (url) await swapIn(v, url);
   }
   if (n > 1) photoUrl(state.photos[(i + 1) % n]).catch(() => {}); // preload next
   trimMemory();
 }
 
+// Shows a photo on the hidden layer, then brings it in (fade, zoom or straight swap).
+async function swapIn(view, url) {
+  const [front, back] = view.front ? [view.imgs[1], view.imgs[0]] : [view.imgs[0], view.imgs[1]];
+  if (front.classList.contains('on') && front.src === url) return;
+  back.src = url;
+  try { await back.decode(); } catch { /* shown anyway */ }
+  back.classList.remove('kb');
+  void back.offsetWidth; // restarts the slow zoom
+  back.classList.add('on', 'kb');
+  front.classList.remove('on');
+  view.front = !view.front;
+}
+
+function styleView(view) {
+  view.root.dataset.effect = state.cfg.effect;
+  view.root.style.setProperty('--slide', `${state.cfg.secs + FADE_S + 0.5}s`);
+}
+
 function schedule() {
   clearTimeout(state.timer);
+  liveViews().forEach((v) => v.root.classList.toggle('paused', state.paused));
   if (state.paused || state.photos.length < 2 || !liveViews().length || document.hidden) return;
-  state.timer = setTimeout(() => go(1), SLIDE_MS);
+  state.timer = setTimeout(() => go(1), state.cfg.secs * 1000);
 }
 
 function go(delta) {
   const n = state.photos.length;
   if (!n) return;
   state.index = (state.index + delta + n) % n;
+  refreshCfg();
   show();
   schedule();
 }
@@ -138,7 +202,7 @@ export function resetPhotos() {
 function mountView(container, full) {
   container.innerHTML = `
     <div class="photo-view${full ? ' full' : ''}">
-      <img alt="" draggable="false">
+      <img alt="" draggable="false"><img alt="" draggable="false">
       <p class="photo-msg muted">This photo could not load.</p>
       <button class="icon-btn photo-pause" type="button"></button>
     </div>`;
@@ -146,7 +210,8 @@ function mountView(container, full) {
   const btn = root.querySelector('.photo-pause');
   const view = {
     root,
-    img: root.querySelector('img'),
+    imgs: [...root.querySelectorAll('img')],
+    front: false,
     updatePause() {
       btn.innerHTML = state.paused ? PLAY : PAUSE;
       btn.setAttribute('aria-label', state.paused ? 'Play slideshow' : 'Pause slideshow');
@@ -177,6 +242,7 @@ function mountView(container, full) {
   });
 
   state.views.add(view);
+  styleView(view);
   view.updatePause();
 }
 
@@ -208,6 +274,8 @@ async function startView(container, full) {
     return;
   }
   mountView(container, full);
+  state.cfgAt = 0;
+  refreshCfg();
   await show();
   schedule();
 }
