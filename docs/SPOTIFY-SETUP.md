@@ -31,7 +31,7 @@ If Settings shows "Not available" and the function logs say "Invalid JWT", open 
 
 ## 4. Connect in the app
 
-1. Open Scott Free, complete the check-in, then **Settings** on the bottom bar.
+1. Open Scott Hub, complete the check-in, then **Settings** on the bottom bar.
 2. **Connect Spotify** and approve. You come back to Settings with "Spotify connected".
 3. **Choose speaker**: pick your Sonos One. If it is not listed, play something on it from the Spotify app once, then try again.
 4. At home, press **Use my current location as home**.

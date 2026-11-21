@@ -1,4 +1,4 @@
--- Scott Free: database schema.
+-- Scott Hub: database schema.
 -- Run once in Supabase: SQL Editor > New query > paste all > Run.
 -- Safe to re-run: uses IF NOT EXISTS / OR REPLACE where possible.
 --

@@ -50,8 +50,8 @@ export const biometricOn = () => !!(read() && read().credId);
 export async function enableBiometric() {
   const cred = await navigator.credentials.create({ publicKey: {
     challenge: crypto.getRandomValues(new Uint8Array(32)),
-    rp: { name: 'Scott Free' },
-    user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'scott-free-lock', displayName: 'Scott Free app lock' },
+    rp: { name: 'Scott Hub' },
+    user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'scott-free-lock', displayName: 'Scott Hub app lock' },
     pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
     authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' },
     timeout: 60000,
@@ -123,7 +123,7 @@ function setupLock() {
   return new Promise((resolve) => {
     let first = null;
     const ask = (title) => {
-      const el = screen(`<h1 class="lock-title">${title}</h1><p class="muted small">This PIN unlocks Scott Free on this device.</p>
+      const el = screen(`<h1 class="lock-title">${title}</h1><p class="muted small">This PIN unlocks Scott Hub on this device.</p>
         <div class="pin-dots"></div><p class="lock-msg" aria-live="polite"></p>${keypad()}`);
       pinEntry(el, async (pin) => {
         if (!first) { first = pin; ask('Enter it again'); return true; }
@@ -150,7 +150,7 @@ function setupLock() {
 // Lock screen: fingerprint (if on) and PIN. Resolves when unlocked.
 function unlock({ onSignOut }) {
   return new Promise((resolve) => {
-    const el = screen(`<h1 class="lock-title">Scott Free</h1><p class="muted small">Enter your PIN${biometricOn() ? ' or use your fingerprint' : ''}</p>
+    const el = screen(`<h1 class="lock-title">Scott Hub</h1><p class="muted small">Enter your PIN${biometricOn() ? ' or use your fingerprint' : ''}</p>
       <div class="pin-dots"></div><p class="lock-msg" aria-live="polite"></p>${keypad()}
       ${biometricOn() ? '<button class="pill-btn lock-bio" type="button">Use fingerprint</button>' : ''}
       <button class="link-btn lock-forgot" type="button">Forgot PIN? Sign out</button>`);

@@ -1,9 +1,9 @@
-// Scott Free service worker.
+// Scott Hub service worker.
 // App files: network first, so edits made on GitHub go live, with the cache as
 // the offline fallback. Pinned CDN libraries: cache first. Supabase and other
 // APIs are never cached here.
 
-const VERSION = 'sf-v49';
+const VERSION = 'sf-v50';
 const SHELL_CACHE = `${VERSION}-shell`;
 // Pinned library versions never change, so this cache survives app updates.
 const CDN_CACHE = 'sf-cdn';

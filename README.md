@@ -1,4 +1,6 @@
-# Scott Free
+# Scott Hub
+
+(Renamed from Scott Free on 21/11/2026. The repo, web address, storage keys and the Spotify and Google developer app names still use the old name; that is expected.)
 
 A calm personal life hub for Scott: installed on an Android phone as an app, and used in a desktop browser. Plain HTML, CSS and JavaScript on GitHub Pages, with Supabase behind it.
 
@@ -64,7 +66,7 @@ To add a second calendar, set `CALENDAR_FEEDS` to a list: `[{"id":"personal","na
 Spotify ends the connection six months after you approve it. The app shows a **Reconnect Spotify** card on Home two weeks before, and again once it has expired. Tap it (or Settings, Morning music, Reconnect Spotify) and approve. Setup guide: `docs/SPOTIFY-SETUP.md`.
 
 ### Import a bank statement
-In the Lloyds app, download a statement PDF. In Scott Free: Money, Pay & import, **Import statement**, choose the PDF. Importing the same period twice is safe. Then confirm anything listed under **Review**. **Check statement** reads a PDF and shows what would be imported without saving anything.
+In the Lloyds app, download a statement PDF. In Scott Hub: Money, Pay & import, **Import statement**, choose the PDF. Importing the same period twice is safe. Then confirm anything listed under **Review**. **Check statement** reads a PDF and shows what would be imported without saving anything.
 
 ### Add a new tile
 1. Copy `tiles/weather/` to a new folder, e.g. `tiles/quotes/`.

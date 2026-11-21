@@ -1,9 +1,9 @@
-// Scott Free: app-wide settings.
+// Scott Hub (formerly Scott Free): app-wide settings.
 // Only the Supabase URL and anon key may ever go here. Never add other secrets:
 // this repo is public.
 
 export const CONFIG = {
-  appName: 'Scott Free',
+  appName: 'Scott Hub',
   ownerName: 'Scott',
   timezone: 'Europe/London',
   locale: 'en-GB',

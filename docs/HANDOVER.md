@@ -1,16 +1,16 @@
-# Scott Free: Handover for a New Chat
+# Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v49` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v50` (Shopping list, habit questions, Music tile, background art rotation, Lights tile, app links on tiles).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
 ## 1. Starter prompt for the new chat
 
-> Continue building Scott Free. Read `claude/HANDOVER.md` and `claude/scott-free-build-prompt.md` in this Project. Attach `shawkins-sys/scott-free-app` with push access and clone it. Next feature: <choose from the roadmap>. Confirm the design decisions with me first before building.
+> Continue building Scott Hub (formerly Scott Free). Read `claude/HANDOVER.md` and `claude/scott-free-build-prompt.md` in this Project. Attach `shawkins-sys/scott-free-app` with push access and clone it. Next feature: <choose from the roadmap>. Confirm the design decisions with me first before building.
 
 ## 2. Project basics
 
-- **What it is:** "Scott Free", a personal life-hub PWA for Scott (UK).
+- **What it is:** "Scott Hub" (renamed from "Scott Free" on 21/11/2026, display name and icon only; repo, URL, storage keys and developer dashboard names keep the old name), a personal life-hub PWA for Scott (UK).
 - **Repo:** `shawkins-sys/scott-free-app` (public).
 - **Live site:** https://shawkins-sys.github.io/Scott-Free-App/ (GitHub Pages).
 - **Backend:** Supabase project `fkcnfgevtwemgokrjxrk`.

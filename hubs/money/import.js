@@ -133,7 +133,7 @@ function openCheck(file) {
     const msg = body.querySelector('.form-msg');
     body.querySelector('[data-copy]').addEventListener('click', async () => {
       const { maskedLayout } = await import('../../core/statement-pdf.js');
-      const text = `Scott Free statement layout (masked)\n${maskedLayout(lines)}`;
+      const text = `Scott Hub statement layout (masked)\n${maskedLayout(lines)}`;
       try {
         await navigator.clipboard.writeText(text);
         msg.textContent = 'Copied. Paste it into your chat with Claude.';
