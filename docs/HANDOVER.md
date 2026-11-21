@@ -1,6 +1,6 @@
 # Scott Free: Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v43` (Shopping list, habit questions, Music tile, background art).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v44` (Shopping list, habit questions, Music tile, background art rotation).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -74,6 +74,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/shopping.js`: shopping data, local copy and offline outbox.
 - `core/habits.js`: habit definitions for the check-in.
 - `core/livedot.js`: green/red status dot above the Home greeting.
+- `core/background.js`: daily background scene rotation (see section 12).
 - `core/spotify.js`, `core/music.js`, `core/breathing.js`, `core/trends.js`, `core/weekly.js`.
 - `core/theme.css`: theme, `--lvl-1` to `--lvl-5`, `--alert`.
 
@@ -115,6 +116,10 @@ Section inside Plan. Multiple lists, items with quantity and notes, ticked items
 ## 10b. Habit questions (built 21/11/2026)
 
 Required questions about yesterday in the check-in (alcohol, social media, caffeine after 2pm, screens in bed), managed in Settings, Habits. Patterns in Wellbeing trends after 14 check-ins with 5+ days each side. SQL in `supabase/habits.sql`.
+
+## 12. Background images (in progress)
+
+4 scenes rotate daily: beach, palms, coral, leaves. Each needs phone day, phone night, wall day (landscape 16:10), wall night. Done: beach phone day and night. To add one: compress to WebP (quality about 78, phone up to 1080 px wide, wall up to 2560 px), save as `assets/bg/<scene>-<phone|wall>-<day|night>.webp`, fill the path in `SCENES` in `core/background.js`, bump that scene's `v` if replacing. If the beach `v` changes, update `BG_FALLBACK` in sw.js. Bump sw.js VERSION. Keep composition: plain top, detail at edges and bottom.
 
 ## 11. Next step
 

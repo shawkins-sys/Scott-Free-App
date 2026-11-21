@@ -3,10 +3,13 @@
 // the offline fallback. Pinned CDN libraries: cache first. Supabase and other
 // APIs are never cached here.
 
-const VERSION = 'sf-v43';
+const VERSION = 'sf-v44';
 const SHELL_CACHE = `${VERSION}-shell`;
 // Pinned library versions never change, so this cache survives app updates.
 const CDN_CACHE = 'sf-cdn';
+const BG_CACHE = 'sf-bg'; // background art: saved on first view, kept across releases
+// Keep in step with core/background.js (same ?v= values).
+const BG_FALLBACK = ['./assets/bg/beach-phone-day.webp?v=1', './assets/bg/beach-phone-night.webp?v=1'];
 
 const SHELL = [
   './',
@@ -29,8 +32,7 @@ const SHELL = [
   './core/shopping.js',
   './core/habits.js',
   './core/livedot.js',
-  './assets/bg/phone-day.webp',
-  './assets/bg/phone-night.webp',
+  './core/background.js',
   './core/quiet-lines.js',
   './core/google.js',
   './core/money.js',
@@ -56,6 +58,7 @@ const SHELL = [
   './hubs/settings/music.js',
   './hubs/settings/phrases.js',
   './hubs/settings/habits.js',
+  './hubs/settings/background.js',
   './hubs/settings/wall.js',
   './hubs/wellbeing/index.js',
   './hubs/wellbeing/trends.js',
@@ -72,7 +75,10 @@ const CDN_HOSTS = ['cdn.jsdelivr.net', 'esm.sh'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(SHELL_CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())
+    caches.open(SHELL_CACHE).then((c) => c.addAll(SHELL))
+      // The beach is the offline fallback background, so it is always saved.
+      .then(() => caches.open(BG_CACHE)).then((c) => c.addAll(BG_FALLBACK).catch(() => null))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -81,7 +87,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(
-        keys.filter((k) => !k.startsWith(VERSION) && k !== 'sf-photos' && k !== CDN_CACHE).map((k) => caches.delete(k))
+        keys.filter((k) => !k.startsWith(VERSION) && k !== 'sf-photos' && k !== CDN_CACHE && k !== BG_CACHE).map((k) => caches.delete(k))
       ))
       .then(() => self.clients.claim())
   );
@@ -92,7 +98,9 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
 
-  if (url.origin === self.location.origin) {
+  if (url.origin === self.location.origin && url.pathname.includes('/assets/bg/')) {
+    event.respondWith(cacheFirst(req, BG_CACHE));
+  } else if (url.origin === self.location.origin) {
     event.respondWith(networkFirst(req));
   } else if (CDN_HOSTS.includes(url.hostname)) {
     event.respondWith(cacheFirst(req));
@@ -114,8 +122,8 @@ async function networkFirst(req) {
   }
 }
 
-async function cacheFirst(req) {
-  const cache = await caches.open(CDN_CACHE);
+async function cacheFirst(req, name = CDN_CACHE) {
+  const cache = await caches.open(name);
   const hit = await cache.match(req);
   if (hit) return hit;
   const res = await fetch(req);

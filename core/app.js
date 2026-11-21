@@ -18,6 +18,7 @@ import { startWallMode, tickClock } from './wall.js';
 import { needsPin, isUnlocked, noteRoute, setRelockHandler, renderPinGate } from './hubpin.js';
 import { renderQuietLines } from './quiet-lines.js';
 import { startLiveDot, liveDotHtml } from './livedot.js';
+import { applySavedBackground, startBackground } from './background.js';
 
 const view = document.getElementById('view');
 const hubbar = document.getElementById('hubbar');
@@ -122,6 +123,7 @@ async function renderHome() {
       <p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>
     </section>`;
   startLiveDot();
+  startBackground();
   tickClock();
   document.getElementById('signout-btn').addEventListener('click', signOutAndClear);
 
@@ -222,6 +224,7 @@ function watchConnection() {
   update();
 }
 watchConnection();
+applySavedBackground();
 
 // Returning from Google sign-in (Photos): take the token out of the address first.
 captureGoogleReturn();
