@@ -4,6 +4,9 @@
 // has both phone images; a missing wall image falls back to the phone one.
 // Setting settings.data.background: 'rotate' (default) or a scene id.
 //
+// Any number of scenes: to add one, add an entry to SCENES (unique id, label
+// shown in Settings, Background). Scenes without both phone images show as
+// "coming soon" and stay out of the rotation.
 // To add or replace an image: put it in assets/bg/ named
 // <scene>-<phone|wall>-<day|night>.webp, fill in the path below and bump
 // that scene's v (so devices fetch the new file instead of the saved one).
@@ -14,7 +17,8 @@ import { isWall } from './device.js';
 export const SCENES = [
   { id: 'beach', label: 'Beach', v: 1,
     phone: { day: 'beach-phone-day.webp', night: 'beach-phone-night.webp' }, wall: { day: null, night: null } },
-  { id: 'palms', label: 'Palms', v: 1, phone: { day: null, night: null }, wall: { day: null, night: null } },
+  { id: 'palms', label: 'Palm trees', v: 1,
+    phone: { day: 'palms-phone-day.webp', night: 'palms-phone-night.webp' }, wall: { day: null, night: null } },
   { id: 'coral', label: 'Coral', v: 1, phone: { day: null, night: null }, wall: { day: null, night: null } },
   { id: 'leaves', label: 'Leaves', v: 1, phone: { day: null, night: null }, wall: { day: null, night: null } },
 ];
