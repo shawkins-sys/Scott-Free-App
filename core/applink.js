@@ -1,38 +1,69 @@
 // Links that open a phone app from a tile.
-// Android: an intent that opens the app, or `fallback` if it is not installed.
-// iPhone: no public way to open these apps from a web page, so `ios` (usually
-// the App Store page). Computer: `fallback` (the website or store page).
-export function appLink({ android, ios, fallback }) {
-  const ua = navigator.userAgent;
-  if (/Android/i.test(ua)) {
-    return `intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=${android};S.browser_fallback_url=${encodeURIComponent(fallback)};end`;
-  }
-  if (/iPhone|iPad|iPod/i.test(ua)) return ios || fallback;
-  return fallback;
-}
-
+// Chrome on Android only opens app screens marked as safe for the browser, so
+// each app uses a link its own app answers to (a deep link), sent to that app's
+// package. If the app does not take it, Chrome goes to the Play Store page
+// (which has an Open button when the app is installed).
+// iPhone: the app's own link scheme; if nothing opens within 1.5 seconds, the
+// App Store page. Computer: the website.
 export const APPS = {
   hue: {
-    android: 'com.philips.lighting.hue2',
-    ios: 'https://apps.apple.com/gb/app/philips-hue/id1055281310',
-    fallback: 'https://play.google.com/store/apps/details?id=com.philips.lighting.hue2',
+    android: 'intent://#Intent;scheme=hue2;package=com.philips.lighting.hue2',
+    play: 'https://play.google.com/store/apps/details?id=com.philips.lighting.hue2',
+    ios: 'hue2://',
+    appStore: 'https://apps.apple.com/gb/app/philips-hue/id1055281310',
+    web: 'https://www.philips-hue.com',
   },
   spotify: {
-    android: 'com.spotify.music',
-    ios: 'https://open.spotify.com',
-    fallback: 'https://open.spotify.com',
+    android: 'intent://#Intent;scheme=spotify;package=com.spotify.music',
+    play: 'https://play.google.com/store/apps/details?id=com.spotify.music',
+    ios: 'spotify://',
+    appStore: 'https://apps.apple.com/gb/app/spotify-music-and-podcasts/id324684580',
+    web: 'https://open.spotify.com',
   },
   calendar: {
-    android: 'com.google.android.calendar',
-    ios: 'https://calendar.google.com',
-    fallback: 'https://calendar.google.com',
+    android: 'intent://calendar.google.com/calendar/r#Intent;scheme=https;package=com.google.android.calendar',
+    play: 'https://play.google.com/store/apps/details?id=com.google.android.calendar',
+    ios: 'googlecalendar://',
+    appStore: 'https://apps.apple.com/gb/app/google-calendar-get-organised/id909319292',
+    web: 'https://calendar.google.com',
   },
 };
 
+const platform = () => {
+  const ua = navigator.userAgent;
+  if (/Android/i.test(ua)) return 'android';
+  if (/iPhone|iPad|iPod/i.test(ua)) return 'ios';
+  return 'web';
+};
+
+export function appLink(app) {
+  const a = APPS[app];
+  const p = platform();
+  if (p === 'android') return `${a.android};S.browser_fallback_url=${encodeURIComponent(a.play)};end`;
+  if (p === 'ios') return a.ios;
+  return a.web;
+}
+
+// iPhone: if the app link did nothing (app not installed), go to the App Store.
+let iosWatch = false;
+function watchIosLinks() {
+  if (iosWatch || platform() !== 'ios') return;
+  iosWatch = true;
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[data-app-store]');
+    if (!link) return;
+    const store = link.dataset.appStore;
+    const timer = setTimeout(() => { if (!document.hidden) window.location.href = store; }, 1500);
+    const cancel = () => { clearTimeout(timer); document.removeEventListener('visibilitychange', cancel); };
+    document.addEventListener('visibilitychange', cancel);
+  });
+}
+
 // Same look in every tile: a small underlined link at the bottom.
-// Android intents open in place; web pages open in a new tab.
 export function appLinkHtml(app, label) {
-  const href = appLink(APPS[app]);
-  const target = href.startsWith('intent:') ? '' : ' target="_blank"';
-  return `<a class="link-btn tile-applink" href="${href}"${target} rel="noopener">${label}</a>`;
+  watchIosLinks();
+  const p = platform();
+  const href = appLink(app);
+  const extra = p === 'web' ? ' target="_blank"' : p === 'ios' ? ` data-app-store="${APPS[app].appStore}"` : '';
+  return `<a class="link-btn tile-applink" href="${href}"${extra} rel="noopener">${label}</a>`;
 }
