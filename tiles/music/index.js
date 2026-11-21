@@ -1,13 +1,13 @@
 // Music tile: control Spotify from Home.
-// One row: small artwork, song and artist, previous / play-pause / next, plus
-// "Open Spotify". Nothing playing: shows the last played track. Play resumes
+// One row: small artwork (tap to open the Spotify app), song and artist,
+// previous / play-pause / next. Nothing playing: shows the last played track. Play resumes
 // it on any open Spotify device; if none is open, opens the Spotify app and
 // starts the track on the phone when Scott comes back. Expanded view is the
 // same at a larger size. Waits for the morning check-in, like Photos.
 // Refreshes every 10 seconds while on screen and the app is visible.
 import { spotifyConfigured, spotifyNow, spotifyControl, spotifyRecent, spotifyResume } from '../../core/spotify.js';
 import { getTodayCheckin, checkinDoneToday, esc } from '../../core/wellbeing.js';
-import { appLinkHtml, appLink } from '../../core/applink.js';
+import { appLinkAttrs, appLink } from '../../core/applink.js';
 
 const REFRESH_MS = 10 * 1000;
 const PENDING_KEY = 'sf-music-resume'; // sessionStorage: track to start on return from Spotify
@@ -29,7 +29,7 @@ async function startView(container, full) {
   }
 
   container.innerHTML = `<div class="mu-tile${full ? ' full' : ''}"><div class="mu-main"><p class="muted">Loading music...</p></div>
-    ${appLinkHtml('spotify', 'Open Spotify')}<p class="muted small mu-msg" aria-live="polite"></p></div>`;
+    <p class="muted small mu-msg" aria-live="polite"></p></div>`;
   const main = container.querySelector('.mu-main');
   const msgEl = container.querySelector('.mu-msg');
   let now = null;
@@ -44,7 +44,9 @@ async function startView(container, full) {
     const show = now || recent;
     main.innerHTML = `
       <div class="mu-row">
-        ${show && show.art ? `<img class="mu-art" src="${esc(show.art)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="mu-art mu-art-empty"></div>'}
+        <a class="mu-art-link" ${appLinkAttrs('spotify')} aria-label="Open Spotify">
+          ${show && show.art ? `<img class="mu-art" src="${esc(show.art)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="mu-art mu-art-empty"></div>'}
+        </a>
         <div class="mu-meta">
           ${!now && recent ? '<span class="muted small">Last played</span>' : ''}
           <span class="mu-track">${show ? esc(show.track || 'Unknown') : 'Nothing playing'}</span>

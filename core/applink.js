@@ -62,10 +62,15 @@ function watchIosLinks() {
 }
 
 // Same look in every tile: a small underlined link at the bottom.
-export function appLinkHtml(app, label) {
+// Attributes for any element that should open the app (href, target or the
+// iPhone App Store fallback), for links that wrap something other than text.
+export function appLinkAttrs(app) {
   watchIosLinks();
   const p = platform();
-  const href = appLink(app);
   const extra = p === 'web' ? ' target="_blank"' : p === 'ios' ? ` data-app-store="${APPS[app].appStore}"` : '';
-  return `<a class="link-btn tile-applink" href="${href}"${extra} rel="noopener">${label}</a>`;
+  return `href="${appLink(app)}"${extra} rel="noopener"`;
+}
+
+export function appLinkHtml(app, label) {
+  return `<a class="link-btn tile-applink" ${appLinkAttrs(app)}>${label}</a>`;
 }
