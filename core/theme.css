@@ -136,9 +136,17 @@ button { font: inherit; color: inherit; }
   display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space);
   padding: 8px 4px 20px;
 }
+/* Greeting, date and phrase sit on the daily background art, so they use the
+   full text colour plus a soft halo (pale in light mode, dark in dark mode)
+   that keeps them readable on any image. */
+.home-head { --halo: rgba(247, 249, 253, 0.9); }
+@media (prefers-color-scheme: dark) { .home-head { --halo: rgba(12, 19, 30, 0.9); } }
+.greeting, .today, .phrase {
+  text-shadow: 0 0 2px var(--halo), 0 0 8px var(--halo), 0 0 16px var(--halo);
+}
 .greeting { font-size: 1.6rem; }
-.today { margin: 2px 0 0; color: var(--muted); }
-.phrase { margin: 10px 0 0; color: var(--muted); font-style: italic; font-size: 0.95rem; }
+.today { margin: 2px 0 0; color: var(--text); font-weight: 500; }
+.phrase { margin: 10px 0 0; color: var(--text); font-style: italic; font-size: 0.95rem; font-weight: 500; }
 .phrase:empty { display: none; }
 
 .edit-hint { margin: -8px 4px 12px; font-size: 0.85rem; color: var(--accent); }
@@ -565,8 +573,8 @@ body.wall { font-size: 19px; -webkit-user-select: none; user-select: none; -webk
 body.wall input, body.wall textarea { -webkit-user-select: text; user-select: text; }
 body.wall .wall-clock { font-size: 4.5rem; font-weight: 300; line-height: 1; margin: 0 0 8px; font-variant-numeric: tabular-nums; color: var(--text); }
 body.wall .greeting { font-size: 2.6rem; color: var(--text); }
-body.wall .today { font-size: 1.3rem; color: var(--text); opacity: 0.85; }
-body.wall .phrase { font-size: 1.25rem; color: var(--text); opacity: 0.9; }
+body.wall .today { font-size: 1.3rem; color: var(--text); }
+body.wall .phrase { font-size: 1.25rem; color: var(--text); }
 body.wall .home-head { padding-top: 12px; }
 body.wall button, body.wall .pill-btn, body.wall .primary-btn, body.wall .chip, body.wall .tab, body.wall .row-btn { min-height: 56px; }
 body.wall .icon-btn { min-width: 56px; min-height: 56px; }
