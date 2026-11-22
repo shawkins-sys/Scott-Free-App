@@ -1,6 +1,6 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v74` (Google Photos set up and working; replace or add when choosing again; slideshow speed and transition per device).
+Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v77` (Google Photos working; slideshow settings per device; photo frame mode on the wall; tiles adapt to their size; foldable inner screen uses the phone layout).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -52,6 +52,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 ## 6. Tech stack
 
 - Plain HTML/CSS/JS ES modules, no build step. Hash router (`#/`, `#/hub/<id>`).
+- Tile contents adapt to tile width with container queries (`.tile-body` is container `tile`, rem units); give new tiles the same treatment.
 - `registry.js` registers hubs and tiles. GridStack 14.1.0 tile grid (18px rows; tile defaultSize in 72px blocks scaled x4; saved items carry `s: 4`).
 - `settings.data` (jsonb) holds preferences.
 - Service worker precaches shell plus all hub and tile files. Keeps `sf-cdn` and `sf-photos` caches across versions. Offline pill, localStorage `sf-today-checkin` fallback.
@@ -69,7 +70,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/wellbeing.js`: METRICS (stress has `reverse: true`), `levelOf()`, check-ins, phrases, settings helpers, `listCheckins`.
 - `core/checkin.js`: check-in form (6 metrics, sleep range, "One good thing that happened yesterday (optional)").
 - `core/applock.js`: PIN and fingerprint app lock.
-- `core/device.js`, `core/wall.js`, `core/hubpin.js`: wall display and hub PIN.
+- `core/device.js` (also `isPhoneDevice()`: any mobile browser is phone), `core/wall.js`, `core/hubpin.js`, `core/frame.js` (photo frame mode): wall display and hub PIN.
 - `core/money.js`, `core/payschedule.js`, `core/statement.js`, `core/statement-pdf.js`: money and statement import (PDF parser provisional).
 - `core/keydates.js`, `core/calendar.js`, `core/quiet-lines.js`.
 - `core/shopping.js`: shopping data, local copy and offline outbox.
@@ -128,8 +129,7 @@ Any number of scenes (Scott wants more than 4 over time); add an entry to `SCENE
 
 **Google Photos Phase B built (sf-v74):** slideshow speed and transition per device type (see PROGRESS.md).
 
-**Google Photos Phase C (agreed with Scott 21/11/2026, not built yet):**
-- Photo frame mode (wall only): after 5 minutes with no touches, and only after the day's check-in, photos go full screen with a small clock and date in a corner ("21:45, Sat 21/11"); tap returns Home. Overnight the photos keep going dimmed, hours set in Settings, Wall display. Defaults (confirmed by Scott): 22:00 to 07:00 at about 30% brightness, on/off switch on by default. Use the wall slideshow settings (speed and transition) from Phase B. Reuse the existing wall Screen Wake Lock. New file goes in the sw.js precache.
+**Google Photos Phase C built (sf-v77):** photo frame mode on the wall (`core/frame.js`, settings in Settings, Wall display). Google Photos follow-up is complete; Scott to test frame mode on the tablet.
 
 Then suggested order:
 1. **Money section rethink** (FUTURE-UPDATES item 5): Scott wants the app to support his mental health, not feel like a job. Decide what to keep (if anything), whether money appears on Home, and what happens to existing money data. Biggest open design question.

@@ -4,8 +4,10 @@
 // - No long-press menus or text selection (CSS does the rest).
 // - Re-checks today's check-in on load, when visible and every 5 minutes, so
 //   finishing it on the phone unlocks the wall (the lock comes from the database).
+// - Photo frame mode after 5 minutes idle (core/frame.js).
 import { CONFIG } from '../config.js';
 import { getTodayCheckin, checkinDoneToday } from './wellbeing.js';
+import { startFrame } from './frame.js';
 
 const RECHECK_MS = 5 * 60 * 1000;
 const clockFmt = new Intl.DateTimeFormat('en-GB', { timeZone: CONFIG.timezone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
@@ -40,6 +42,7 @@ export function startWallMode({ onChange }) {
   tickClock();
   setInterval(tickClock, 1000);
   keepAwake();
+  startFrame();
   setInterval(recheck, RECHECK_MS);
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') { keepAwake(); recheck(); tickClock(); }

@@ -830,3 +830,20 @@ body.wall .shop-list-head { min-height: 60px; font-size: 1.1rem; }
   .ev-btn { grid-template-columns: 1fr; row-gap: 2px; }
   .ev-loc { grid-column: 1; }
 }
+
+/* ---------- Photo frame mode (wall display) ---------- */
+.photo-frame {
+  position: fixed; inset: 0; z-index: 250; background: #000; cursor: pointer;
+  filter: brightness(var(--frame-dim, 1)); transition: filter 2s ease;
+  animation: fade-in 0.8s ease;
+}
+.frame-photos { position: absolute; inset: 0; }
+.photo-frame .photo-view.full { height: 100%; border-radius: 0; cursor: pointer; }
+.photo-frame .photo-pause { display: none; }
+.frame-clock {
+  position: absolute; left: 32px; bottom: 28px; z-index: 3; color: #fff;
+  display: flex; flex-direction: column; line-height: 1.1;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7), 0 0 18px rgba(0, 0, 0, 0.5);
+}
+.frame-time { font-size: 3rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.frame-date { font-size: 1.2rem; opacity: 0.9; }
