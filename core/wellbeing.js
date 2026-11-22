@@ -34,10 +34,23 @@ export function esc(s) {
 
 // Cached for the current London day so the hub bar can check the lock quickly.
 let todayCache = { day: null, entry: undefined };
+let pending = null; // one request at a time, shared by every caller
 
-export async function getTodayCheckin({ refresh = false } = {}) {
+export function getTodayCheckin({ refresh = false } = {}) {
   const day = todayKey();
-  if (!refresh && todayCache.day === day && todayCache.entry !== undefined) return todayCache.entry;
+  if (!refresh && todayCache.day === day && todayCache.entry !== undefined) return Promise.resolve(todayCache.entry);
+  if (!pending) pending = fetchTodayCheckin(day).finally(() => { pending = null; });
+  return pending;
+}
+
+// True when this device saw today's check-in confirmed by the database
+// (written only after the database returns it), so the lock can open at once.
+export function checkinSavedToday() {
+  const saved = readSavedCheckin();
+  return !!(saved && saved.day === todayKey());
+}
+
+async function fetchTodayCheckin(day) {
   let data;
   try {
     const res = await supabase.from('checkins').select('*').eq('day', day).maybeSingle();

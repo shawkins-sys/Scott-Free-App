@@ -16,6 +16,12 @@ function readLocal(device) {
   }
 }
 
+// This device's saved layout (no network), or null.
+export function readLocalLayout(device) {
+  const local = readLocal(device);
+  return local ? local.items : null;
+}
+
 function writeLocal(device, items, at) {
   try { localStorage.setItem(key(device), JSON.stringify({ items, at })); } catch { /* ignore */ }
 }

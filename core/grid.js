@@ -1,15 +1,18 @@
 // Tile grid built on GridStack. Static by default, movable in Edit mode.
 // Each device type keeps its own saved layout.
 import { tiles as tileRegistry } from '../registry.js';
-import { loadLayout, saveLayout } from './layout-store.js';
+import { loadLayout, saveLayout, readLocalLayout } from './layout-store.js';
 import { icons } from './icons.js';
 import { openOverlay } from './overlay.js';
 import { isWall, isPhoneDevice } from './device.js';
-import { getTodayCheckin, checkinDoneToday } from './wellbeing.js';
+import { getTodayCheckin, checkinDoneToday, checkinSavedToday } from './wellbeing.js';
 
 // Standing rule (Scott, 21/11/2026): every tile waits for the day's check-in.
 // Enforced here for all tiles, current and future, so no tile can skip it.
+// Today's check-in confirmed by the database earlier on this device counts
+// straight away (no wait); otherwise ask the database.
 async function checkinDone() {
+  if (checkinSavedToday()) { getTodayCheckin().catch(() => {}); return true; }
   try { await getTodayCheckin(); } catch { /* treated as not done */ }
   return checkinDoneToday();
 }
@@ -78,7 +81,11 @@ function tileShell(tile) {
 export async function mountGrid(container) {
   const device = currentDevice();
   const tiles = await loadTileModules();
-  const saved = (await loadLayout(device)) || [];
+  // This device's saved layout shows at once; Supabase is checked in the
+  // background and wins only if it holds a newer layout (another device).
+  const local = readLocalLayout(device);
+  const fromServer = loadLayout(device);
+  const saved = (local || (await fromServer)) || [];
   const savedById = new Map(saved.map((s) => [s.id, s]));
 
   container.innerHTML = '';
@@ -130,9 +137,28 @@ export async function mountGrid(container) {
     grid.makeWidget(el, pos
       ? { id: tile.id, x: pos.x, y: Math.round(pos.y * k), w: pos.w, h: Math.round(pos.h * k), minH: MIN_ROWS }
       : { id: tile.id, w: size.w, h: size.h * ROW_SCALE, minH: MIN_ROWS });
-    await renderTile(tile, el.querySelector('.tile-body'));
   }
   grid.batchUpdate(false);
+  // All tiles load at the same time, so a slow one (weather location,
+  // calendar feed) no longer holds up the others or the layout.
+  for (const tile of ordered) {
+    const body = gridEl.querySelector(`[gs-id="${tile.id}"] .tile-body`);
+    if (body) renderTile(tile, body);
+  }
+
+  // A newer layout from another device: move the tiles to match.
+  if (local) {
+    fromServer.then((items) => {
+      if (!items || !gridEl.isConnected || JSON.stringify(items) === JSON.stringify(local)) return;
+      grid.batchUpdate();
+      for (const pos of items) {
+        const el = gridEl.querySelector(`[gs-id="${pos.id}"]`);
+        const k = ROW_SCALE / (pos.s || 1);
+        if (el) grid.update(el, { x: pos.x, y: Math.round(pos.y * k), w: pos.w, h: Math.round(pos.h * k) });
+      }
+      grid.batchUpdate(false);
+    }).catch(() => {});
+  }
 
   // Saves straight after a move or resize (and any knock-on changes), and
   // again if the app is left while a save is waiting, so nothing is lost.
