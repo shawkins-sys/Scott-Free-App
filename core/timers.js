@@ -156,9 +156,22 @@ function releaseAwake() {
 // Browsers only allow sound after a tap, so the audio is unlocked on any tap.
 export function unlockAudio() {
   try {
-    if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
-    if (audio.state === 'suspended') audio.resume();
+    if (!audio) {
+      audio = new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'running') window.dispatchEvent(new Event('sf:audio-ready'));
+    }
+    if (audio.state === 'suspended') {
+      audio.resume().then(() => {
+        window.dispatchEvent(new Event('sf:audio-ready'));
+        document.getElementById('timer-ring')?.classList.remove('silent');
+      }).catch(() => {});
+    }
   } catch { /* no audio */ }
+}
+
+// False until the screen has been touched since the app loaded (browser rule).
+export function audioReady() {
+  return !!audio && audio.state === 'running';
 }
 
 function chime() {
@@ -188,21 +201,27 @@ function ringPanel() {
     el.setAttribute('role', 'alertdialog');
     document.body.appendChild(el);
   }
-  const names = timers.filter((t) => ringing.ids.includes(t.id)).map((t) => esc(t.name));
+  const names = [...timers.filter((t) => ringing.ids.includes(t.id)).map((t) => t.name), ...ringing.names].map(esc);
+  const alarmOnly = !ringing.ids.length;
+  el.classList.toggle('silent', !audioReady());
   el.innerHTML = `
     <div class="timer-ring-card">
       <p class="timer-ring-title">${names.length ? names.join(', ') : 'Timer'}</p>
-      <p class="muted">${names.length > 1 ? 'have' : 'has'} finished</p>
+      <p class="muted">${alarmOnly ? '' : names.length > 1 ? 'have finished' : 'has finished'}</p>
       <button type="button" class="primary-btn timer-stop">Stop</button>
     </div>`;
   el.querySelector('.timer-stop').addEventListener('click', stopRing);
 }
 
-export function ring(ids) {
+// ids: finished timers; names: other things ringing (wall alarms).
+export function ring(ids, names = []) {
   unlockAudio();
-  if (ringing) { ringing.ids = [...new Set([...ringing.ids, ...ids])]; ringing.stopAt = Date.now() + RING_MAX_MS; }
-  else {
-    ringing = { ids: [...ids], stopAt: Date.now() + RING_MAX_MS, loop: setInterval(chime, 2600) };
+  if (ringing) {
+    ringing.ids = [...new Set([...ringing.ids, ...ids])];
+    ringing.names = [...new Set([...ringing.names, ...names])];
+    ringing.stopAt = Date.now() + RING_MAX_MS;
+  } else {
+    ringing = { ids: [...ids], names: [...names], stopAt: Date.now() + RING_MAX_MS, loop: setInterval(chime, 2600) };
     chime();
     if (!tick) tick = setInterval(check, 1000);
   }

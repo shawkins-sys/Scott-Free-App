@@ -906,3 +906,25 @@ body.wall .tm-btns .pill-btn, body.wall .tm-preset { min-height: 56px; padding: 
 .tm-set { margin: 8px 0; }
 .tm-set-add { display: flex; gap: 8px; align-items: flex-end; }
 .tm-set-add .field { flex: 1 1 0; min-width: 0; margin: 0; }
+
+/* ---------- Alarms (Plan, wall display) ---------- */
+.al-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.al-item {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 12px 14px;
+  border: 1px solid var(--border); border-radius: 14px; background: var(--card);
+}
+.al-item.editing { display: block; }
+.al-item.off .al-time, .al-item.off .al-name { opacity: 0.5; }
+.al-main { flex: 1 1 200px; min-width: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+.al-time { font-size: 2.2rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.al-name { font-weight: 600; overflow-wrap: anywhere; }
+.al-switch { display: inline-flex; align-items: center; gap: 8px; min-height: 56px; cursor: pointer; }
+.al-switch input { width: 28px; height: 28px; accent-color: var(--accent); }
+.al-btns { display: flex; gap: 6px; }
+.al-form .field { margin-bottom: 8px; }
+.al-days { margin: 4px 0 12px; }
+.al-days .chip { min-width: 56px; min-height: 48px; }
+.al-hint { padding: 10px 12px; border-radius: 12px; border: 1px solid var(--alert); color: var(--text); margin: 6px 0; }
+/* Ringing while the browser still blocks sound: pulse so it is noticed. */
+.timer-ring.silent .timer-ring-card { animation: ring-pulse 1.2s ease-in-out infinite; }
+@keyframes ring-pulse { 50% { transform: scale(1.04); box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent); } }

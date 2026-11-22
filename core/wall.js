@@ -5,9 +5,11 @@
 // - Re-checks today's check-in on load, when visible and every 5 minutes, so
 //   finishing it on the phone unlocks the wall (the lock comes from the database).
 // - Photo frame mode after 5 minutes idle (core/frame.js).
+// - Alarms (core/alarms.js), ringing even before the check-in.
 import { CONFIG } from '../config.js';
 import { getTodayCheckin, checkinDoneToday } from './wellbeing.js';
 import { startFrame } from './frame.js';
+import { startAlarms } from './alarms.js';
 
 const RECHECK_MS = 5 * 60 * 1000;
 const clockFmt = new Intl.DateTimeFormat('en-GB', { timeZone: CONFIG.timezone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
@@ -43,6 +45,7 @@ export function startWallMode({ onChange }) {
   setInterval(tickClock, 1000);
   keepAwake();
   startFrame();
+  startAlarms();
   setInterval(recheck, RECHECK_MS);
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') { keepAwake(); recheck(); tickClock(); }
