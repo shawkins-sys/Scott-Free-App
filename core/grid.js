@@ -135,18 +135,26 @@ export async function mountGrid(container) {
   }
   grid.batchUpdate(false);
 
-  let saveTimer;
-  grid.on('change', () => {
+  // Saves straight after a move or resize (and any knock-on changes), and
+  // again if the app is left while a save is waiting, so nothing is lost.
+  let saveTimer = null;
+  const saveNow = () => {
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
-      const items = grid.save(false).map(({ id, x, y, w, h }) => ({ id, x, y, w, h, s: ROW_SCALE }));
-      saveLayout(device, items);
-    }, 400);
-  });
+    saveTimer = null;
+    const items = grid.save(false).map(({ id, x, y, w, h }) => ({ id, x, y, w, h, s: ROW_SCALE }));
+    saveLayout(device, items);
+  };
+  const saveSoon = () => { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 150); };
+  const flush = () => { if (saveTimer) saveNow(); };
+  grid.on('change', saveSoon);
+  grid.on('resizestop dragstop', saveSoon);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
+  window.addEventListener('pagehide', flush);
 
   return {
     device,
     setEditing(on) {
+      if (!on) flush();
       grid.setStatic(!on);
       gridEl.classList.toggle('editing', on);
     },

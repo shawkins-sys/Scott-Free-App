@@ -785,3 +785,48 @@ body.wall .bg-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)
 .shop-list-row.open .shop-chev { transform: rotate(-135deg); margin-bottom: -2px; }
 .shop-panel { padding: 0 0 12px; }
 body.wall .shop-list-head { min-height: 60px; font-size: 1.1rem; }
+
+/* ---------- Tiles adapt to their own size (22/11/2026) ----------
+   Each tile body is a size container, so content changes layout when a tile
+   is resized. rem units follow the phone's text size setting. */
+.tile-body { container-type: inline-size; container-name: tile; }
+
+/* Weather */
+@container tile (max-width: 24rem) {
+  .w-meta { margin-left: 0; text-align: left; flex-basis: 100%; }
+  .w-hours li:nth-child(n+5) { display: none; }
+}
+@container tile (max-width: 16rem) {
+  .w-hours li:nth-child(n+4) { display: none; }
+  .w-big { font-size: 1.8rem; }
+  .w-icon.w-icon-lg { width: 40px; height: 40px; }
+}
+@container tile (max-width: 11rem) {
+  .weather:not(.weather-full) .w-meta, .weather:not(.weather-full) .w-hours { display: none; }
+  .w-now { flex-direction: column; text-align: center; gap: 6px; }
+}
+
+/* Music */
+@container tile (max-width: 19rem) {
+  .mu-tile:not(.full) .mu-row { flex-wrap: wrap; }
+  .mu-tile:not(.full) .mu-meta { flex-basis: 0; }
+  .mu-tile:not(.full) .mu-controls { flex-basis: 100%; justify-content: center; }
+}
+@container tile (max-width: 10rem) {
+  .mu-tile:not(.full) .mu-row { justify-content: center; }
+  .mu-tile:not(.full) .mu-meta { display: none; }
+  .mu-tile:not(.full) .mu-controls { gap: 2px; }
+  .mu-tile:not(.full) .mu-btn:not(.mu-main-btn) { width: 32px; height: 32px; }
+}
+
+/* Lights: stack the name over the button when narrow */
+@container tile (max-width: 12rem) {
+  .li-row { flex-direction: column; align-items: stretch; gap: 4px; }
+  .li-btn { width: 100%; }
+}
+
+/* Calendar: time above the title when narrow */
+@container tile (max-width: 16rem) {
+  .ev-btn { grid-template-columns: 1fr; row-gap: 2px; }
+  .ev-loc { grid-column: 1; }
+}
