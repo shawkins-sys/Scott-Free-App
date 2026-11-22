@@ -3,9 +3,8 @@
 // works out speaker (at home) or phone (away), and plays via the spotify
 // Edge Function. Problems become a calm card on Home, never a raw error.
 import { supabase } from './supabase.js';
-import { CONFIG } from '../config.js';
 import { londonParts } from './date.js';
-import { isWall } from './device.js';
+import { isWall, isPhoneDevice } from './device.js';
 import { esc } from './wellbeing.js';
 import { spotifyConfigured, spotifyStatus, spotifyPlay, startSpotifyConnect,
   getMusicSettings, currentPosition, distanceM } from './spotify.js';
@@ -86,7 +85,7 @@ function askTarget(slot) {
 
 // ---------- Flow ----------
 
-const isPhone = () => window.innerWidth < CONFIG.phoneBreakpoint;
+const isPhone = () => isPhoneDevice();
 // "Plays on" setting (Scott, 21/11/2026), default phone, because the Spotify
 // Web API does not list Sonos speakers. Phone: always the phone, no location
 // check, the wall display does not start music. Speaker: speaker at home

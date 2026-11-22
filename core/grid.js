@@ -1,11 +1,10 @@
 // Tile grid built on GridStack. Static by default, movable in Edit mode.
 // Each device type keeps its own saved layout.
-import { CONFIG } from '../config.js';
 import { tiles as tileRegistry } from '../registry.js';
 import { loadLayout, saveLayout } from './layout-store.js';
 import { icons } from './icons.js';
 import { openOverlay } from './overlay.js';
-import { isWall } from './device.js';
+import { isWall, isPhoneDevice } from './device.js';
 import { getTodayCheckin, checkinDoneToday } from './wellbeing.js';
 
 // Standing rule (Scott, 21/11/2026): every tile waits for the day's check-in.
@@ -38,7 +37,7 @@ const WALL_DEFAULTS = { photos: { w: 4, h: 6 }, calendar: { w: 4, h: 6 }, weathe
 
 export function currentDevice() {
   if (isWall()) return 'wall';
-  return window.innerWidth < CONFIG.phoneBreakpoint ? 'phone' : 'desktop';
+  return isPhoneDevice() ? 'phone' : 'desktop';
 }
 
 async function loadTileModules() {
