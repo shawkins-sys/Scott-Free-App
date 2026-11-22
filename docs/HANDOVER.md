@@ -24,7 +24,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - Be efficient with tokens: targeted edits, no full-file rewrites unless needed. Pause in larger tasks and ask Scott to "resume".
 - **Never use em dashes anywhere** (UI text, code comments, docs, commit messages).
 - UK English, GBP, dates DD/MM/YYYY, timezone Europe/London.
-- Bump `VERSION` in `sw.js` on every release, and add any new hub or tile files to the service worker precache list.
+- Bump `VERSION` in `sw.js` on every release, and add any new hub or tile files to the service worker precache list. Essential since sf-v80: app files are served cache first, so a release only reaches devices when VERSION changes (the new worker precaches everything fresh with `cache: 'reload'`).
 - Update `docs/PROGRESS.md` (repo and Project copy) after each phase.
 - Commit messages end with:
   ```
