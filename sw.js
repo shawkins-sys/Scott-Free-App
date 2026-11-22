@@ -1,9 +1,11 @@
 // Scott Hub service worker.
-// App files: network first, so edits made on GitHub go live, with the cache as
-// the offline fallback. Pinned CDN libraries: cache first. Supabase and other
+// App files: cache first (fast start). Every release bumps VERSION, so the
+// browser installs this worker again and it downloads the whole new set fresh
+// (bypassing the browser's own cache) before taking over; the new version
+// shows the next time the app is opened. Pinned CDN libraries: cache first. Supabase and other
 // APIs are never cached here.
 
-const VERSION = 'sf-v79';
+const VERSION = 'sf-v80';
 const SHELL_CACHE = `${VERSION}-shell`;
 // Pinned library versions never change, so this cache survives app updates.
 const CDN_CACHE = 'sf-cdn';
@@ -84,7 +86,7 @@ const CDN_HOSTS = ['cdn.jsdelivr.net', 'esm.sh'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(SHELL_CACHE).then((c) => c.addAll(SHELL))
+    caches.open(SHELL_CACHE).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' }))))
       // The beach is the offline fallback background, so it is always saved.
       .then(() => caches.open(BG_CACHE)).then((c) => c.addAll(BG_FALLBACK).catch(() => null))
       .then(() => self.skipWaiting())
@@ -110,26 +112,25 @@ self.addEventListener('fetch', (event) => {
   if (url.origin === self.location.origin && url.pathname.includes('/assets/bg/')) {
     event.respondWith(cacheFirst(req, BG_CACHE));
   } else if (url.origin === self.location.origin) {
-    event.respondWith(networkFirst(req));
+    event.respondWith(appFile(req));
   } else if (CDN_HOSTS.includes(url.hostname)) {
     event.respondWith(cacheFirst(req));
   }
   // Anything else (Supabase, weather, etc.) goes straight to the network.
 });
 
-async function networkFirst(req) {
+// Saved copy from this release if there is one, otherwise the network (and
+// keep it for next time). Navigations (any path or ?query) get index.html.
+async function appFile(req) {
   const cache = await caches.open(SHELL_CACHE);
+  const hit = await cache.match(req, { ignoreSearch: true })
+    || (req.mode === 'navigate' ? await cache.match('./index.html') : null);
+  if (hit) return hit;
   try {
-    // no-cache: always check with GitHub Pages for a newer file (a quick 304 if
-    // unchanged). Without it the browser reuses its own copy for up to 10
-    // minutes, so a new release could still show old screens after reopening.
     const res = await fetch(req, { cache: 'no-cache' });
-    if (res.ok) cache.put(req, res.clone());
+    if (res.ok && req.mode !== 'navigate') cache.put(req, res.clone());
     return res;
   } catch {
-    const hit = await cache.match(req, { ignoreSearch: true });
-    if (hit) return hit;
-    if (req.mode === 'navigate') return cache.match('./index.html');
     throw new Error('Offline and not cached');
   }
 }

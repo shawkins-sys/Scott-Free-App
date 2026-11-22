@@ -203,7 +203,16 @@ window.addEventListener('resize', () => {
 });
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch((err) => console.warn('Service worker not registered', err));
+  navigator.serviceWorker.register('./sw.js')
+    .then((reg) => {
+      // Check for a new release when the app comes back on screen too (it is
+      // often resumed rather than reopened). The new files download quietly
+      // and show the next time the app is opened.
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') reg.update().catch(() => {});
+      });
+    })
+    .catch((err) => console.warn('Service worker not registered', err));
 }
 
 let signedIn = false;
