@@ -1,5 +1,5 @@
 // Plan hub: calendar agenda (today plus the next 7 days) and key dates
-// (birthdays and life admin), and the shopping list.
+// (birthdays and life admin), Lists and Timers.
 import { renderAgenda } from '../../core/calendar.js';
 import { listKeyDates, saveKeyDate, deleteKeyDate, nextDate, advancedDate, daysBetween,
   whenText, displayTitle, ageOn, formatKey, DEFAULT_LEAD, leadDays } from '../../core/keydates.js';
@@ -7,6 +7,7 @@ import { todayKey } from '../../core/date.js';
 import { esc } from '../../core/wellbeing.js';
 import { openOverlay } from '../../core/overlay.js';
 import { renderShopping } from './shopping.js';
+import { renderTimers } from './timers.js';
 
 const REPEATS = [
   ['none', 'Does not repeat'],
@@ -194,12 +195,14 @@ export default {
   async render(container) {
     container.innerHTML = `
       <div class="card" id="plan-shopping"></div>
+      <div class="card" id="plan-timers"></div>
       <div class="card"><h2 class="card-title">Next 7 days</h2><div id="plan-agenda"></div></div>
       <div class="card" id="plan-keydates"></div>`;
     await Promise.all([
       renderAgenda(container.querySelector('#plan-agenda'), 8),
       renderKeyDates(container.querySelector('#plan-keydates')),
       renderShopping(container.querySelector('#plan-shopping')),
+      renderTimers(container.querySelector('#plan-timers')),
     ]);
   },
 };

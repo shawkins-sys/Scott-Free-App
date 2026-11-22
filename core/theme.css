@@ -860,3 +860,49 @@ body.wall .shop-list-head { min-height: 60px; font-size: 1.1rem; }
 }
 .frame-time { font-size: 3rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .frame-date { font-size: 1.2rem; opacity: 0.9; }
+
+/* ---------- Timers (Plan) ---------- */
+.tm-note { margin: 2px 0 10px; }
+.tm-presets { margin-bottom: 10px; }
+.tm-custom .tm-time { display: flex; gap: 8px; align-items: flex-end; }
+.tm-custom .tm-time .field { flex: 1 1 0; min-width: 0; margin: 0; }
+.tm-custom .tm-time .primary-btn, .tm-set-add .primary-btn { flex: 0 0 auto; width: auto; margin: 0; padding-left: 22px; padding-right: 22px; }
+.tm-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.tm-item {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 14px; background: var(--card);
+}
+.tm-main { flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.tm-title { font-weight: 600; overflow-wrap: anywhere; }
+.tm-left { font-size: 1.6rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tm-item.paused .tm-left { color: var(--muted); }
+.tm-bar { display: block; height: 4px; border-radius: 999px; background: var(--border); overflow: hidden; margin-top: 4px; }
+.tm-bar span { display: block; height: 100%; width: 0; background: var(--accent); transition: width 1s linear; }
+.tm-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.tm-item.done { opacity: 0.85; }
+body.wall .tm-left { font-size: 2.4rem; }
+body.wall .tm-btns .pill-btn, body.wall .tm-preset { min-height: 56px; padding: 10px 20px; }
+
+/* Home line while a timer runs */
+.timer-line {
+  display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 10px; padding: 8px 14px;
+  border: 1px solid var(--border); border-radius: 999px; background: var(--card); box-shadow: var(--shadow);
+  color: var(--text); text-decoration: none; font-size: 0.9rem; font-variant-numeric: tabular-nums;
+}
+.timer-line b { font-weight: 600; }
+.timer-ic { width: 18px; height: 18px; flex: 0 0 auto; color: var(--accent); }
+
+/* Finished panel (above the photo frame, below the app lock) */
+.timer-ring {
+  position: fixed; inset: 0; z-index: 270; display: grid; place-items: center; padding: 24px;
+  background: rgba(8, 14, 24, 0.55); animation: fade-in 0.25s ease;
+}
+.timer-ring-card {
+  width: min(360px, 100%); text-align: center; padding: 24px; border-radius: 22px;
+  background: var(--bg); border: 1px solid var(--border); box-shadow: var(--shadow);
+}
+.timer-ring-title { font-size: 1.4rem; font-weight: 600; margin: 0 0 4px; overflow-wrap: anywhere; }
+.timer-ring .timer-stop { margin-top: 16px; width: 100%; min-height: 52px; font-size: 1.1rem; }
+.tm-set { margin: 8px 0; }
+.tm-set-add { display: flex; gap: 8px; align-items: flex-end; }
+.tm-set-add .field { flex: 1 1 0; min-width: 0; margin: 0; }

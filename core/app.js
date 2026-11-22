@@ -19,6 +19,7 @@ import { needsPin, isUnlocked, noteRoute, setRelockHandler, renderPinGate } from
 import { renderQuietLines } from './quiet-lines.js';
 import { startLiveDot, liveDotHtml } from './livedot.js';
 import { applySavedBackground, startBackground } from './background.js';
+import { startTimers, renderTimerLine } from './timers.js';
 
 const view = document.getElementById('view');
 const hubbar = document.getElementById('hubbar');
@@ -117,6 +118,7 @@ async function renderHome() {
       <p class="edit-hint" id="edit-hint" hidden>Press and hold a tile to move it, or hold a blue edge to resize. Changes save automatically.</p>
       <div id="checkin-slot"></div>
       <div id="music-slot"></div>
+      <div id="timer-slot"></div>
       <div id="grid-slot"></div>
       <div id="quiet-lines"></div>
       <div id="weekly-slot"></div>
@@ -124,6 +126,7 @@ async function renderHome() {
   startLiveDot();
   startBackground();
   tickClock();
+  renderTimerLine(document.getElementById('timer-slot'));
 
   setupCheckin();
   gridCtl = await mountGrid(document.getElementById('grid-slot'));
@@ -243,6 +246,7 @@ requireAuth(view)
       watchAway({ onSignOut: signOutAndClear });
     }
     signedIn = true;
+    startTimers(); // timers on this device keep counting across pages
     window.addEventListener('hashchange', route);
     // If the app is left open past midnight, start the new day fresh.
     let openDay = todayKey();
