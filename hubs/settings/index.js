@@ -14,6 +14,7 @@ import { renderWallSettings } from './wall.js';
 import { renderBackupSettings } from './backup.js';
 import { renderSlideshowSettings } from './slideshow.js';
 import { renderTimerSettings } from './timers.js';
+import { renderMorningSettings } from './morning.js';
 import { isWall } from '../../core/device.js';
 import { getBreathingSettings, saveBreathingSettings } from '../../core/breathing.js';
 import { biometricAvailable, biometricOn, enableBiometric, disableBiometric, changePin, lockNow, clearLock } from '../../core/applock.js';
@@ -305,6 +306,7 @@ const SECTIONS = [
   { id: 'phrases', group: 'routine', title: 'Daily phrases', render: renderPhraseSettings },
   { id: 'habits', group: 'routine', title: 'Habits', render: renderHabitSettings },
   { id: 'timers', group: 'routine', title: 'Timer presets', render: renderTimerSettings },
+  { id: 'morning', group: 'routine', title: 'Morning page', render: renderMorningSettings },
   { id: 'background', group: 'custom', title: 'Background', render: renderBackgroundSettings },
   { id: 'lock', group: 'device', title: 'App lock', render: renderLockSettings },
   { id: 'wall', group: 'device', title: 'Wall display', render: renderWallSettings },

@@ -4,6 +4,8 @@ const wrap = (d) =>
 
 export const icons = {
   home: wrap('<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>'),
+  // Sun rising over the horizon (Morning hub).
+  morning: wrap('<path d="M3 18h18M6 21h12"/><path d="M7 18a5 5 0 0 1 10 0"/><path d="M12 6v3M5.6 10.6l1.6 1.6M18.4 10.6l-1.6 1.6M2.5 15h2M19.5 15h2"/>'),
   money: wrap('<rect x="3" y="6" width="18" height="12" rx="3"/><circle cx="12" cy="12" r="2.5"/>'),
   wellbeing: wrap('<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>'),
   plan: wrap('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'),
