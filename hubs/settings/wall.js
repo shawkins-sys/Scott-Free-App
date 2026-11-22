@@ -76,7 +76,7 @@ async function renderPinControls(el) {
 export async function renderWallSettings(body) {
   const on = isWall();
   body.innerHTML = `
-    <p class="muted small">Turn this on for a tablet or screen on the wall at home. It uses its own layout, larger text, a clock, keeps the screen awake and always plays morning music on the speaker. Money is not available on it at all. Only this device is affected.</p>
+    <p class="muted small">Turn this on for a tablet or screen on the wall at home. It uses its own layout, larger text, a clock, keeps the screen awake and always plays morning music on the speaker. Only this device is affected.</p>
     <label class="check"><input type="checkbox" name="wall"${on ? ' checked' : ''}> This device is a wall display</label>
     <p class="form-msg" aria-live="polite"></p>
     <div class="wall-frame"></div>

@@ -12,18 +12,18 @@ Live: https://shawkins-sys.github.io/Scott-Free-App/
 
 ## How the app works day to day
 
-- **Home** shows the greeting, today's phrase, the morning check-in, then tiles (weather, photos, calendar) and quiet lines for money and key dates.
+- **Home** shows the greeting, today's phrase, the morning check-in, then tiles (weather, photos, calendar) and a quiet line for key dates.
 - **App lock:** each device asks for a 4-digit PIN (or fingerprint, where available) when the app opens and when you come back after more than a minute. 5 wrong PINs pause entry for 5 minutes. "Forgot PIN? Sign out" on the lock screen signs you out; sign in again with password and authenticator code, then choose a new PIN.
 - **Everything is locked until the day's check-in is done**, including Settings. The day resets at midnight (UK time). The check-in is stored in the database, so doing it on the phone unlocks the PC too.
 - After the check-in: the daily phrase appears, box breathing runs if either stress rating is 5, then morning music starts (phone only, before 12:00).
 - **Sundays:** a weekly review card appears on Home after the check-in.
-- **Bottom bar:** Home, Money, Wellbeing, Plan, Settings.
+- **Bottom bar:** Home, Wellbeing, Plan, Settings. (Money was removed on 22/11/2026; a Morning page is planned in its place.)
 
 ## Wall display (tablet or screen at home)
 - On the tablet: sign in, do or wait for the check-in, then Settings, Wall display, tick **This device is a wall display**. Only that device changes.
 - The wall has its own layout (Edit works as normal), a large clock, larger text and buttons, and keeps the screen awake while the app is open. It has no app lock.
 - Weather uses your saved home location. Morning music starts from the wall display only when Settings, Morning music is set to Speaker (it then always uses the speaker).
-- Privacy on the wall: **the Money hub is not on the wall at all** (Money is for your phone and PC). No finance line on Home, no money figures in the weekly review, and no Pay and income settings. **Settings needs the hub PIN** (Wellbeing too if you tick "Also protect Wellbeing"). After the PIN, the hub relocks after 2 minutes without a touch or as soon as you leave it. 5 wrong PINs pause entry for 5 minutes. Plan stays open.
+- Privacy on the wall: **Settings needs the hub PIN** (Wellbeing too if you tick "Also protect Wellbeing"). After the PIN, the hub relocks after 2 minutes without a touch or as soon as you leave it. 5 wrong PINs pause entry for 5 minutes. Plan stays open.
 - The hub PIN (4 to 6 digits) is set or changed only from your phone or PC: Settings, Wall display. Only a scrambled (hashed) copy is stored.
 - The check-in is shared: doing it on your phone unlocks the wall within 5 minutes, or straight away when the wall screen is touched or woken.
 - To turn wall mode off, open Settings on the wall (needs the hub PIN) and untick the switch.
@@ -39,8 +39,6 @@ Live: https://shawkins-sys.github.io/Scott-Free-App/
 | Breathing vibration on or off | Settings, Breathing |
 | Bank holiday rule, employer description, usual salary | Settings, Pay and income |
 | Slideshow photos from Google Photos | Settings, Photos |
-| Change a single payday | Money, Pay & import, Paydays, Change |
-| Payment categories | Money, Payments, Manage categories |
 | Key dates (birthdays, MOT, car tax...) | Plan, Key dates |
 | Tile positions and sizes | Home, Edit (phone and desktop are saved separately) |
 | Edit today's check-in | Wellbeing, Today |
@@ -65,8 +63,8 @@ To add a second calendar, set `CALENDAR_FEEDS` to a list: `[{"id":"personal","na
 ### Reconnect Spotify
 Spotify ends the connection six months after you approve it. The app shows a **Reconnect Spotify** card on Home two weeks before, and again once it has expired. Tap it (or Settings, Morning music, Reconnect Spotify) and approve. Setup guide: `docs/SPOTIFY-SETUP.md`.
 
-### Import a bank statement
-In the Lloyds app, download a statement PDF. In Scott Hub: Money, Pay & import, **Import statement**, choose the PDF. Importing the same period twice is safe. Then confirm anything listed under **Review**. **Check statement** reads a PDF and shows what would be imported without saving anything.
+### Money (removed)
+The Money tab was removed on 22/11/2026 because it felt like work. Payments, transactions and pay settings stay in the database, unused, and the code is still in `hubs/money/` and `core/money.js`, `core/statement.js`, `core/payschedule.js`. To bring it back, restore the Money line in `registry.js`. Renewal dates can be copied into Key dates from a one-off card at the top of Plan.
 
 ### Add a new tile
 1. Copy `tiles/weather/` to a new folder, e.g. `tiles/quotes/`.
@@ -83,12 +81,12 @@ In the Lloyds app, download a statement PDF. In Scott Hub: Money, Pay & import, 
 Edit files directly on GitHub and commit to `main`. GitHub Pages goes live in a minute or two. **Each time, bump `VERSION` in `sw.js`** (e.g. `sf-v26` to `sf-v27`) so phones pick up the new files. On the phone, close the app fully and reopen it.
 
 ## Offline
-The app's own files and libraries are saved on the device, so it opens without a connection and shows an "Offline" note at the top. The last weather forecast, calendar and photos you have seen still show. A check-in already completed today keeps the hubs unlocked. Anything that needs the database (saving, Money figures) waits until you are back online.
+The app's own files and libraries are saved on the device, so it opens without a connection and shows an "Offline" note at the top. The last weather forecast, calendar and photos you have seen still show. A check-in already completed today keeps the hubs unlocked. Anything that needs the database (saving) waits until you are back online.
 
 ## Folders
 - `index.html`, `config.js`, `registry.js`, `manifest.webmanifest`, `sw.js` (offline and updates)
 - `core/`: app shell, sign-in, grid, theme, and shared logic (check-in, phrases, money, statements, music, breathing, trends, weekly review)
-- `hubs/<id>/`: Money, Wellbeing, Plan, Settings
+- `hubs/<id>/`: Wellbeing, Plan, Settings (Money kept but switched off)
 - `tiles/<id>/`: Weather, Photos, Calendar
 - `supabase/schema.sql`: tables and security rules. `supabase/functions/`: server-side functions (`calendar-feed`, `spotify`, `photos-import`)
 - `docs/`: setup guides (Supabase, Calendar, Spotify, Google Photos), Android test checklist, build progress notes

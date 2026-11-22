@@ -15,7 +15,7 @@ const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
 export async function renderBackupSettings(body) {
   body.innerHTML = `
-    <p class="muted small">Keep a copy of your data, or open your wellbeing history in Excel or Google Sheets. Money data is not included.</p>
+    <p class="muted small">Keep a copy of your data, or open your wellbeing history in Excel or Google Sheets.</p>
     <div class="backup-btns">
       <button class="pill-btn" data-export="full">Download full backup</button>
       <button class="pill-btn" data-export="daily">Download wellbeing spreadsheet</button>

@@ -1,13 +1,11 @@
 // Weekly review (Monday to Sunday). A snapshot of the week's figures is saved
 // in weekly_reviews: on Sunday it refreshes while the card is shown; weeks
 // with no snapshot (app not opened that Sunday) are filled in later, up to
-// eight weeks back. Money parts are optional so the wall display (brief 14.4)
-// can hide them.
+// eight weeks back. Money figures were removed on 22/11/2026.
 import { supabase, currentUserId } from './supabase.js';
 import { todayKey } from './date.js';
 import { METRICS, listCheckins, esc } from './wellbeing.js';
 import { listKeyDates, nextDate, daysBetween, displayTitle, whenText, formatKey } from './keydates.js';
-import { listPayments, renewalsSoon, alertText, money } from './money.js';
 
 const BACKFILL_WEEKS = 8;
 const KEYS = [...METRICS.map((m) => ({ key: m.key, label: m.label })), { key: 'hours', label: 'Hours slept' }];
@@ -38,28 +36,16 @@ export async function buildSnapshot(ws) {
   ]);
   const snap = { builtAt: new Date().toISOString(), weekStart: ws, checkins: { this: averages(thisWeek), last: averages(lastWeek) } };
 
-  // Money: spending so far this pay period (up to the Sunday) and expenses owed.
+  // Key dates in the fortnight after the Sunday. (Money figures and payment
+  // renewals were removed with the Money tab on 22/11/2026.)
   try {
-    const [{ listTransactions, summarise, expensesTotals }, { payContext, payPeriod }, { listCategories }] = await Promise.all([
-      import('./statement.js'), import('./payschedule.js'), import('./money.js')]);
-    const ctx = await payContext();
-    const period = payPeriod(ctx, sunday);
-    const to = period.end < addDays(sunday, 1) ? period.end : addDays(sunday, 1);
-    const [txs, cats, owed] = await Promise.all([listTransactions({ from: period.start, to }), listCategories(), expensesTotals()]);
-    const s = summarise(txs, cats);
-    snap.money = { periodStart: period.start, periodEnd: addDays(period.end, -1), spending: s.spending, saved: s.saved, owed: owed.outstanding };
-  } catch (err) { console.warn('Weekly money figures not available', err); }
-
-  // Key dates and renewals in the fortnight after the Sunday.
-  try {
-    const [items, pays] = await Promise.all([listKeyDates(), listPayments()]);
+    const items = await listKeyDates();
     const kd = items.map((i) => ({ i, date: nextDate(i, addDays(sunday, 1)) }))
       .map((x) => ({ ...x, days: daysBetween(sunday, x.date) }))
       .filter((x) => x.days >= 1 && x.days <= 14)
       .sort((a, b) => a.days - b.days)
       .map((x) => `${displayTitle(x.i)}, ${formatKey(x.date)}`);
-    const ren = renewalsSoon(pays, addDays(sunday, 1), 14).map(alertText);
-    snap.upcoming = [...kd, ...ren].slice(0, 8);
+    snap.upcoming = kd.slice(0, 8);
   } catch (err) { console.warn('Weekly key dates not available', err); }
 
   // Next week's calendar: only known when built on the Sunday itself.
@@ -131,7 +117,7 @@ function trend(now, before) {
   return `<strong>${now}</strong> <span class="muted small">${d === 0 ? 'same as last week' : `${d > 0 ? 'up' : 'down'} from ${before}`}</span>`;
 }
 
-// Review body. `showMoney: false` hides all money figures (wall display).
+// Review body. Money figures were removed on 22/11/2026 (older saved reviews may still hold them; they are not shown). `showMoney` is kept so callers need no change.
 export function reviewHtml(review, { showMoney = true } = {}) {
   const s = review.snapshot || {};
   const c = s.checkins || { this: {}, last: {} };
@@ -140,15 +126,8 @@ export function reviewHtml(review, { showMoney = true } = {}) {
     <p class="muted small">Week ${formatKey(ws)} to ${formatKey(addDays(ws, 6))} &middot; ${c.this.count || 0} check-in${c.this.count === 1 ? '' : 's'}</p>
     <h3 class="w-head">Check-in averages</h3>
     <ul class="summary">${KEYS.map(({ key, label }) => `<li><span>${label}</span><span>${trend(c.this[key], c.last[key])}</span></li>`).join('')}</ul>
-    ${showMoney && s.money ? `
-      <h3 class="w-head">Money</h3>
-      <ul class="summary">
-        <li><span>Spending this pay period</span><span><strong>${money(s.money.spending)}</strong> <span class="muted small">since ${formatKey(s.money.periodStart)}</span></span></li>
-        ${s.money.saved ? `<li><span>Saved</span><span>${money(s.money.saved)}</span></li>` : ''}
-        <li><span>Expenses owed to you</span><span><strong>${money(s.money.owed)}</strong></span></li>
-      </ul>` : ''}
     <h3 class="w-head">Coming up</h3>
-    ${s.upcoming && s.upcoming.length ? `<ul class="pattern-list">${s.upcoming.filter((u) => showMoney || !/renews|cancel by/.test(u)).map((u) => `<li>${esc(u)}</li>`).join('')}</ul>` : '<p class="muted small">Nothing in the next two weeks.</p>'}
+    ${s.upcoming && s.upcoming.length ? `<ul class="pattern-list">${s.upcoming.filter((u) => !/renews|cancel by|cancel-by/.test(u)).map((u) => `<li>${esc(u)}</li>`).join('')}</ul>` : '<p class="muted small">Nothing in the next two weeks.</p>'}
     ${s.nextWeek ? `
       <h3 class="w-head">Next week</h3>
       <ul class="row-list week-glance">${s.nextWeek.map((d) => `

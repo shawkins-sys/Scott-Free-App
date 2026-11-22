@@ -4,7 +4,9 @@
 // `icon` must be a name from core/icons.js.
 
 export const hubs = [
-  { id: 'money',     title: 'Money',     icon: 'money',     path: './hubs/money/index.js' },
+  // Money was removed on 22/11/2026 (Scott: it felt like work). Its code and
+  // data are kept but unused; to bring it back, restore this line:
+  // { id: 'money', title: 'Money', icon: 'money', path: './hubs/money/index.js' },
   { id: 'wellbeing', title: 'Wellbeing', icon: 'wellbeing', path: './hubs/wellbeing/index.js' },
   { id: 'plan',      title: 'Plan',      icon: 'plan',      path: './hubs/plan/index.js' },
   { id: 'settings',  title: 'Settings',  icon: 'settings',  path: './hubs/settings/index.js' },

@@ -9,6 +9,7 @@ import { openOverlay } from '../../core/overlay.js';
 import { renderShopping } from './shopping.js';
 import { renderTimers } from './timers.js';
 import { renderAlarms } from './alarms.js';
+import { renderRenewalCopy } from './renewals.js';
 import { isWall } from '../../core/device.js';
 
 const REPEATS = [
@@ -196,6 +197,7 @@ export default {
   title: 'Plan',
   async render(container) {
     container.innerHTML = `
+      ${isWall() ? '' : '<div class="card" id="plan-renewals"></div>'}
       <div class="card" id="plan-shopping"></div>
       <div class="card" id="plan-timers"></div>
       ${isWall() ? '<div class="card" id="plan-alarms"></div>' : ''}
@@ -204,6 +206,9 @@ export default {
     await Promise.all([
       renderAgenda(container.querySelector('#plan-agenda'), 8),
       renderKeyDates(container.querySelector('#plan-keydates')),
+      !isWall() && renderRenewalCopy(container.querySelector('#plan-renewals'), {
+        onDone: () => renderKeyDates(container.querySelector('#plan-keydates')),
+      }),
       renderShopping(container.querySelector('#plan-shopping')),
       renderTimers(container.querySelector('#plan-timers')),
       isWall() && renderAlarms(container.querySelector('#plan-alarms')),

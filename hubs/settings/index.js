@@ -47,7 +47,6 @@ async function renderLockSettings(body) {
     } else { disableBiometric(); msg.textContent = 'Fingerprint unlock is off. Your PIN still works.'; }
   });
 }
-import { renderPayIncomeSettings } from '../money/import.js';
 
 const PICKER = 'https://photospicker.googleapis.com/v1';
 const SESSION_KEY = 'sf-g-session';
@@ -296,7 +295,6 @@ async function renderBreathingSettings(body) {
 const GROUPS = [
   { id: 'routine', title: 'Daily routine' },
   { id: 'custom', title: 'Customisation' },
-  { id: 'money', title: 'Money' },
   { id: 'device', title: 'Device and security' },
 ];
 
@@ -312,7 +310,6 @@ const SECTIONS = [
   { id: 'wall', group: 'device', title: 'Wall display', render: renderWallSettings },
   { id: 'backup', group: 'device', title: 'Backup and export', render: renderBackupSettings },
   { id: 'breathing', group: 'routine', title: 'Breathing', render: renderBreathingSettings },
-  { id: 'pay', group: 'money', title: 'Pay and income', render: renderPayIncomeSettings },
   { id: 'photos', group: 'custom', title: 'Photos', render: renderPhotosSettings,
     // Open automatically during the Google Photos flow.
     autoOpen: () => !!(sessionStorage.getItem('sf-g-resume') || sessionStorage.getItem('sf-g-session')) },

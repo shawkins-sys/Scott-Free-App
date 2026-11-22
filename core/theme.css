@@ -928,3 +928,8 @@ body.wall .tm-btns .pill-btn, body.wall .tm-preset { min-height: 56px; padding: 
 /* Ringing while the browser still blocks sound: pulse so it is noticed. */
 .timer-ring.silent .timer-ring-card { animation: ring-pulse 1.2s ease-in-out infinite; }
 @keyframes ring-pulse { 50% { transform: scale(1.04); box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent); } }
+
+/* One-off renewal copy card (Plan) */
+.rn-list { list-style: none; margin: 8px 0 12px; padding: 0; display: grid; gap: 6px; }
+.rn-list .check { display: flex; gap: 10px; align-items: flex-start; }
+.rn-list .check span { display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; }
