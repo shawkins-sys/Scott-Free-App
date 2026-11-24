@@ -33,6 +33,9 @@ export const SCENES = [
   { id: 'mountains', label: 'Misty mountains', v: 1,
     phone: { day: 'mountains-phone-day.webp', night: 'mountains-phone-night.webp' },
     wall: { day: 'mountains-wall-day.webp', night: 'mountains-wall-night.webp' } },
+  { id: 'northern', label: 'Northern lights', v: 1,
+    phone: { day: 'northern-phone-day.webp', night: 'northern-phone-night.webp' },
+    wall: { day: 'northern-wall-day.webp', night: 'northern-wall-night.webp' } },
 ];
 
 const PREF_CACHE = 'sf-background';
