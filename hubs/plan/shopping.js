@@ -174,7 +174,8 @@ export async function renderShopping(card) {
   // Count beside the heading, shown while the card is closed.
   const drawTotal = () => {
     const todo = lists().reduce((n, l) => n + shop.itemsFor(l.id).todo.length, 0);
-    card.querySelector('.card-count').textContent = lists().length ? `${todo} item${todo === 1 ? '' : 's'}` : '';
+    const n = lists().length; // number of lists (Scott, 24/11/2026), not items
+    card.querySelector('.card-count').textContent = n ? `${n} list${n === 1 ? '' : 's'}` : '';
   };
   const drawDynamic = () => {
     if (!card.isConnected) return;
