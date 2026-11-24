@@ -15,7 +15,7 @@
   --radius: 20px;
   --radius-sm: 12px;
   --space: 16px;
-  --bar-h: 56px;
+  --bar-h: 68px;
   --bar-bg: #dde5f0;
   --bar-border: rgba(28, 37, 51, 0.1);
   --bar-active: #ffffff;
@@ -230,10 +230,10 @@ button { font: inherit; color: inherit; }
 #hubbar:empty { display: none; }
 .hub-btn {
   display: flex; align-items: center; justify-content: center;
-  flex: 1 1 0; max-width: 96px; height: 44px;
+  flex: 1 1 0; max-width: 110px; height: 100%;
   color: var(--muted); text-decoration: none;
 }
-.hub-btn svg { width: 24px; height: 24px; padding: 6px 16px; box-sizing: content-box; border-radius: 999px; transition: background 0.2s, color 0.2s; }
+.hub-btn svg { width: 26px; height: 26px; padding: 9px 20px; box-sizing: content-box; border-radius: 999px; transition: background 0.2s, color 0.2s; }
 .hub-btn.active { color: var(--accent); }
 .hub-btn.active svg { background: color-mix(in srgb, var(--accent) 16%, transparent); }
 .hub-btn.locked { opacity: 0.45; }
