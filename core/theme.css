@@ -989,3 +989,5 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .mo-next { margin: 8px 0 0; }
 .mo-table + .mo-table { margin-top: 0; }
 .mo-table .mo-results { margin: 4px 0 8px; }
+.mo-label { font-size: 0.85rem; font-weight: 600; margin: 4px 0 6px; }
+.mo-cap { margin: 6px 0 12px; }

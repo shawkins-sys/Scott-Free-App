@@ -45,12 +45,12 @@ function footballHtml(f) {
     outcome = ours > theirs ? 'Won' : ours < theirs ? 'Lost' : 'Drew';
   }
   return `
-    ${last ? `<div class="mo-match">${line(last, true)}</div>
-      <p class="muted small">${outcome}, ${fmt(dayOnly, last.at)}${last.competition && last.competition !== 'Premier League' ? ` &middot; ${esc(last.competition)}` : ''}</p>` : ''}
-    <p class="mo-facts">
-      ${f.position ? `${ordinal(f.position.pos)} in the table, ${f.position.pts} pts` : ''}
-      ${f.next ? `<br>Next: ${esc(f.next.homeId === team ? f.next.away : f.next.home)} (${f.next.homeId === team ? 'home' : 'away'}), ${fmt(dayTime, f.next.at)}${f.next.competition && f.next.competition !== 'Premier League' ? `, ${esc(f.next.competition)}` : ''}` : ''}
-    </p>
+    ${last ? `<p class="mo-label">Last match</p>
+      <div class="mo-match">${line(last, true)}</div>
+      <p class="muted small mo-cap">${outcome}, ${fmt(dayOnly, last.at)}${last.competition && last.competition !== 'Premier League' ? ` &middot; ${esc(last.competition)}` : ''}${f.position ? ` &middot; ${ordinal(f.position.pos)} in the table, ${f.position.pts} pts` : ''}</p>` : ''}
+    ${f.next ? `<p class="mo-label">Next match</p>
+      <div class="mo-match">${line(f.next, false)}</div>
+      <p class="muted small mo-cap">${fmt(dayTime, f.next.at)}${f.next.competition && f.next.competition !== 'Premier League' ? ` &middot; ${esc(f.next.competition)}` : ''}</p>` : ''}
     ${f.results && f.results.length ? `
       <details class="mo-table"><summary>Matchday ${f.matchday} results</summary>
         <ul class="mo-results">${f.results.map((m) => `<li>${line(m, true)}</li>`).join('')}</ul>
