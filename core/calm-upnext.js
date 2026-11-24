@@ -9,13 +9,15 @@ const MAX_ROWS = 4;
 export async function renderUpNext(slot) {
   if (!slot) return;
   let items = [];
-  try { items = await listKeyDates(); } catch (err) { console.warn('Up next not loaded', err); slot.hidden = true; return; }
+  try { items = await listKeyDates(); } catch (err) { console.warn('Up next not loaded', err); slot.hidden = true; slot.closest('.calm')?.classList.add('no-upnext'); return; }
   if (!slot.isConnected) return;
   const today = todayKey();
   const due = items
     .map((item) => { const date = nextDate(item, today); return { item, date, days: daysBetween(today, date) }; })
     .filter((x) => x.days === 0 || x.days === 1)
     .sort((a, b) => a.days - b.days);
+  // Cards grow to fill the gap when there is no Up next card (see .no-upnext in theme.css).
+  slot.closest('.calm')?.classList.toggle('no-upnext', !due.length);
   if (!due.length) { slot.hidden = true; slot.innerHTML = ''; return; }
   const shown = due.slice(0, MAX_ROWS);
   const more = due.length - shown.length;

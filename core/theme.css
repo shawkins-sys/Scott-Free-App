@@ -1088,3 +1088,10 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .calm-upnext-when { font-size: 0.82rem; color: var(--muted); flex: none; }
 .calm-upnext-when.today { color: var(--accent); font-weight: 600; }
 .calm-upnext-more { display: block; font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+/* With no Up next card the squares grow to fill the gap (Scott, 24/11/2026). */
+.calm-card { transition: flex-basis 0.25s ease, width 0.25s ease, height 0.25s ease; }
+.calm.no-upnext .calm-card { flex-basis: 132px; width: 132px; height: 132px; padding: 14px; }
+.calm.no-upnext .calm-card-icon { width: 36px; height: 36px; }
+.calm.no-upnext .calm-card-icon img { width: 36px; height: 36px; border-radius: 10px; }
+.calm.no-upnext .calm-card-big { font-size: 1.1rem; }
+.calm.no-upnext .calm-card-small { font-size: 0.78rem; }
