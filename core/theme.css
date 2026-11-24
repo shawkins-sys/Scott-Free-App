@@ -1005,3 +1005,41 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .mo-label { font-size: 0.85rem; font-weight: 600; margin: 4px 0 6px; }
 .mo-cap { margin: 6px 0 12px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- Calm Home (phone, 24/11/2026) ----------
+   The art leads: plain top, detail at the bottom. Cards use the same glass as
+   #hubbar so the art shows through. Text sits on the art with the same halo. */
+.calm {
+  --serif: ui-serif, "Iowan Old Style", Georgia, Cambria, "Times New Roman", serif;
+  --halo: rgba(247, 249, 253, 0.9);
+  display: flex; flex-direction: column;
+  min-height: calc(100dvh - var(--bar-h) - var(--space) * 3 - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+@media (prefers-color-scheme: dark) { .calm { --halo: rgba(12, 19, 30, 0.9); } }
+.calm-head { padding: 8px 4px 18px; text-align: center; }
+.calm-greeting, .calm-date, .calm-phrase, .calm-checked { text-shadow: 0 0 2px var(--halo), 0 0 8px var(--halo), 0 0 16px var(--halo); }
+.calm-greeting { font-family: var(--serif); font-weight: 500; font-size: 2rem; letter-spacing: -0.01em; }
+.calm-date { margin: 4px 0 0; font-size: 0.85rem; font-weight: 500; color: var(--muted); }
+.calm-phrase { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 1.1rem; line-height: 1.4; margin: 14px auto 0; max-width: 30ch; }
+.calm-checked { display: inline-flex; align-items: center; gap: 5px; margin: 12px 0 0; font-size: 0.78rem; font-weight: 500; color: var(--muted); }
+.calm-checked[hidden] { display: none; }
+.calm-checked svg { width: 14px; height: 14px; color: var(--lvl-5); }
+.calm-photo {
+  position: relative; aspect-ratio: 4 / 3; width: 100%;
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(10, 16, 26, 0.25);
+}
+.calm-photo[hidden] { display: none; }
+.calm-photo .photo-view { height: 100%; min-height: 0; border-radius: 0; }
+.calm-photo .photo-pause { display: none; } /* pause lives in the full screen view */
+.calm-gap { flex: 1 1 auto; min-height: 16px; }
+/* Check-in gate in the calm look: glass card, serif title. */
+.calm .checkin {
+  background: color-mix(in srgb, var(--card) 62%, transparent);
+  background-image: none;
+  -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
+  border-color: var(--bar-border);
+  border-radius: 20px;
+}
+.calm .checkin-title { font-family: var(--serif); font-weight: 500; font-size: 1.35rem; }
+.calm .live-dot { margin: 0 auto 8px; }

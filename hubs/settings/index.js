@@ -15,7 +15,8 @@ import { renderBackupSettings } from './backup.js';
 import { renderSlideshowSettings } from './slideshow.js';
 import { renderTimerSettings } from './timers.js';
 import { renderMorningSettings } from './morning.js';
-import { isWall } from '../../core/device.js';
+import { renderHomeStyleSettings } from './homestyle.js';
+import { isWall, isPhoneDevice } from '../../core/device.js';
 import { getBreathingSettings, saveBreathingSettings } from '../../core/breathing.js';
 import { biometricAvailable, biometricOn, enableBiometric, disableBiometric, changePin, lockNow, clearLock, AWAY_CHOICES, awayMins, setAwayMins } from '../../core/applock.js';
 import { signOut } from '../../core/auth.js';
@@ -311,6 +312,7 @@ const SECTIONS = [
   { id: 'habits', group: 'routine', title: 'Habits', render: renderHabitSettings },
   { id: 'timers', group: 'routine', title: 'Timer presets', render: renderTimerSettings },
   { id: 'morning', group: 'routine', title: 'Morning page', render: renderMorningSettings },
+  { id: 'homestyle', group: 'custom', title: 'Home style', render: renderHomeStyleSettings },
   { id: 'background', group: 'custom', title: 'Background', render: renderBackgroundSettings },
   { id: 'lock', group: 'device', title: 'App lock', render: renderLockSettings },
   { id: 'wall', group: 'device', title: 'Wall display', render: renderWallSettings },
@@ -326,7 +328,8 @@ export default {
   title: 'Settings',
   async render(container) {
     // A wall display has no money settings and no app lock.
-    const sections = SECTIONS.filter((sec) => !(isWall() && (sec.id === 'pay' || sec.id === 'lock')));
+    const sections = SECTIONS.filter((sec) => !(isWall() && (sec.id === 'pay' || sec.id === 'lock'))
+      && !(sec.id === 'homestyle' && (isWall() || !isPhoneDevice()))); // Home style: phone only
     const secHtml = (sec) => `
       <details class="card set-sec" data-sec="${sec.id}">
         <summary class="set-head">${sec.title}</summary>

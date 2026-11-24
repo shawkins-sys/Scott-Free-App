@@ -287,4 +287,6 @@ export default {
   // Not awaited, so a slow first photo download does not hold up other tiles.
   render(container) { startView(container, false); },
   renderExpanded(container) { return startView(container, true); },
+  // Calm Home photo card: same slideshow, awaited so the caller can tell if it loaded.
+  renderInline(container) { return startView(container, false); },
 };

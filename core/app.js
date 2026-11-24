@@ -20,10 +20,12 @@ import { renderQuietLines } from './quiet-lines.js';
 import { startLiveDot, liveDotHtml } from './livedot.js';
 import { applySavedBackground, startBackground } from './background.js';
 import { startTimers, renderTimerLine } from './timers.js';
+import { useCalm, syncHomeStyle, calmHomeHtml, revealCalm, resetCalm } from './calm.js';
 
 const view = document.getElementById('view');
 const hubbar = document.getElementById('hubbar');
 let gridCtl = null;
+let calmOn = false; // Home is showing the calm layout (phone)
 
 document.title = CONFIG.appName;
 
@@ -69,7 +71,8 @@ async function setupCheckin() {
     // Safety net in case the phrase was not picked when the check-in was saved.
     try { await pickDailyPhrase(entry.metrics); } catch { /* shown as empty */ }
     showPhrase();
-    renderQuietLines(document.getElementById('quiet-lines'));
+    if (calmOn) revealCalm();
+    else renderQuietLines(document.getElementById('quiet-lines'));
     renderWeeklyCard(document.getElementById('weekly-slot'), { showMoney: !isWall() });
     maybeReconnectPrompt(document.getElementById('music-slot'), todayKey());
     return;
@@ -82,7 +85,8 @@ async function setupCheckin() {
       window.dispatchEvent(new CustomEvent('sf:checkin-done'));
       await afterCheckin(saved);
       showPhrase();
-      renderQuietLines(document.getElementById('quiet-lines'));
+      if (calmOn) revealCalm();
+      else renderQuietLines(document.getElementById('quiet-lines'));
       renderWeeklyCard(document.getElementById('weekly-slot'), { showMoney: !isWall() });
     },
   });
@@ -101,7 +105,24 @@ function renderHubBar(activeId) {
     hubs.filter((h) => !h.hidden && !(isWall() && h.id === 'money')).map((h) => btn(h.id, h.title, h.icon, `#/hub/${h.id}`)).join('');
 }
 
+async function renderCalmHome() {
+  calmOn = true;
+  gridCtl = null;
+  resetCalm();
+  view.innerHTML = calmHomeHtml();
+  startLiveDot();
+  startBackground();
+  setupCheckin();
+}
+
 async function renderHome() {
+  if (useCalm()) {
+    renderCalmHome();
+    // Picks up a Home style chosen on another device; redraws once if it changed.
+    syncHomeStyle().then((changed) => { if (changed && !location.hash.startsWith('#/hub/')) renderHome(); });
+    return;
+  }
+  calmOn = false;
   const now = new Date();
   view.innerHTML = `
     <section class="home">
@@ -147,6 +168,7 @@ async function renderHub(id) {
   const entry = hubs.find((h) => h.id === id);
   if (!entry || (isWall() && id === 'money')) { location.hash = '#/'; return; }
   gridCtl = null;
+  calmOn = false;
   view.innerHTML = `
     <section class="hub">
       <header class="hub-head">
@@ -197,7 +219,7 @@ window.addEventListener('resize', () => {
     const d = currentDevice();
     if (d !== lastDevice) {
       lastDevice = d;
-      if (gridCtl) renderHome();
+      if (gridCtl || calmOn) renderHome();
     }
   }, 250);
 });

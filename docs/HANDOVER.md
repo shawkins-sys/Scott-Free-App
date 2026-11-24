@@ -1,6 +1,6 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 24/11/2026. Current release: `sw.js` VERSION `sf-v98` (bottom bar icons only, slim glass; Wellbeing cards fold; Lists count shows lists; Morning page; timers and wall alarms; timed app lock; faster loading).
+Last updated: 24/11/2026. Current release: `sw.js` VERSION `sf-v99` (calm Home Phase 1 on the phone; bottom bar icons only, slim glass; Wellbeing cards fold; Lists count shows lists; Morning page; timers and wall alarms; timed app lock; faster loading).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -142,7 +142,7 @@ Replaced Money (Scott: Money felt like work; the app is to help him switch off).
 ## 11. Next step (end of 24/11/2026 session)
 
 Suggested order:
-0. **Calm Home (agreed, start here).** Full signed-off plan in `docs/CALM-HOME-PLAN.md` (Project copy `claude/CALM-HOME-PLAN.md`). Phone only; three phases; stop after each.
+0. **Calm Home (agreed, in progress).** Full signed-off plan in `docs/CALM-HOME-PLAN.md` (Project copy `claude/CALM-HOME-PLAN.md`). Phone only; three phases; stop after each. **Phase 1 done (sf-v99):** `core/calm.js`, Settings, Home style, photo card, restyled check-in gate. **Next: Phase 2 (card row: Weather, Music, Lights, Calendar link), then Phase 3 (Up next, polish).** Phase 1 left a `.calm-gap` between the photo card and the weekly slot where the card row goes; `renderCalmHome()` in `core/app.js` is where to hook it.
 1. **Morning Phase 3 polish** (list in `claude/MORNING-PLAN.md`): One good thing picture for Good News Network, summary cut at a sentence, team names on one line, check each rotating topic on its day and swap failing feeds, wall sizes.
 2. **New background art** (Scott plans to add more scenes; see section 12 for how).
 3. **Scott's setup**: wall display hub PIN and tablet test (photo frame mode, alarms sound after a reload), confirm bank holidays load on the phone.
