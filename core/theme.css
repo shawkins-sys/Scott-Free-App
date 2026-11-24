@@ -430,6 +430,12 @@ button { font: inherit; color: inherit; }
 
 /* ---------- Money (Phase 5) ---------- */
 .card-title.sub { margin-top: 18px; }
+/* Tap-to-open cards (Plan: Key dates, Lists) */
+.collapsible > .card-row .card-title { cursor: pointer; flex: 1; display: flex; align-items: center; gap: 8px; user-select: none; }
+.collapsible > .card-row .card-title::after { content: ""; width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin-top: -4px; transition: transform 0.2s; }
+.collapsible.collapsed > .card-row .card-title::after { transform: rotate(-45deg); margin-top: 0; }
+.collapsible.collapsed > .card-row { margin-bottom: 0; }
+.collapsible.collapsed > :not(.card-row) { display: none; }
 .row-list { list-style: none; padding: 0; margin: 0; }
 .row-list > li + li { border-top: 1px solid var(--border); }
 .row-btn {

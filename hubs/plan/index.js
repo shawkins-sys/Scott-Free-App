@@ -198,11 +198,20 @@ export default {
   async render(container) {
     container.innerHTML = `
       ${isWall() ? '' : '<div class="card" id="plan-renewals"></div>'}
-      <div class="card" id="plan-shopping"></div>
+      <div class="card collapsible collapsed" id="plan-shopping"></div>
       <div class="card" id="plan-timers"></div>
       ${isWall() ? '<div class="card" id="plan-alarms"></div>' : ''}
       <div class="card"><h2 class="card-title">Next 7 days</h2><div id="plan-agenda"></div></div>
-      <div class="card" id="plan-keydates"></div>`;
+      <div class="card collapsible collapsed" id="plan-keydates"></div>`;
+    // Key dates and Lists open on tapping the heading; closed on arrival (Scott, 24/11/2026).
+    container.querySelectorAll('.collapsible').forEach((card) => {
+      card.addEventListener('click', (e) => {
+        const title = e.target.closest('.card-title');
+        if (!title || title.closest('.card') !== card) return;
+        card.classList.toggle('collapsed');
+        title.setAttribute('aria-expanded', String(!card.classList.contains('collapsed')));
+      });
+    });
     await Promise.all([
       renderAgenda(container.querySelector('#plan-agenda'), 8),
       renderKeyDates(container.querySelector('#plan-keydates')),
