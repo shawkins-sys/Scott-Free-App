@@ -425,8 +425,20 @@ button { font: inherit; color: inherit; }
 .ev.kd .ev-time { color: var(--accent); }
 .ev.kd .ev-title::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: middle; }
 #quiet-lines { margin: 4px 0 var(--space); }
-.quiet-line { display: block; text-align: center; color: var(--muted); font-size: 0.9rem; text-decoration: none; padding: 6px 8px; }
-.quiet-line:hover { color: var(--accent); }
+/* Readable on any background (24/11/2026): a soft pill like the timer line. */
+#quiet-lines { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.quiet-line {
+  display: inline-flex; align-items: center; gap: 8px; max-width: 100%;
+  padding: 8px 14px; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--card); box-shadow: var(--shadow);
+  color: var(--text); font-size: 0.9rem; text-decoration: none; text-align: center;
+}
+.quiet-line::before {
+  content: ""; width: 16px; height: 16px; flex: 0 0 auto; background: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Crect x='4' y='5' width='16' height='15' rx='3'/%3E%3Cpath d='M4 10h16M9 3v4M15 3v4'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Crect x='4' y='5' width='16' height='15' rx='3'/%3E%3Cpath d='M4 10h16M9 3v4M15 3v4'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.quiet-line:active { transform: scale(0.98); }
 
 /* ---------- Money (Phase 5) ---------- */
 .card-title.sub { margin-top: 18px; }
