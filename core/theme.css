@@ -221,9 +221,9 @@ button { font: inherit; color: inherit; }
   display: flex; justify-content: space-around; align-items: center;
   height: calc(var(--bar-h) + env(safe-area-inset-bottom));
   padding: 0 8px env(safe-area-inset-bottom);
-  background: color-mix(in srgb, var(--bar-bg) 55%, transparent);
-  -webkit-backdrop-filter: blur(18px) saturate(1.4);
-          backdrop-filter: blur(18px) saturate(1.4);
+  background: color-mix(in srgb, var(--bar-bg) 28%, transparent);
+  -webkit-backdrop-filter: blur(8px) saturate(1.5);
+          backdrop-filter: blur(8px) saturate(1.5);
   border-top: 1px solid var(--bar-border);
   z-index: 50;
 }
