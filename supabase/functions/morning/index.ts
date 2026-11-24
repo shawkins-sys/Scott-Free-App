@@ -43,7 +43,7 @@ const GOOD_FEEDS = [
 ];
 
 // Headlines containing any of these are left out (Scott: keep it calm).
-const HEAVY = /\b(dies|died|dead|death|deaths|killed|kills|killing|murder\w*|war|wars|attack\w*|crash\w*|shooting|stabb\w*|terror\w*|abuse\w*|assault\w*|suicide|bomb\w*|missile\w*|hostage\w*|rape\w*|massacre|tragedy|tragic|victim\w*|injur\w*|fatal\w*)\b/i;
+const HEAVY = /\b(holocaust|nazi\w*|genocide|exterminat\w*|ghetto\w*|concentration camp|pogrom\w*|execut(?:ed|ion\w*)|hanged|beheaded|assassinat\w*|slaughter\w*|famine|plague|epidemic|pandemic|invasion|invade\w*|battle\w*|bombing|bomber\w*|blitz|earthquake|tsunami|hurricane|disaster\w*|sank|sinking|shipwreck|riot\w*|lynch\w*|slave\w*|slavery|dies|died|dead|death|deaths|killed|kills|killing|murder\w*|war|wars|attack\w*|crash\w*|shooting|stabb\w*|terror\w*|abuse\w*|assault\w*|suicide|bomb\w*|missile\w*|hostage\w*|rape\w*|massacre|tragedy|tragic|victim\w*|injur\w*|fatal\w*)\b/i;
 
 const MIN = 60 * 1000;
 const cache = new Map<string, { at: number; data: unknown }>();

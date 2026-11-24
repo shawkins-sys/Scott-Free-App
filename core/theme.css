@@ -976,3 +976,4 @@ body.wall .mo-news a { font-size: 1.15rem; }
 .mo-good-img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; margin: 0 0 10px; background: var(--border); }
 body.wall .mo-thumb { width: 140px; height: 94px; }
 body.wall .mo-story-title { font-size: 1.15rem; }
+.mo-refresh { font-size: inherit; padding: 0; min-height: 0; }

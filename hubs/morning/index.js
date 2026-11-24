@@ -28,7 +28,7 @@ function ago(ms) {
 const link = (url, text) => `<a href="${esc(url)}" target="_blank" rel="noopener">${text}</a>`;
 
 function footballHtml(f) {
-  if (!f || f.error === 'notset') return '<p class="muted small">Football appears once it is set up (see docs/MORNING-SETUP.md).</p>';
+  if (!f || f.error === 'notset') return '<p class="muted small">Football will appear once the football token is set in Supabase.</p>';
   if (f.error) return '<p class="muted small">Football is not available right now.</p>';
   const team = f.teamId;
   const line = (m, done) => {
@@ -110,7 +110,7 @@ function pageHtml(saved, show) {
       ${parts.join('')}
       <p class="mo-end">That's everything for today</p>
     </div>
-    <p class="muted small mo-updated">Updated ${ago(saved.at)}</p>`;
+    <p class="muted small mo-updated">Updated ${ago(saved.at)} &middot; <button type="button" class="link-btn mo-refresh">Refresh</button></p>`;
 }
 
 export default {
@@ -124,16 +124,29 @@ export default {
       container.innerHTML = saved ? pageHtml(saved, show)
         : '<div class="card"><p class="muted">Getting this morning\'s read...</p></div>';
     };
-    draw();
-    loadShow().then((s) => { show = s; draw(); });
-    if (!isFresh(saved)) {
+    const refresh = async () => {
       try { saved = await fetchMorning(); draw(); }
       catch (err) {
         console.warn('Morning refresh failed', err);
-        if (!saved && container.isConnected) {
+        if (!container.isConnected) return;
+        if (!saved) {
           container.innerHTML = '<div class="card"><p class="muted">The morning read is not available right now. Check your connection and try again later.</p></div>';
+        } else {
+          const btn = container.querySelector('.mo-refresh');
+          if (btn) btn.textContent = 'Could not refresh, try again';
         }
       }
-    }
+    };
+    // Refresh on demand (the page otherwise refreshes when over 20 minutes old).
+    container.addEventListener('click', (e) => {
+      const btn = e.target.closest('.mo-refresh');
+      if (!btn) return;
+      btn.textContent = 'Refreshing...';
+      btn.disabled = true;
+      refresh();
+    });
+    draw();
+    loadShow().then((s) => { show = s; draw(); });
+    if (!isFresh(saved)) await refresh();
   },
 };
