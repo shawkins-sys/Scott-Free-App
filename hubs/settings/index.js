@@ -17,7 +17,7 @@ import { renderTimerSettings } from './timers.js';
 import { renderMorningSettings } from './morning.js';
 import { isWall } from '../../core/device.js';
 import { getBreathingSettings, saveBreathingSettings } from '../../core/breathing.js';
-import { biometricAvailable, biometricOn, enableBiometric, disableBiometric, changePin, lockNow, clearLock } from '../../core/applock.js';
+import { biometricAvailable, biometricOn, enableBiometric, disableBiometric, changePin, lockNow, clearLock, AWAY_CHOICES, awayMins, setAwayMins } from '../../core/applock.js';
 import { signOut } from '../../core/auth.js';
 
 const onSignOut = () => { clearLock(); signOut(); };
@@ -27,13 +27,17 @@ async function renderLockSettings(body) {
   const canBio = await biometricAvailable();
   const draw = () => {
     body.innerHTML = `
-      <p class="muted small">The app asks for your PIN${canBio ? ' or fingerprint' : ''} when it opens, and when you come back after more than a minute. This applies to this device only.</p>
+      <p class="muted small">The app asks for your PIN${canBio ? ' or fingerprint' : ''} when you open it or come back to it after it has been closed or in the background for longer than the time below. This applies to this device only.</p>
+      <p class="muted small">Lock again after</p>
+      <div class="chips lock-away">${AWAY_CHOICES.map((m) => `<button type="button" class="chip${awayMins() === m ? ' active' : ''}" data-away="${m}" aria-pressed="${awayMins() === m}">${m < 60 ? `${m} min` : `${m / 60} hour${m === 60 ? '' : 's'}`}</button>`).join('')}</div>
       <div class="btn-row"><button class="pill-btn" data-act="change">Change PIN</button><button class="pill-btn" data-act="lock">Lock now</button></div>
       ${canBio ? `<label class="check lock-check"><input type="checkbox" name="bio"${biometricOn() ? ' checked' : ''}> Unlock with fingerprint</label>` : '<p class="muted small">Fingerprint unlock is not available on this device.</p>'}
       <p class="form-msg" aria-live="polite"></p>`;
   };
   draw();
   body.addEventListener('click', async (e) => {
+    const away = e.target.closest('[data-away]');
+    if (away) { setAwayMins(Number(away.dataset.away)); draw(); body.querySelector('.form-msg').textContent = 'Saved.'; return; }
     const act = e.target.closest('[data-act]');
     if (!act) return;
     if (act.dataset.act === 'change') { await changePin({ onSignOut }); draw(); body.querySelector('.form-msg').textContent = 'PIN changed.'; }

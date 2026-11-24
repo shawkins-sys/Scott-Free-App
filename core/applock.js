@@ -6,7 +6,25 @@
 
 const KEY = 'sf-lock';
 const AWAY_KEY = 'sf-away-at';
-const AWAY_LIMIT_MS = 60 * 1000;
+// How long the app can be closed or in the background before it asks again.
+// Per device, Settings, App lock (Scott, 24/11/2026: default 2 hours).
+export const AWAY_CHOICES = [1, 15, 60, 120, 240]; // minutes
+const DEFAULT_AWAY_MINS = 120;
+export function awayMins() {
+  const m = read() && read().awayMins;
+  return AWAY_CHOICES.includes(m) ? m : DEFAULT_AWAY_MINS;
+}
+export function setAwayMins(m) {
+  const c = read();
+  if (c && AWAY_CHOICES.includes(m)) { c.awayMins = m; write(c); }
+}
+const awayLimitMs = () => awayMins() * 60 * 1000;
+const markAway = () => { try { localStorage.setItem(AWAY_KEY, String(Date.now())); } catch { /* ignore */ } };
+// True when the app was last on screen within the limit (so no PIN needed).
+function recentlyUsed() {
+  const at = Number(localStorage.getItem(AWAY_KEY) || 0);
+  return at > 0 && Date.now() - at <= awayLimitMs();
+}
 const MAX_FAILS = 5;
 const PAUSE_MS = 5 * 60 * 1000;
 const PIN_LENGTH = 4;
@@ -197,22 +215,31 @@ function unlock({ onSignOut }) {
 let unlocking = null;
 
 // Call after sign-in, before showing anything: sets up or asks for the lock.
-export async function ensureUnlocked({ onSignOut }) {
+// Opening the app within the time limit of last using it skips the lock;
+// `force` (Lock now) always asks.
+export async function ensureUnlocked({ onSignOut, force = false }) {
   if (unlocking) return unlocking;
+  if (!force && lockConfigured() && recentlyUsed()) return;
   unlocking = (lockConfigured() ? unlock({ onSignOut }) : setupLock()).finally(() => { unlocking = null; });
   return unlocking;
 }
 
-// Locks again when the app comes back after more than a minute away.
+// Records when the app leaves the screen (or is closed), and locks again when
+// it comes back after longer than the limit.
 export function watchAway({ onSignOut }) {
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') { localStorage.setItem(AWAY_KEY, String(Date.now())); return; }
-    const away = Date.now() - Number(localStorage.getItem(AWAY_KEY) || Date.now());
-    if (lockConfigured() && away > AWAY_LIMIT_MS) ensureUnlocked({ onSignOut });
+    if (document.visibilityState === 'hidden') { if (!unlocking) markAway(); return; }
+    if (lockConfigured() && !recentlyUsed()) ensureUnlocked({ onSignOut });
+    else markAway();
   });
+  window.addEventListener('pagehide', () => { if (!unlocking) markAway(); });
+  if (!unlocking) markAway();
 }
 
-export function lockNow({ onSignOut }) { return ensureUnlocked({ onSignOut }); }
+export function lockNow({ onSignOut }) {
+  localStorage.removeItem(AWAY_KEY);
+  return ensureUnlocked({ onSignOut, force: true });
+}
 
 // Change PIN: confirm the current PIN (or fingerprint) first, then choose a new one.
 export async function changePin({ onSignOut }) {
