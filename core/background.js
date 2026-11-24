@@ -36,6 +36,9 @@ export const SCENES = [
   { id: 'northern', label: 'Northern lights', v: 1,
     phone: { day: 'northern-phone-day.webp', night: 'northern-phone-night.webp' },
     wall: { day: 'northern-wall-day.webp', night: 'northern-wall-night.webp' } },
+  { id: 'dunes', label: 'Desert dunes', v: 1,
+    phone: { day: 'dunes-phone-day.webp', night: 'dunes-phone-night.webp' },
+    wall: { day: 'dunes-wall-day.webp', night: 'dunes-wall-night.webp' } },
 ];
 
 const PREF_CACHE = 'sf-background';
