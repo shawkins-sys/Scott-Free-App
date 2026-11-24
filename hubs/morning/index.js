@@ -88,7 +88,9 @@ function pageHtml(saved, show) {
   const parts = [];
   if (show.football) parts.push(`<section class="mo-sec"><h2 class="mo-head">Man Utd</h2>${footballHtml(d.football)}</section>`);
   for (const t of d.news || []) {
-    if (show[t.id]) parts.push(`<section class="mo-sec"><h2 class="mo-head">${esc(t.title)}</h2>${newsHtml(t)}</section>`);
+    if (!show[t.id]) continue;
+    parts.push(`<section class="mo-sec"><h2 class="mo-head">${esc(t.title)}${t.rotating ? ' <span class="mo-tag">This week</span>' : ''}</h2>
+      ${newsHtml(t)}${t.next ? `<p class="muted small mo-next">Tomorrow: ${esc(t.next)}</p>` : ''}</section>`);
   }
   if (show.good && d.good) {
     parts.push(`<section class="mo-sec"><h2 class="mo-head">One good thing</h2>

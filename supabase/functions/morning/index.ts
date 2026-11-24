@@ -3,14 +3,14 @@
 // - Football (football-data.org free tier): the followed team's last result,
 //   next fixture and league position, the latest Premier League results and
 //   the table. Cached 3 hours (the free tier allows 10 calls a minute).
-// - News from RSS feeds per topic (Tech and AI, Man Utd), heavy stories
-//   filtered out, up to 5 per topic. Cached 30 minutes.
+// - News from RSS feeds: Man Utd and FPL daily (1 each), plus one rotating
+//   topic a day (3 stories from the past week). Heavy stories filtered out.
 // - One good thing: one story from a positive news feed. Cached 30 minutes.
 // - On this day: one event from Wikipedia's "On this day" feed. Cached per day.
 // Each part can fail on its own; the page shows what it has.
 //
 // Secret required: FOOTBALL_DATA_TOKEN (free token from football-data.org).
-// Request (POST JSON): {}   Response: { football, news, good, onThisDay, builtAt }
+// Request (POST JSON): { topics?: string[] }   Response: { football, news, good, onThisDay, builtAt }
 // Only the signed-in owner with MFA (aal2) can call it.
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
@@ -19,14 +19,10 @@ const ALLOWED_ORIGINS = ['https://shawkins-sys.github.io', 'http://localhost:800
 const TEAM_ID = 66; // Manchester United on football-data.org
 const UA = 'Mozilla/5.0 (compatible; ScottHub/1.0; personal app; +https://shawkins-sys.github.io/Scott-Free-App/)';
 
-export const TOPICS: Record<string, { title: string; feeds: string[] }> = {
-  tech: {
-    title: 'Tech and AI',
-    feeds: [
-      'https://feeds.bbci.co.uk/news/technology/rss.xml',
-      'https://www.theguardian.com/technology/artificialintelligenceai/rss',
-    ],
-  },
+// Topics (Scott, 24/11/2026). Man Utd and FPL show every day (1 club story,
+// 1 FPL story). The ROTATION topics take turns, one a day, each showing its 3
+// best stories from the past week. `drop` removes stories off his focus.
+export const TOPICS: Record<string, { title: string; feeds: string[]; drop?: RegExp }> = {
   utd: {
     title: 'Man Utd',
     feeds: [
@@ -34,8 +30,40 @@ export const TOPICS: Record<string, { title: string; feeds: string[] }> = {
       'https://www.theguardian.com/football/manchester-united/rss',
     ],
   },
+  fpl: { title: 'FPL', feeds: ['https://www.fantasyfootballscout.co.uk/feed/'] },
+  tech: {
+    title: 'Phones and new tech',
+    feeds: ['https://www.gsmarena.com/rss-news-reviews.php3', 'https://www.androidauthority.com/feed/'],
+    drop: /\b(deal|deals|discount|sale|coupon|save \$|lawsuit|layoffs?)\b/i,
+  },
+  ps: {
+    title: 'PlayStation',
+    feeds: ['https://blog.playstation.com/feed/', 'https://www.pushsquare.com/feeds/latest'],
+  },
+  fish: {
+    title: 'Fishkeeping',
+    feeds: ['https://www.practicalfishkeeping.co.uk/feed/', 'https://www.thegreenmachineonline.com/feed/'],
+    drop: /\b(marine|reef|reefs|coral|corals|saltwater|clownfish|anemone|seahorse|pond|koi)\b/i,
+  },
+  local: {
+    title: 'Cheltenham',
+    feeds: ['https://feeds.bbci.co.uk/news/england/gloucestershire/rss.xml', 'https://www.soglos.com/feeds/latest'],
+  },
 };
-// Tried together; whichever answers is used (some sites block server requests).
+export const ROTATION = ['tech', 'ps', 'fish', 'local'];
+const WEEK = 7 * 86400000;
+
+// Which rotating topic shows on a London day (and the next one), from the
+// topics Scott has switched on. Day 0 is 24/11/2026.
+export function rotationFor(enabled: string[], date = new Date()) {
+  const list = ROTATION.filter((t) => enabled.includes(t));
+  if (!list.length) return { today: null, tomorrow: null };
+  const london = new Date(date.toLocaleString('en-US', { timeZone: 'Europe/London' }));
+  const day = Math.floor((Date.UTC(london.getFullYear(), london.getMonth(), london.getDate()) - Date.UTC(2026, 10, 24)) / 86400000);
+  const i = ((day % list.length) + list.length) % list.length;
+  return { today: list[i], tomorrow: list.length > 1 ? list[(i + 1) % list.length] : null };
+}
+
 const GOOD_FEEDS = [
   'https://www.positive.news/feed/',
   'https://www.goodnewsnetwork.org/feed/',
@@ -115,12 +143,17 @@ export function parseRss(xml: string, fallbackSource = ''): Story[] {
 }
 
 // Newest first, heavy stories and near-duplicate titles removed.
-export function pickStories(lists: Story[][], max = 5): Story[] {
+export function pickStories(lists: Story[][], max = 5, opts: { drop?: RegExp; within?: number } = {}): Story[] {
   const seen = new Set<string>();
   const key = (t: string) => t.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(' ').slice(0, 6).join(' ');
-  return lists.flat()
-    .filter((s) => !HEAVY.test(s.title))
-    .sort((a, b) => b.at - a.at)
+  const now = Date.now();
+  const all = lists.flat()
+    .filter((s) => !HEAVY.test(s.title) && !(opts.drop && opts.drop.test(`${s.title} ${s.summary || ''}`)))
+    .sort((a, b) => b.at - a.at);
+  // Stories from the period first; older ones only fill any gap.
+  const recent = opts.within ? all.filter((s) => now - s.at <= opts.within!) : all;
+  const older = opts.within ? all.filter((s) => now - s.at > opts.within!) : [];
+  return [...recent, ...older]
     .filter((s) => { const k = key(s.title); if (seen.has(k)) return false; seen.add(k); return true; })
     .slice(0, max)
     .map(({ summary: _s, ...rest }) => rest);
@@ -130,17 +163,22 @@ async function fetchFeed(url: string): Promise<Story[]> {
   const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/rss+xml, application/xml, text/xml' } });
   if (!res.ok) throw new Error(`${url} ${res.status}`);
   const host = new URL(url).hostname;
-  const label = host.includes('bbc') ? 'BBC' : host.includes('theguardian') ? 'The Guardian'
-    : host.includes('positive.news') ? 'Positive News' : host.includes('goodnewsnetwork') ? 'Good News Network'
-    : host.includes('reasonstobecheerful') ? 'Reasons to be Cheerful' : host.replace(/^www\./, '');
+  const NAMES: [string, string][] = [
+    ['bbc', 'BBC'], ['theguardian', 'The Guardian'], ['positive.news', 'Positive News'],
+    ['goodnewsnetwork', 'Good News Network'], ['reasonstobecheerful', 'Reasons to be Cheerful'],
+    ['fantasyfootballscout', 'Fantasy Football Scout'], ['gsmarena', 'GSMArena'],
+    ['androidauthority', 'Android Authority'], ['playstation', 'PlayStation Blog'], ['pushsquare', 'Push Square'],
+    ['practicalfishkeeping', 'Practical Fishkeeping'], ['thegreenmachine', 'The Green Machine'], ['soglos', 'SoGlos'],
+  ];
+  const label = (NAMES.find(([k]) => host.includes(k)) || [])[1] || host.replace(/^www\./, '');
   return parseRss(await res.text(), label).map((st) => ({ ...st, source: label }));
 }
 
-async function topicNews(id: string) {
+async function topicStories(id: string, max: number, within?: number) {
   const t = TOPICS[id];
   const lists = await Promise.all(t.feeds.map((u) => fetchFeed(u).catch(() => [] as Story[])));
   if (!lists.some((l) => l.length)) throw new Error(`No feed for ${id}`);
-  return { id, title: t.title, stories: pickStories(lists) };
+  return pickStories(lists, max, { drop: t.drop, within });
 }
 
 async function goodThing() {
@@ -261,19 +299,37 @@ if (import.meta.main) Deno.serve(async (req) => {
 
   const token = Deno.env.get('FOOTBALL_DATA_TOKEN') ?? '';
   const dayKey = new Date().toISOString().slice(0, 10);
-  const [foot, tech, utd, good, otd] = await Promise.all([
+  // Topics switched on in Settings (sent by the app); all if not sent.
+  let body: { topics?: string[] } = {};
+  try { body = await req.json(); } catch { /* empty body */ }
+  const enabled = Array.isArray(body.topics) ? body.topics.filter((t) => t in TOPICS) : Object.keys(TOPICS);
+  const rot = rotationFor(enabled);
+
+  const [foot, club, fpl, todayTopic, good, otd] = await Promise.all([
     token ? settle(cached('football', 180 * MIN, () => football(token))) : Promise.resolve({ ok: false as const, error: 'notset' }),
-    settle(cached('news-tech', 30 * MIN, () => topicNews('tech'))),
-    settle(cached('news-utd', 30 * MIN, () => topicNews('utd'))),
+    enabled.includes('utd') ? settle(cached('news-utd', 30 * MIN, () => topicStories('utd', 1))) : Promise.resolve(null),
+    enabled.includes('utd') ? settle(cached('news-fpl', 30 * MIN, () => topicStories('fpl', 1))) : Promise.resolve(null),
+    rot.today ? settle(cached(`news-${rot.today}`, 60 * MIN, () => topicStories(rot.today!, 3, WEEK))) : Promise.resolve(null),
     settle(cached('good', 30 * MIN, goodThing)),
     settle(cached(`otd-${dayKey}`, 24 * 60 * MIN, onThisDay)),
   ]);
+
+  const news = [];
+  if (club || fpl) {
+    news.push({ id: 'utd', title: 'Man Utd and FPL',
+      stories: [...(club && club.ok ? club.data : []), ...(fpl && fpl.ok ? fpl.data : [])] });
+  }
+  if (rot.today && todayTopic) {
+    news.push({ id: rot.today, title: TOPICS[rot.today].title, rotating: true,
+      next: rot.tomorrow ? TOPICS[rot.tomorrow].title : null,
+      stories: todayTopic.ok ? todayTopic.data : [] });
+  }
 
   return json({
     result: 'ok',
     builtAt: new Date().toISOString(),
     football: foot.ok ? foot.data : { error: foot.error },
-    news: [tech, utd].map((n, i) => (n.ok ? n.data : { id: ['tech', 'utd'][i], title: TOPICS[['tech', 'utd'][i]].title, error: 'error', stories: [] })),
+    news,
     good: good.ok ? good.data : null,
     onThisDay: otd.ok ? otd.data : null,
   });
