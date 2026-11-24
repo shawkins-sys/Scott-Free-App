@@ -1,12 +1,12 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 24/11/2026. Current release: `sw.js` VERSION `sf-v93` (Money removed and replaced by the Morning page; timers and wall alarms in Plan; timed app lock; faster loading).
+Last updated: 24/11/2026. Current release: `sw.js` VERSION `sf-v98` (bottom bar icons only, slim glass; Wellbeing cards fold; Lists count shows lists; Morning page; timers and wall alarms; timed app lock; faster loading).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
 ## 1. Starter prompt for the new chat
 
-> Continue building Scott Hub (formerly Scott Free). Read `claude/HANDOVER.md`, `claude/FUTURE-UPDATES.md`, `claude/MORNING-PLAN.md` and `claude/scott-free-build-prompt.md` in this Project. Attach `shawkins-sys/scott-free-app` with push access and clone it. Next feature: <choose from the roadmap>. Confirm the design decisions with me first before building.
+> Continue building Scott Hub (formerly Scott Free). Read `claude/HANDOVER.md`, `claude/CALM-HOME-PLAN.md`, `claude/FUTURE-UPDATES.md`, `claude/MORNING-PLAN.md` and `claude/scott-free-build-prompt.md` in this Project. Attach `shawkins-sys/scott-free-app` with push access and clone it. Next feature: <choose from the roadmap>. Confirm the design decisions with me first before building.
 
 ## 2. Project basics
 
@@ -142,6 +142,7 @@ Replaced Money (Scott: Money felt like work; the app is to help him switch off).
 ## 11. Next step (end of 24/11/2026 session)
 
 Suggested order:
+0. **Calm Home (agreed, start here).** Full signed-off plan in `docs/CALM-HOME-PLAN.md` (Project copy `claude/CALM-HOME-PLAN.md`). Phone only; three phases; stop after each.
 1. **Morning Phase 3 polish** (list in `claude/MORNING-PLAN.md`): One good thing picture for Good News Network, summary cut at a sentence, team names on one line, check each rotating topic on its day and swap failing feeds, wall sizes.
 2. **New background art** (Scott plans to add more scenes; see section 12 for how).
 3. **Scott's setup**: wall display hub PIN and tablet test (photo frame mode, alarms sound after a reload), confirm bank holidays load on the phone.
