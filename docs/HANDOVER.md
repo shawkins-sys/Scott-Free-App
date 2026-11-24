@@ -1,6 +1,6 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 24/11/2026. Current release: `sw.js` VERSION `sf-v100` (calm Home Phases 1 and 2 on the phone; bottom bar icons only, slim glass; Wellbeing cards fold; Lists count shows lists; Morning page; timers and wall alarms; timed app lock; faster loading).
+Last updated: 24/11/2026. Current release: `sw.js` VERSION `sf-v101` (calm Home complete on the phone, all three phases; bottom bar icons only, slim glass; Wellbeing cards fold; Lists count shows lists; Morning page; timers and wall alarms; timed app lock; faster loading).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -79,7 +79,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/livedot.js`: green/red status dot above the Home greeting.
 - `core/applink.js`: "Open <app>" links on tiles (Android intent, web fallback). Add new apps to `APPS`.
 - `core/background.js`: daily background scene rotation (see section 12).
-- `core/calm.js`: calm Home (phone only): `useCalm()`, `homeStyle()`/`setHomeStyle()` (`settings.data.homeStyle`, device copy `sf-home-style`), `calmHomeHtml()`, `revealCalm()` (Checked in mark, photo card, card row). `core/calm-cards.js`: the swipe row of glass cards. Photos tile exposes `renderInline()` for the card.
+- `core/calm.js`: calm Home (phone only): `useCalm()`, `homeStyle()`/`setHomeStyle()` (`settings.data.homeStyle`, device copy `sf-home-style`), `calmHomeHtml()`, `revealCalm()` (Checked in mark, photo card, card row). `core/calm-cards.js`: the swipe row of glass cards. `core/calm-upnext.js`: the Up next card. Photos tile exposes `renderInline()` for the card.
 - `core/spotify.js`, `core/music.js`, `core/breathing.js`, `core/trends.js`, `core/weekly.js`.
 - `core/theme.css`: theme, `--lvl-1` to `--lvl-5`, `--alert`.
 
@@ -143,7 +143,7 @@ Replaced Money (Scott: Money felt like work; the app is to help him switch off).
 ## 11. Next step (end of 24/11/2026 session)
 
 Suggested order:
-0. **Calm Home (agreed, in progress).** Full signed-off plan in `docs/CALM-HOME-PLAN.md` (Project copy `claude/CALM-HOME-PLAN.md`). Phone only; three phases; stop after each. **Phase 1 done (sf-v99):** `core/calm.js`, Settings, Home style, photo card, restyled check-in gate. **Phase 2 done (sf-v100):** `core/calm-cards.js` (Weather, Music, Lights sheet, Calendar link), `core/music-resume.js`. **Next: Phase 3 (Up next card for key dates today or tomorrow, glass style, hidden when nothing is due; Playwright checks; docs).** Up next goes between the photo card and the card row (`#calm-cards` is after `.calm-gap` in `calmHomeHtml()`).
+0. **Calm Home: done (sf-v99 to sf-v101).** Plan in `docs/CALM-HOME-PLAN.md`. Phase 1: `core/calm.js`, Settings, Home style, photo card, check-in gate. Phase 2: `core/calm-cards.js` (Weather, Music, Lights sheet, Calendar link), `core/music-resume.js`. Phase 3: `core/calm-upnext.js` (key dates today or tomorrow). Scott to check on the phone; possible later: overdue items in Up next, Lights toggle if Lights moves to the Hue Remote API (state and per-room off become possible).
 1. **Morning Phase 3 polish** (list in `claude/MORNING-PLAN.md`): One good thing picture for Good News Network, summary cut at a sentence, team names on one line, check each rotating topic on its day and swap failing feeds, wall sizes.
 2. **New background art** (Scott plans to add more scenes; see section 12 for how).
 3. **Scott's setup**: wall display hub PIN and tablet test (photo frame mode, alarms sound after a reload), confirm bank holidays load on the phone.

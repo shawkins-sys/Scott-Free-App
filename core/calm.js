@@ -55,6 +55,7 @@ export function calmHomeHtml(now = new Date()) {
       <div class="calm-photo" id="calm-photo" hidden></div>
       <div id="weekly-slot"></div>
       <div class="calm-gap"></div>
+      <div id="calm-upnext" hidden></div>
       <div id="calm-cards" hidden></div>
     </section>`;
 }
@@ -69,6 +70,9 @@ export async function revealCalm() {
   const card = document.getElementById('calm-photo');
   if (!card || photoStarted) return;
   photoStarted = true;
+  // Up next: key dates due today or tomorrow (card stays hidden when none).
+  import('./calm-upnext.js').then((m) => m.renderUpNext(document.getElementById('calm-upnext')))
+    .catch((err) => console.warn('Up next not shown', err));
   // Card row (Weather, Music, Lights, Calendar) starts at once, alongside the photo.
   import('./calm-cards.js').then((m) => m.renderCardRow(document.getElementById('calm-cards')))
     .catch((err) => console.warn('Card row not shown', err));

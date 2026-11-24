@@ -5,7 +5,7 @@
 // shows the next time the app is opened. Pinned CDN libraries: cache first. Supabase and other
 // APIs are never cached here.
 
-const VERSION = 'sf-v100';
+const VERSION = 'sf-v101';
 const SHELL_CACHE = `${VERSION}-shell`;
 // Pinned library versions never change, so this cache survives app updates.
 const CDN_CACHE = 'sf-cdn';
@@ -44,6 +44,7 @@ const SHELL = [
   './core/background.js',
   './core/calm.js',
   './core/calm-cards.js',
+  './core/calm-upnext.js',
   './core/music-resume.js',
   './hubs/settings/homestyle.js',
   './core/quiet-lines.js',
