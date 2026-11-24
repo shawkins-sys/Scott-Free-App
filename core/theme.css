@@ -987,3 +987,5 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .mo-refresh { font-size: inherit; padding: 0; min-height: 0; }
 .mo-tag { font-size: 0.7rem; letter-spacing: 0.04em; padding: 2px 8px; margin-left: 6px; border-radius: 999px; border: 1px solid var(--border); text-transform: none; font-weight: 500; }
 .mo-next { margin: 8px 0 0; }
+.mo-table + .mo-table { margin-top: 0; }
+.mo-table .mo-results { margin: 4px 0 8px; }

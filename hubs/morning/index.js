@@ -52,8 +52,9 @@ function footballHtml(f) {
       ${f.next ? `<br>Next: ${esc(f.next.homeId === team ? f.next.away : f.next.home)} (${f.next.homeId === team ? 'home' : 'away'}), ${fmt(dayTime, f.next.at)}${f.next.competition && f.next.competition !== 'Premier League' ? `, ${esc(f.next.competition)}` : ''}` : ''}
     </p>
     ${f.results && f.results.length ? `
-      <h3 class="mo-sub">Matchday ${f.matchday} results</h3>
-      <ul class="mo-results">${f.results.map((m) => `<li>${line(m, true)}</li>`).join('')}</ul>` : ''}
+      <details class="mo-table"><summary>Matchday ${f.matchday} results</summary>
+        <ul class="mo-results">${f.results.map((m) => `<li>${line(m, true)}</li>`).join('')}</ul>
+      </details>` : ''}
     ${f.table && f.table.length ? `
       <details class="mo-table"><summary>Premier League table</summary>
         <table><thead><tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>Pts</th></tr></thead>
