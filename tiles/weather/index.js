@@ -26,7 +26,7 @@ const W_ICONS = {
   storm: () => svg('<path d="M7 14h10a4 4 0 0 0 .5-8A6 6 0 0 0 6 7a3.5 3.5 0 0 0 1 7z"/><path d="M13 14l-2 4h3l-2 4"/>'),
 };
 
-function describe(code) {
+export function describe(code) {
   if (code === 0) return ['Clear', 'clear'];
   if (code === 1) return ['Mostly clear', 'partly'];
   if (code === 2) return ['Partly cloudy', 'partly'];
@@ -42,8 +42,8 @@ function describe(code) {
   if (code >= 95) return ['Thunderstorms', 'storm'];
   return ['Mixed', 'cloud'];
 }
-const icon = (code, day = 1) => W_ICONS[describe(code)[1]](day);
-const deg = (t) => `${Math.round(t)}°`;
+export const icon = (code, day = 1) => W_ICONS[describe(code)[1]](day);
+export const deg = (t) => `${Math.round(t)}°`;
 
 // ---------- Location ----------
 // Wall display: the saved home location (Settings, Morning music), else Cheltenham.
@@ -75,7 +75,7 @@ function readCache() {
 
 let pending = null; // shares one request between the tile and the expanded view
 
-async function getWeather() {
+export async function getWeather() {
   const cached = readCache();
   if (cached && Date.now() - cached.at < CACHE_MINUTES * 60 * 1000) return cached;
   if (pending) return pending;
@@ -106,7 +106,7 @@ async function getWeather() {
 }
 
 // Index of the current hour in the hourly arrays (times are London local).
-function nowIndex(hourly) {
+export function nowIndex(hourly) {
   const p = londonParts();
   const pad = (n) => String(n).padStart(2, '0');
   const key = `${p.year}-${pad(p.month)}-${pad(p.day)}T${pad(p.hour)}:00`;

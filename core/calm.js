@@ -53,8 +53,9 @@ export function calmHomeHtml(now = new Date()) {
       <div id="checkin-slot"></div>
       <div id="music-slot"></div>
       <div class="calm-photo" id="calm-photo" hidden></div>
-      <div class="calm-gap"></div>
       <div id="weekly-slot"></div>
+      <div class="calm-gap"></div>
+      <div id="calm-cards" hidden></div>
     </section>`;
 }
 
@@ -68,6 +69,9 @@ export async function revealCalm() {
   const card = document.getElementById('calm-photo');
   if (!card || photoStarted) return;
   photoStarted = true;
+  // Card row (Weather, Music, Lights, Calendar) starts at once, alongside the photo.
+  import('./calm-cards.js').then((m) => m.renderCardRow(document.getElementById('calm-cards')))
+    .catch((err) => console.warn('Card row not shown', err));
   try {
     const mod = await import(new URL('../tiles/photos/index.js', import.meta.url).href);
     await mod.default.renderInline(card);
