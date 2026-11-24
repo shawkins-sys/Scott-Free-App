@@ -1,7 +1,7 @@
 // Plan hub: calendar agenda (today plus the next 7 days) and key dates
 // (birthdays and life admin), Lists and Timers.
 import { renderAgenda } from '../../core/calendar.js';
-import { listKeyDates, saveKeyDate, deleteKeyDate, nextDate, advancedDate, daysBetween,
+import { upcoming, listKeyDates, saveKeyDate, deleteKeyDate, nextDate, advancedDate, daysBetween,
   whenText, displayTitle, ageOn, formatKey, DEFAULT_LEAD, leadDays } from '../../core/keydates.js';
 import { todayKey } from '../../core/date.js';
 import { esc } from '../../core/wellbeing.js';
@@ -138,7 +138,7 @@ function openForm(item, onSaved) {
 
 async function renderKeyDates(card) {
   card.innerHTML = `
-    <div class="card-row"><h2 class="card-title">Key dates</h2><button class="pill-btn" data-add>Add</button></div>
+    <div class="card-row"><h2 class="card-title">Key dates <span class="card-count"></span></h2><button class="pill-btn" data-add>Add</button></div>
     <p class="form-msg" aria-live="polite"></p>
     <ul class="phrase-list kd-list"><li class="muted">Loading...</li></ul>`;
   const list = card.querySelector('.kd-list');
@@ -153,6 +153,8 @@ async function renderKeyDates(card) {
     }
     const today = todayKey();
     items.sort((a, b) => nextDate(a, today).localeCompare(nextDate(b, today)));
+    const soon = upcoming(items, today).length;
+    card.querySelector('.card-count').textContent = soon ? `${soon} due soon` : `${items.length} date${items.length === 1 ? '' : 's'}`;
     list.innerHTML = items.length
       ? items.map((i) => row(i, today)).join('')
       : '<li class="muted">No key dates yet. Add birthdays and things like MOT, car tax or passport renewal.</li>';

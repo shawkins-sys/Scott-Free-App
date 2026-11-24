@@ -78,7 +78,7 @@ function itemRow(item, staple) {
 
 export async function renderShopping(card) {
   card.innerHTML = `
-    <div class="card-row"><h2 class="card-title">Lists</h2><button class="pill-btn" data-new-list>New list</button></div>
+    <div class="card-row"><h2 class="card-title">Lists <span class="card-count"></span></h2><button class="pill-btn" data-new-list>New list</button></div>
     <div class="shop-body"></div>`;
   const bodyEl = card.querySelector('.shop-body');
   // Lists show as collapsed rows; tap one to open it (one at a time, all
@@ -171,8 +171,14 @@ export async function renderShopping(card) {
   };
 
   // Counts, staples, items and sync status: redrawn on every change.
+  // Count beside the heading, shown while the card is closed.
+  const drawTotal = () => {
+    const todo = lists().reduce((n, l) => n + shop.itemsFor(l.id).todo.length, 0);
+    card.querySelector('.card-count').textContent = lists().length ? `${todo} item${todo === 1 ? '' : 's'}` : '';
+  };
   const drawDynamic = () => {
     if (!card.isConnected) return;
+    drawTotal();
     pickList();
     if (shellKey() !== shownKey) { drawShell(); return; }
     bodyEl.querySelectorAll('[data-count]').forEach((el) => { el.textContent = countText(el.dataset.count); });
@@ -231,6 +237,7 @@ export async function renderShopping(card) {
 
   const off = shop.onChange(() => { if (!card.isConnected) { off(); return; } drawDynamic(); });
   shop.startAutoSync();
+  drawTotal();
   drawShell();      // instant, from the copy on this device
   await shop.refresh(); // redraws through onChange if anything changed
 }
