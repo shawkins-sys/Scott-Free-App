@@ -92,8 +92,8 @@ function renderHubBar(activeId) {
   const locked = hubsLocked();
   const btn = (id, title, icon, href) => `
     <a class="hub-btn${activeId === id ? ' active' : ''}${locked && id !== 'home' ? ' locked' : ''}"
-       href="${href}" aria-label="${title}"${activeId === id ? ' aria-current="page"' : ''}>
-      ${icons[icon] || ''}<span>${title}</span>
+       href="${href}" aria-label="${title}" title="${title}"${activeId === id ? ' aria-current="page"' : ''}>
+      ${icons[icon] || ''}<span class="sr-only">${title}</span>
     </a>`;
   hubbar.innerHTML =
     btn('home', 'Home', 'home', '#/') +
