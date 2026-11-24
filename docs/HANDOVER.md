@@ -79,12 +79,13 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/livedot.js`: green/red status dot above the Home greeting.
 - `core/applink.js`: "Open <app>" links on tiles (Android intent, web fallback). Add new apps to `APPS`.
 - `core/background.js`: daily background scene rotation (see section 12).
+- `core/calm.js`: calm Home (phone only): `useCalm()`, `homeStyle()`/`setHomeStyle()` (`settings.data.homeStyle`, device copy `sf-home-style`), `calmHomeHtml()`, `revealCalm()` (Checked in mark and photo card). Photos tile exposes `renderInline()` for the card.
 - `core/spotify.js`, `core/music.js`, `core/breathing.js`, `core/trends.js`, `core/weekly.js`.
 - `core/theme.css`: theme, `--lvl-1` to `--lvl-5`, `--alert`.
 
 **Hubs**
 - `hubs/morning/` (Morning page), `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping, timers, alarms, renewals), `hubs/settings/` (index, music, phrases, habits, wall, slideshow, timers, morning, background, backup). `hubs/money/` kept but not in `registry.js`.
-- Settings sections, grouped under headings (21/11/2026): Daily routine (music, phrases, habits, breathing), Customisation (background, photos), Device and security (lock, wall, backup and export, Sign out). App lock hidden on the wall. Daily routine also has Timer presets and Morning page. New sections need a `group` in `SECTIONS`.
+- Settings sections, grouped under headings (21/11/2026): Daily routine (music, phrases, habits, breathing), Customisation (home style (phone only), background, photos), Device and security (lock, wall, backup and export, Sign out). App lock hidden on the wall. Daily routine also has Timer presets and Morning page. New sections need a `group` in `SECTIONS`.
 
 **Tiles:** `tiles/weather`, `tiles/photos`, `tiles/calendar`, `tiles/music`, `tiles/lights`.
 
