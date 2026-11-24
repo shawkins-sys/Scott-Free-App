@@ -17,7 +17,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 
 const ALLOWED_ORIGINS = ['https://shawkins-sys.github.io', 'http://localhost:8000'];
 const TEAM_ID = 66; // Manchester United on football-data.org
-const UA = 'ScottHub/1.0 (personal app; https://shawkins-sys.github.io/Scott-Free-App/)';
+const UA = 'Mozilla/5.0 (compatible; ScottHub/1.0; personal app; +https://shawkins-sys.github.io/Scott-Free-App/)';
 
 export const TOPICS: Record<string, { title: string; feeds: string[] }> = {
   tech: {
@@ -35,7 +35,12 @@ export const TOPICS: Record<string, { title: string; feeds: string[] }> = {
     ],
   },
 };
-const GOOD_FEEDS = ['https://www.positive.news/feed/'];
+// Tried together; whichever answers is used (some sites block server requests).
+const GOOD_FEEDS = [
+  'https://www.positive.news/feed/',
+  'https://www.goodnewsnetwork.org/feed/',
+  'https://reasonstobecheerful.world/feed/',
+];
 
 // Headlines containing any of these are left out (Scott: keep it calm).
 const HEAVY = /\b(dies|died|dead|death|deaths|killed|kills|killing|murder\w*|war|wars|attack\w*|crash\w*|shooting|stabb\w*|terror\w*|abuse\w*|assault\w*|suicide|bomb\w*|missile\w*|hostage\w*|rape\w*|massacre|tragedy|tragic|victim\w*|injur\w*|fatal\w*)\b/i;
@@ -71,7 +76,29 @@ const tag = (item: string, name: string) => {
   return m ? decode(m[1]) : '';
 };
 
-export interface Story { title: string; url: string; source: string; at: number; summary?: string }
+export interface Story { title: string; url: string; source: string; at: number; summary?: string; image?: string }
+
+// A small picture for the story: media:thumbnail (BBC), the media:content
+// closest above 200px wide (The Guardian), an image enclosure, or the first <img>
+// in the content. Only https images are used.
+export function storyImage(item: string): string {
+  const attr = (el: string, name: string) => (el.match(new RegExp(`${name}="([^"]+)"`, 'i')) || [])[1] || '';
+  const clean = (u: string) => u.replace(/&amp;/g, '&');
+  const thumb = item.match(/<media:thumbnail[^>]*>/i);
+  if (thumb && attr(thumb[0], 'url')) return clean(attr(thumb[0], 'url'));
+  const contents = (item.match(/<media:content[^>]*>/gi) || [])
+    .map((el) => ({ url: attr(el, 'url'), w: Number(attr(el, 'width')) || 0, medium: attr(el, 'medium'), type: attr(el, 'type') }))
+    .filter((c) => c.url && (c.medium === 'image' || /^image\//.test(c.type) || /\.(jpe?g|png|webp)(\?|$)/i.test(c.url) || c.w));
+  if (contents.length) {
+    // Smallest picture at least 200px wide (sharp on a phone), else the largest.
+    const big = contents.filter((c) => (c.w || 600) >= 200).sort((a, b) => (a.w || 600) - (b.w || 600));
+    return clean((big[0] || contents.sort((a, b) => b.w - a.w)[0]).url);
+  }
+  const enc = item.match(/<enclosure[^>]*type="image\/[^"]*"[^>]*>/i);
+  if (enc && attr(enc[0], 'url')) return clean(attr(enc[0], 'url'));
+  const img = item.match(/<img[^>]+src="([^"]+)"/i) || item.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').match(/<img[^>]+src="([^"]+)"/i);
+  return img ? clean(img[1]) : '';
+}
 
 export function parseRss(xml: string, fallbackSource = ''): Story[] {
   const source = decode((xml.match(/<channel>[\s\S]*?<title>([\s\S]*?)<\/title>/i) || [])[1] || fallbackSource)
@@ -83,7 +110,8 @@ export function parseRss(xml: string, fallbackSource = ''): Story[] {
     source,
     at: Date.parse(tag(it, 'pubDate') || tag(it, 'dc:date')) || 0,
     summary: tag(it, 'description').slice(0, 220),
-  })).filter((s) => s.title && /^https?:/.test(s.url));
+    image: storyImage(it),
+  })).map((st) => (/^https:/.test(st.image || '') ? st : { ...st, image: '' })).filter((s) => s.title && /^https?:/.test(s.url));
 }
 
 // Newest first, heavy stories and near-duplicate titles removed.
@@ -103,7 +131,8 @@ async function fetchFeed(url: string): Promise<Story[]> {
   if (!res.ok) throw new Error(`${url} ${res.status}`);
   const host = new URL(url).hostname;
   const label = host.includes('bbc') ? 'BBC' : host.includes('theguardian') ? 'The Guardian'
-    : host.includes('positive.news') ? 'Positive News' : host.replace(/^www\./, '');
+    : host.includes('positive.news') ? 'Positive News' : host.includes('goodnewsnetwork') ? 'Good News Network'
+    : host.includes('reasonstobecheerful') ? 'Reasons to be Cheerful' : host.replace(/^www\./, '');
   return parseRss(await res.text(), label).map((st) => ({ ...st, source: label }));
 }
 
@@ -121,7 +150,7 @@ async function goodThing() {
   // One story per day, the same all day.
   const day = Math.floor(Date.now() / 86400000);
   const s = all[day % Math.min(all.length, 5)];
-  return { title: s.title, url: s.url, source: s.source, summary: s.summary || '' };
+  return { title: s.title, url: s.url, source: s.source, summary: s.summary || '', image: s.image || '' };
 }
 
 // ---------- On this day ----------

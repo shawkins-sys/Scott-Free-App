@@ -63,8 +63,14 @@ function footballHtml(f) {
 
 function newsHtml(topic) {
   if (!topic.stories || !topic.stories.length) return '<p class="muted small">No headlines right now.</p>';
+  // News-site rows: small picture on the left (when the feed has one), then
+  // headline, source and age. The whole row opens the article.
   return `<ul class="mo-news">${topic.stories.map((s) => `
-    <li>${link(s.url, esc(s.title))}<span class="muted small">${esc(s.source)}${s.at ? ` &middot; ${ago(s.at)}` : ''}</span></li>`).join('')}</ul>`;
+    <li><a class="mo-story" href="${esc(s.url)}" target="_blank" rel="noopener">
+      ${s.image ? `<img class="mo-thumb" src="${esc(s.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}
+      <span class="mo-story-text"><span class="mo-story-title">${esc(s.title)}</span>
+        <span class="muted small">${esc(s.source)}${s.at ? ` &middot; ${ago(s.at)}` : ''}</span></span>
+    </a></li>`).join('')}</ul>`;
 }
 
 // Rough reading time for the "x min read" line.
@@ -86,6 +92,7 @@ function pageHtml(saved, show) {
   }
   if (show.good && d.good) {
     parts.push(`<section class="mo-sec"><h2 class="mo-head">One good thing</h2>
+      ${d.good.image ? `<a href="${esc(d.good.url)}" target="_blank" rel="noopener"><img class="mo-good-img" src="${esc(d.good.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></a>` : ''}
       <p class="mo-good">${link(d.good.url, esc(d.good.title))}</p>
       ${d.good.summary ? `<p class="muted small">${esc(d.good.summary)}</p>` : ''}
       <p class="muted small">${esc(d.good.source)}</p></section>`);

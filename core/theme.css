@@ -964,3 +964,15 @@ body.wall .tm-btns .pill-btn, body.wall .tm-preset { min-height: 56px; padding: 
 body.wall .mo-title { font-size: 2rem; }
 body.wall .mo-news a { font-size: 1.15rem; }
 .mo-sec p a.mo-more { color: var(--accent); font-weight: 400; }
+/* News-site rows with a small picture (24/11/2026) */
+.mo-news { gap: 0; }
+.mo-news li { display: block; border-bottom: 1px solid var(--border); }
+.mo-news li:last-child { border-bottom: 0; }
+.mo-story { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; color: var(--text); text-decoration: none; }
+.mo-story:active { opacity: 0.7; }
+.mo-thumb { flex: 0 0 auto; width: 96px; height: 64px; object-fit: cover; border-radius: 10px; background: var(--border); }
+.mo-story-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.mo-story-title { font-weight: 500; line-height: 1.35; overflow-wrap: anywhere; }
+.mo-good-img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; margin: 0 0 10px; background: var(--border); }
+body.wall .mo-thumb { width: 140px; height: 94px; }
+body.wall .mo-story-title { font-size: 1.15rem; }
