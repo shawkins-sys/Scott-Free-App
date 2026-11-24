@@ -15,11 +15,11 @@ import { listReviews, buildSnapshot, reviewHtml, weekStartOf, syncReviews } from
 
 // Weekly review card: this week so far (not saved) and Past reviews, newest first.
 async function renderWeekly(card) {
-  card.innerHTML = '<h2 class="card-title">Weekly review</h2><p class="muted small">Loading...</p>';
+  card.innerHTML = '<div class="card-row"><h2 class="card-title" role="button" aria-expanded="false">Weekly review</h2></div><p class="muted small">Loading...</p>';
   let reviews = [];
   try { await syncReviews(); reviews = await listReviews(); } catch (err) { console.warn(err); }
   card.innerHTML = `
-    <h2 class="card-title">Weekly review</h2>
+    <div class="card-row"><h2 class="card-title" role="button" aria-expanded="${!card.classList.contains('collapsed')}">Weekly review</h2></div>
     <button class="pill-btn" data-week-now>This week so far</button>
     <h3 class="w-head">Past reviews</h3>
     ${reviews.length ? `<ul class="row-list">${reviews.map((r) => `
@@ -127,11 +127,21 @@ export default {
     container.innerHTML = `
       <div class="card" id="wb-history"></div>
       <div class="card" id="wb-trends"></div>
-      <div class="card" id="wb-weekly"></div>
-      <div class="card"><h2 class="card-title">Box breathing</h2>
+      <div class="card collapsible collapsed" id="wb-weekly"></div>
+      <div class="card collapsible collapsed"><div class="card-row"><h2 class="card-title" role="button" aria-expanded="false">Box breathing</h2></div>
         <p class="muted small">Breathe in 4, hold 4, out 4, hold 4. Four rounds, about a minute.</p>
         <button class="pill-btn" data-breathe>Start</button></div>`;
     container.querySelector('[data-breathe]').addEventListener('click', () => runBreathing());
+    // Weekly review and Box breathing open on tapping the heading; closed on
+    // arrival, like Lists and Key dates in Plan (Scott, 24/11/2026).
+    container.querySelectorAll('.collapsible').forEach((card) => {
+      card.addEventListener('click', (e) => {
+        const title = e.target.closest('.card-title');
+        if (!title || title.closest('.card') !== card) return;
+        card.classList.toggle('collapsed');
+        title.setAttribute('aria-expanded', String(!card.classList.contains('collapsed')));
+      });
+    });
     const historyEl = container.querySelector('#wb-history');
 
     const editToday = async () => {
