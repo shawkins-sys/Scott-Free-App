@@ -1,12 +1,12 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 21/11/2026. Current release: `sw.js` VERSION `sf-v77` (Google Photos working; slideshow settings per device; photo frame mode on the wall; tiles adapt to their size; foldable inner screen uses the phone layout).
+Last updated: 24/11/2026. Current release: `sw.js` VERSION `sf-v93` (Money removed and replaced by the Morning page; timers and wall alarms in Plan; timed app lock; faster loading).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
 ## 1. Starter prompt for the new chat
 
-> Continue building Scott Hub (formerly Scott Free). Read `claude/HANDOVER.md`, `claude/FUTURE-UPDATES.md` and `claude/scott-free-build-prompt.md` in this Project. Attach `shawkins-sys/scott-free-app` with push access and clone it. Next feature: <choose from the roadmap>. Confirm the design decisions with me first before building.
+> Continue building Scott Hub (formerly Scott Free). Read `claude/HANDOVER.md`, `claude/FUTURE-UPDATES.md`, `claude/MORNING-PLAN.md` and `claude/scott-free-build-prompt.md` in this Project. Attach `shawkins-sys/scott-free-app` with push access and clone it. Next feature: <choose from the roadmap>. Confirm the design decisions with me first before building.
 
 ## 2. Project basics
 
@@ -45,7 +45,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 
 - Everything, Settings included, stays locked until the day's check-in is complete. No exceptions. This applies to every tile and every future build (Scott, 21/11/2026): enforced for every tile in `core/grid.js` (`renderTile()`), so new tiles are covered automatically.
 - App lock (phone and desktop): 4-digit PIN or fingerprint, asked when the app is opened or returned to after being closed or in the background for longer than a per-device limit (Settings, App lock: 1 min, 15 min, 1 hour, 2 hours or 4 hours; default 2 hours, Scott 24/11/2026). Lock now always asks. 5 wrong tries cause a 5-minute wait. Applies on every device except the wall display.
-- Wall display (tablet/TV): no app lock. Settings needs the hub PIN (Wellbeing optionally). Plan stays open. **Money hub is fully hidden on the wall** (not in the hub bar, route redirects Home, no money lines in the weekly card or quiet lines).
+- Wall display (tablet/TV): no app lock. Settings needs the hub PIN (Wellbeing optionally). Plan stays open. Money was removed everywhere on 22/11/2026 (see section 13).
 - Mood colours run soft red (1) to green (5). Emotional and work stress are reversed (1 = green). Warnings use the separate amber `--alert`.
 - Sleep: 7 to 8 hours is good; below 7 or above 8 shows red.
 
@@ -71,7 +71,8 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/checkin.js`: check-in form (6 metrics, sleep range, "One good thing that happened yesterday (optional)").
 - `core/applock.js`: PIN and fingerprint app lock.
 - `core/device.js` (also `isPhoneDevice()`: any mobile browser is phone), `core/wall.js`, `core/hubpin.js`, `core/frame.js` (photo frame mode): wall display and hub PIN.
-- `core/money.js`, `core/payschedule.js`, `core/statement.js`, `core/statement-pdf.js`: money and statement import (PDF parser provisional).
+- `core/money.js`, `core/payschedule.js`, `core/statement.js`, `core/statement-pdf.js`: old Money code, switched off (kept; `core/money.js` still used by the one-off renewals card).
+- `core/morning.js`: Morning page data (device copy, section switches). `core/timers.js`, `core/alarms.js` (wall), `core/frame.js` (wall photo frame).
 - `core/keydates.js`, `core/calendar.js`, `core/quiet-lines.js`.
 - `core/shopping.js`: shopping data, local copy and offline outbox.
 - `core/habits.js`: habit definitions for the check-in.
@@ -82,8 +83,8 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/theme.css`: theme, `--lvl-1` to `--lvl-5`, `--alert`.
 
 **Hubs**
-- `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping), `hubs/money/` (index, import, spending), `hubs/settings/` (index, music, phrases, habits, wall).
-- Settings sections, grouped under headings (21/11/2026): Daily routine (music, phrases, habits, breathing), Customisation (background, photos), Money (pay), Device and security (lock, wall, backup and export, Sign out). Pay and lock hidden on the wall. New sections need a `group` in `SECTIONS`.
+- `hubs/morning/` (Morning page), `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping, timers, alarms, renewals), `hubs/settings/` (index, music, phrases, habits, wall, slideshow, timers, morning, background, backup). `hubs/money/` kept but not in `registry.js`.
+- Settings sections, grouped under headings (21/11/2026): Daily routine (music, phrases, habits, breathing), Customisation (background, photos), Device and security (lock, wall, backup and export, Sign out). App lock hidden on the wall. Daily routine also has Timer presets and Morning page. New sections need a `group` in `SECTIONS`.
 
 **Tiles:** `tiles/weather`, `tiles/photos`, `tiles/calendar`, `tiles/music`, `tiles/lights`.
 
@@ -105,7 +106,8 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 1. **Calendar:** done 21/11/2026 (secret set, `calendar-feed` deployed, Verify JWT off).
 2. **Google Photos:** done 21/11/2026 (Google Cloud project "Scott Hub" in Testing with Scott as test user, Client ID in `config.js`, `photos-import` deployed with Verify JWT off, first import of 6 photos worked).
 3. **Spotify:** done 21/11/2026 (connected, resume of last played confirmed working). Settings, Morning music has a "Plays on" switch (`settings.data.music.playOn`, default phone) because the Spotify Web API does not list Sonos; Scott uses phone and switches to the Sonos from his lock screen. Speaker mode keeps the original home/away logic. Possible later: Sonos Control API with Sonos Favourites.
-4. **Bank statement:** ON HOLD until the Money rethink is decided (see `claude/FUTURE-UPDATES.md` item 5).
+4. **Bank statement:** no longer needed (Money removed 22/11/2026).
+7. **Morning:** done 24/11/2026 (`morning` deployed, Verify JWT off, `FOOTBALL_DATA_TOKEN` set). Redeploy `morning` after any change to `supabase/functions/morning/index.ts`.
 5. **Bank holidays:** confirm the gov.uk fetch works on the phone (CORS).
 6. **Wall display:** SQL done (21/11/2026). Set the hub PIN from the phone, then test on a tablet.
 
@@ -125,16 +127,22 @@ Required questions about yesterday in the check-in (alcohol, social media, caffe
 
 Any number of scenes (Scott wants more than 4 over time); add an entry to `SCENES` in `core/background.js`. Live: beach, palms ("Palm trees"), coral, rainforest, winter, mountains ("Misty mountains"). Planned: northern lights (with aurora). Each needs phone day, phone night, wall day (landscape 16:10), wall night. Done: all six scenes, phone and wall, day and night (21/11/2026; beach replaced with a new set, v 2). Landscape (wall) images are used on the wall display and on any screen wider than tall. To add one: compress to WebP (quality about 78, phone up to 1080 px wide, wall up to 2560 px), save as `assets/bg/<scene>-<phone|wall>-<day|night>.webp`, fill the path in `SCENES` in `core/background.js`, bump that scene's `v` if replacing. If the beach `v` changes, update `BG_FALLBACK` in sw.js. Bump sw.js VERSION. Keep composition: plain top, detail at edges and bottom.
 
-## 11. Next step (end of 21/11/2026 session)
+## 13. Morning page (built 22 to 24/11/2026)
 
-**Google Photos Phase B built (sf-v74):** slideshow speed and transition per device type (see PROGRESS.md).
+Replaced Money (Scott: Money felt like work; the app is to help him switch off). Full decisions and sources in `claude/MORNING-PLAN.md`. One briefing page: Man Utd last and next match as score boxes, matchday results and table folded; headlines with small pictures: Man Utd and FPL daily, plus one rotating topic a day (Phones and new tech, PlayStation, Fishkeeping, Cheltenham; 3 stories from the past week); One good thing; On this day; heavy news filtered. Edge Function `morning` (football-data.org token, RSS feeds, Wikipedia). Settings, Daily routine, Morning page switches topics.
 
-**Google Photos Phase C built (sf-v77):** photo frame mode on the wall (`core/frame.js`, settings in Settings, Wall display). Google Photos follow-up is complete; Scott to test frame mode on the tablet.
+## 14. Other builds since 21/11/2026 (details in PROGRESS.md)
+- Timers in Plan (all devices) and alarms in Plan (wall only, kept on the tablet; may move to the account later so the phone can set them).
+- App lock is timed: asks after longer than the device's limit away (default 2 hours, Settings, App lock).
+- Faster start: app files served cache first (release only arrives when VERSION changes), tiles load in parallel, layout and check-in from the device copy first.
+- Tiles adapt to their size (container queries); foldable inner screen uses the phone layout.
+- Home key dates line is a readable pill. Open app links are small pill buttons.
+- Another chat (24/11/2026) made Plan's Key dates and Lists open on tapping the heading, with counts (sf-v88, sf-v89). Work in one chat at a time to avoid clashing pushes; if a push is refused, rebase on origin/main and take the next VERSION number.
 
-Then suggested order:
-1. **Money section rethink** (FUTURE-UPDATES item 5): Scott wants the app to support his mental health, not feel like a job. Decide what to keep (if anything), whether money appears on Home, and what happens to existing money data. Biggest open design question.
-2. **Northern lights background scene**: prompts given; Scott to generate four images (phone and landscape, day and night, aurora in the night versions). Add as a new `SCENES` entry.
-3. **Scott's setup**: wall display hub PIN and tablet test, confirm bank holidays load on the phone.
-4. **Plan hub**: Key dates and Next 7 days could become collapsible like Lists (Scott said "Lists only for now").
-5. **Parked ideas** (FUTURE-UPDATES): News, Premier League scores, Alarm or timer, Tesla sync. Older roadmap: countdown timers, push notifications, home move hub, family sharing for lists.
+## 11. Next step (end of 24/11/2026 session)
 
+Suggested order:
+1. **Morning Phase 3 polish** (list in `claude/MORNING-PLAN.md`): One good thing picture for Good News Network, summary cut at a sentence, team names on one line, check each rotating topic on its day and swap failing feeds, wall sizes.
+2. **New background art** (Scott plans to add more scenes; see section 12 for how).
+3. **Scott's setup**: wall display hub PIN and tablet test (photo frame mode, alarms sound after a reload), confirm bank holidays load on the phone.
+4. **Parked ideas** (FUTURE-UPDATES): Lights on the Hue Remote API (item 6, frees the Voice Monkey triggers), Tesla sync, alarms set from the phone. Older roadmap: countdown timers, push notifications, home move hub, family sharing for lists.
