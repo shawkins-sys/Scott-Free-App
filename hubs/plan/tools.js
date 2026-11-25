@@ -13,6 +13,8 @@ import { openOverlay } from '../../core/overlay.js';
 import { renderShopping } from './shopping.js';
 import { renderTimers } from './timers.js';
 import { renderRenewalCopy } from './renewals.js';
+import { renderCountdowns } from './countdowns.js';
+import { cachedCountdowns, listCountdowns, countdownStatus, countdownRows } from '../../core/countdowns.js';
 
 const DAYS = 8; // today plus the next 7 days
 
@@ -20,6 +22,7 @@ const svg = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 const ICON = {
   lists: svg('<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>'),
   timers: svg('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>'),
+  countdowns: svg('<path d="M7 3h10M7 21h10M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/>'),
   keydates: svg('<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M12 13.5v3M10.5 15h3"/>'),
 };
 
@@ -27,6 +30,7 @@ const TOOLS = [
   { id: 'lists', title: 'Lists' },
   { id: 'timers', title: 'Timers' },
   { id: 'keydates', title: 'Key dates' },
+  { id: 'countdowns', title: 'Countdowns' },
 ];
 
 const tileHtml = (t) => `
@@ -73,7 +77,7 @@ function keyDatesStatus(items) {
 }
 
 // ---------- Coming up ----------
-async function renderComingUp(slot, keyDates, onKeyDate) {
+async function renderComingUp(slot, keyDates, countdowns, onKeyDate, onCountdown) {
   const result = await getEvents(DAYS).catch((err) => { console.warn('Calendar failed', err); return null; });
   if (!slot.isConnected) return;
   const events = result && result.configured ? result.events : [];
@@ -81,7 +85,7 @@ async function renderComingUp(slot, keyDates, onKeyDate) {
   const days = [];
   for (let i = 0; i < DAYS; i += 1) {
     const key = addDaysKey(today, i);
-    const rows = keyDateRows(keyDates, key, today) + eventRows(events, key, { dimFinished: true });
+    const rows = countdownRows(countdowns, key) + keyDateRows(keyDates, key, today) + eventRows(events, key, { dimFinished: true });
     if (rows) days.push(`<section class="agenda-day"><h3 class="agenda-head">${dayLabel(key)}</h3><ul class="ev-list">${rows}</ul></section>`);
   }
   if (!days.length) { slot.hidden = true; slot.innerHTML = ''; return; }
@@ -89,7 +93,10 @@ async function renderComingUp(slot, keyDates, onKeyDate) {
   slot.hidden = false;
   bindEventClicks(slot, events);
   // Key date rows link to this page; open the Key dates sheet instead.
-  slot.querySelectorAll('.kd a').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); onKeyDate(); }));
+  slot.querySelectorAll('.kd a').forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (a.closest('.cdr')) onCountdown(); else onKeyDate();
+  }));
 }
 
 // ---------- Sheets ----------
@@ -108,6 +115,7 @@ export async function renderTools(container, { renderKeyDates }) {
     <div class="tools-grid">${TOOLS.map(tileHtml).join('')}</div>`;
 
   let keyDates = null;
+  let countdowns = cachedCountdowns();
   const setStatus = (id, html) => {
     const el = container.querySelector(`[data-status="${id}"]`);
     if (el) el.innerHTML = html;
@@ -117,6 +125,7 @@ export async function renderTools(container, { renderKeyDates }) {
     setStatus('lists', esc(listsStatus()));
     setStatus('timers', esc(timersStatus()));
     setStatus('keydates', keyDatesStatus(keyDates));
+    setStatus('countdowns', esc(countdownStatus(countdowns)));
   };
   const loadKeyDates = async () => {
     keyDates = await getKeyDatesSafe();
@@ -135,10 +144,17 @@ export async function renderTools(container, { renderKeyDates }) {
     ]);
   }, refreshAll);
 
+  const openCountdowns = () => openSheet('Countdowns', (card) => renderCountdowns(card), refreshAll);
+
   async function refreshAll() {
     if (!container.isConnected) return;
-    const items = await loadKeyDates();
-    renderComingUp(container.querySelector('#tools-coming'), items, openKeyDates);
+    const [items, cds] = await Promise.all([
+      loadKeyDates(),
+      listCountdowns().catch((err) => { console.warn('Countdowns not loaded', err); return countdowns; }),
+    ]);
+    countdowns = cds;
+    refreshStatus();
+    renderComingUp(container.querySelector('#tools-coming'), items, countdowns, openKeyDates, openCountdowns);
   }
 
   container.querySelector('.tools-grid').addEventListener('click', (e) => {
@@ -148,6 +164,7 @@ export async function renderTools(container, { renderKeyDates }) {
     if (id === 'lists') openSheet('Lists', (card) => renderShopping(card), refreshStatus);
     if (id === 'timers') openSheet('Timers', (card) => renderTimers(card), refreshStatus);
     if (id === 'keydates') openKeyDates();
+    if (id === 'countdowns') openCountdowns();
   });
 
   // Live updates: list changes, timer ticks. Listeners stop once the page is left.
