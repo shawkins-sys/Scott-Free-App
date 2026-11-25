@@ -20,7 +20,7 @@ import { renderQuietLines } from './quiet-lines.js';
 import { startLiveDot, liveDotHtml } from './livedot.js';
 import { applySavedBackground, startBackground } from './background.js';
 import { startTimers, renderTimerLine } from './timers.js';
-import { useCalm, syncHomeStyle, calmHomeHtml, revealCalm, resetCalm } from './calm.js';
+import { useCalm, useCalmPage, syncHomeStyle, calmHomeHtml, revealCalm, resetCalm } from './calm.js';
 
 const view = document.getElementById('view');
 const hubbar = document.getElementById('hubbar');
@@ -169,7 +169,14 @@ async function renderHub(id) {
   if (!entry || (isWall() && id === 'money')) { location.hash = '#/'; return; }
   gridCtl = null;
   calmOn = false;
-  view.innerHTML = `
+  view.innerHTML = useCalmPage(id) ? `
+    <section class="hub calm-page" data-hub="${id}">
+      <header class="hub-head calm-page-head">
+        <h1>${entry.title}</h1>
+        <p class="calm-page-sub">${friendlyDate(new Date())}</p>
+      </header>
+      <div class="hub-body"></div>
+    </section>` : `
     <section class="hub">
       <header class="hub-head">
         <a class="icon-btn" href="#/" aria-label="Back to Home">${icons.back}</a>

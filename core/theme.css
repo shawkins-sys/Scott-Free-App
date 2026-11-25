@@ -1145,3 +1145,42 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 #overlay.glass .weather-full .w-head { margin: 16px 4px 8px; }
 #overlay.glass .weather-full .w-days li:last-child { border-bottom: 0; }
 #overlay.glass .weather-full .w-days li { border-bottom-color: var(--bar-border); }
+
+/* ---------- Calm pages (phone, 25/11/2026) ----------
+   Hubs listed in CALM_PAGES (core/calm.js) get the calm Home look: a serif title
+   on the art, then frosted glass cards (same glass as the bottom bar). */
+.calm-page {
+  --serif: ui-serif, "Iowan Old Style", Georgia, Cambria, "Times New Roman", serif;
+  --halo: rgba(247, 249, 253, 0.9);
+  --glass: color-mix(in srgb, var(--card) 62%, transparent);
+  --glass-inner: color-mix(in srgb, var(--card) 55%, transparent);
+}
+@media (prefers-color-scheme: dark) { .calm-page { --halo: rgba(12, 19, 30, 0.9); } }
+.calm-page .hub-head { display: block; text-align: center; padding: 10px 4px 20px; }
+.calm-page .hub-head h1 { font-family: var(--serif); font-weight: 500; font-size: 2rem; letter-spacing: -0.01em; }
+.calm-page-sub { margin: 4px 0 0; font-size: 0.85rem; font-weight: 500; color: var(--muted); }
+.calm-page .hub-head h1, .calm-page-sub, .calm-page .mo-end, .calm-page .mo-updated {
+  text-shadow: 0 0 2px var(--halo), 0 0 8px var(--halo), 0 0 16px var(--halo);
+}
+.calm-page .hub-body { max-width: 560px; margin: 0 auto; }
+.calm-page .card {
+  background: var(--glass); background-image: none; box-shadow: none;
+  -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--bar-border); border-radius: 20px; padding: 16px 18px;
+}
+
+/* Morning: each section is its own glass card */
+.calm-page .mo-card { background: none; border: 0; padding: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.calm-page .mo-intro { display: none; }
+.calm-page .mo-sec {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--bar-border); border-radius: 20px; padding: 16px 18px; margin: 0 0 12px;
+}
+.calm-page .mo-head { font-family: var(--serif); font-weight: 500; font-size: 1.2rem; letter-spacing: 0; text-transform: none; color: var(--text); margin: 0 0 10px; }
+.calm-page .mo-tag { font-family: var(--font); font-size: 0.7rem; vertical-align: middle; border-color: var(--bar-border); color: var(--muted); }
+.calm-page .mo-match { background: var(--glass-inner); border-color: var(--bar-border); border-radius: 16px; }
+.calm-page .mo-news li, .calm-page .mo-table th, .calm-page .mo-table td { border-bottom-color: var(--bar-border); }
+.calm-page .mo-thumb, .calm-page .mo-good-img { border-radius: 12px; }
+.calm-page .mo-table summary { border-top: 1px solid var(--bar-border); margin-top: 6px; }
+.calm-page .mo-refresh { color: var(--accent); }

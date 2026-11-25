@@ -108,8 +108,8 @@ function pageHtml(saved, show) {
   if (!parts.length) parts.push('<p class="muted">All sections are turned off. Choose what to show in Settings, Morning.</p>');
   return `
     <div class="card mo-card">
-      <h1 class="mo-title">Morning read</h1>
-      <p class="muted small">${friendlyDate(new Date())} &middot; ${minutes(d, show)} min read</p>
+      <div class="mo-intro"><h1 class="mo-title">Morning read</h1>
+      <p class="muted small">${friendlyDate(new Date())} &middot; ${minutes(d, show)} min read</p></div>
       ${parts.join('')}
       <p class="mo-end">That's everything for today</p>
     </div>
@@ -124,6 +124,12 @@ export default {
     let saved = savedMorning();
     const draw = () => {
       if (!container.isConnected) return;
+      // Calm style: the title and "x min read" move up into the page header.
+      const hub = container.closest('.calm-page');
+      if (hub && saved) {
+        hub.querySelector('h1').textContent = 'Morning read';
+        hub.querySelector('.calm-page-sub').textContent = `${friendlyDate(new Date())} \u00b7 ${minutes(saved, show)} min read`;
+      }
       container.innerHTML = saved ? pageHtml(saved, show)
         : '<div class="card"><p class="muted">Getting this morning\'s read...</p></div>';
     };
