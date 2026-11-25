@@ -1,6 +1,6 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 25/11/2026. Current release: `sw.js` VERSION `sf-v111` (calm Home and calm pages (Morning, Wellbeing, Plan, Settings) on the phone; Lights and Weather sheets in glass; taller, more see-through bottom bar; nine background scenes; bottom bar icons only, slim glass; Wellbeing cards fold; Lists count shows lists; Morning page; timers and wall alarms; timed app lock; faster loading).
+Last updated: 25/11/2026. Current release: `sw.js` VERSION `sf-v111` (background art round 2 complete: Northern lights, Desert dunes, Cotswolds; calm Home and calm pages (Morning, Wellbeing, Plan, Settings) on the phone; Lights and Weather sheets in glass; taller, more see-through bottom bar; timers and wall alarms; timed app lock; faster loading). Check `git log` for anything newer, as more than one chat works on the app.
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -15,7 +15,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - **Live site:** https://shawkins-sys.github.io/Scott-Free-App/ (GitHub Pages).
 - **Backend:** Supabase project `fkcnfgevtwemgokrjxrk`.
 - **Brief:** `claude/scott-free-build-prompt.md` in the claude.ai Project (v2 plus section 14 addendum, now built).
-- **Progress log:** `docs/PROGRESS.md` in the repo, mirrored to the Project doc `claude/PROGRESS.md`.
+- **Progress log:** `docs/PROGRESS.md` in the repo, mirrored to the Project doc `claude/PROGRESS.md`. The repo copy is the full record (about 88 KB); the Project copy may lag behind it.
 
 ## 3. Working rules (must follow)
 
@@ -100,6 +100,7 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - Stub Supabase and CDN libraries with `page.route`, including CORS headers.
 - Local static server on port 8766 (repo root). Restart it after pauses. Reload after a hash change.
 - Check light and dark mode for visual changes.
+- Note (24/11/2026): in some sessions starting the local server is blocked. For image-only changes, check the images under the light and dark veils (composited with PIL) and run `node --check` on edited files instead.
 
 ## 9. Scott's outstanding setup (remind him at the end of the build)
 
@@ -124,9 +125,11 @@ Section inside Plan, shown as "Lists" (renamed 21/11/2026; code and tables keep 
 
 Required questions about yesterday in the check-in (alcohol, social media, caffeine after 2pm, screens in bed), managed in Settings, Habits. Patterns in Wellbeing trends after 14 check-ins with 5+ days each side. SQL in `supabase/habits.sql`.
 
-## 12. Background images (in progress)
+## 12. Background images (9 scenes live)
 
-Any number of scenes (Scott wants more than 4 over time); add an entry to `SCENES` in `core/background.js`. Live (nine): beach, palms ("Palm trees"), coral, rainforest, winter, mountains ("Misty mountains"), northern lights, dunes ("Desert dunes"), cotswolds. Each needs phone day, phone night, wall day (landscape 16:10), wall night. Done: all six scenes, phone and wall, day and night (21/11/2026; beach replaced with a new set, v 2). Landscape (wall) images are used on the wall display and on any screen wider than tall. To add one: compress to WebP (quality about 78, phone up to 1080 px wide, wall up to 2560 px), save as `assets/bg/<scene>-<phone|wall>-<day|night>.webp`, fill the path in `SCENES` in `core/background.js`, bump that scene's `v` if replacing. If the beach `v` changes, update `BG_FALLBACK` in sw.js. Bump sw.js VERSION. Keep composition: plain top, detail at edges and bottom.
+Any number of scenes; add an entry to `SCENES` in `core/background.js`. Live (all with phone and wall, day and night): beach (v 2), palms ("Palm trees"), coral, rainforest, winter, mountains ("Misty mountains"), northern ("Northern lights", sf-v94), dunes ("Desert dunes", sf-v95), cotswolds ("Cotswolds", sf-v111). Round 2 (24 to 25/11/2026) used the Gemini prompts in `claude/BACKGROUND-PROMPTS.md`; reuse its shared style line and steps for any future scene. Scott makes the images in Gemini and attaches them; Claude does the rest.
+
+To add one: phone images resized to 1080 px wide (Gemini gives 1193x2576, so 1080x2332), wall images centre-cropped to 16:10 and resized to 2560x1592, WebP quality 78 (drop to about 70 if a wall image is over about 250 KB, as with the detailed Cotswolds day), save as `assets/bg/<scene>-<phone|wall>-<day|night>.webp`, fill the paths in `SCENES`, bump that scene's `v` if replacing. If the beach `v` changes, update `BG_FALLBACK` in sw.js. Bump sw.js VERSION. Keep composition: plain top, detail at edges and bottom. Status bar colours are worked out automatically per image.
 
 ## 13. Morning page (built 22 to 24/11/2026)
 
@@ -140,11 +143,14 @@ Replaced Money (Scott: Money felt like work; the app is to help him switch off).
 - Home key dates line is a readable pill. Open app links are small pill buttons.
 - Another chat (24/11/2026) made Plan's Key dates and Lists open on tapping the heading, with counts (sf-v88, sf-v89). Work in one chat at a time to avoid clashing pushes; if a push is refused, rebase on origin/main and take the next VERSION number.
 
-## 11. Next step (end of 24/11/2026 session)
+- Calm pages and sheets (25/11/2026, sf-v103 to sf-v110): bottom bar taller and more see-through; Lights and Weather sheets from calm Home in glass (`openOverlay(title, fn, { glass: true })`); Morning, Wellbeing, Plan and Settings in the calm style; Settings is a list with a page per section. Details in PROGRESS.md.
+
+## 11. Next step (updated 25/11/2026)
 
 Suggested order:
 0. **Calm Home: done (sf-v99 to sf-v101).** Plan in `docs/CALM-HOME-PLAN.md`. Phase 1: `core/calm.js`, Settings, Home style, photo card, check-in gate. Phase 2: `core/calm-cards.js` (Weather, Music, Lights sheet, Calendar link), `core/music-resume.js`. Phase 3: `core/calm-upnext.js` (key dates today or tomorrow). Scott to check on the phone; possible later: overdue items in Up next, Lights toggle if Lights moves to the Hue Remote API (state and per-room off become possible). Calm pages (25/11/2026, sf-v107 to sf-v110): Morning, Wellbeing, Plan, Settings in the same style; Settings is a list with a page per section (Option B); Lights and Weather sheets from calm Home are glass (`openOverlay(title, fn, { glass: true })`); bottom bar 68px and more see-through (sf-v103, sf-v104). The Calm / Tiles switch turns all of it off.
 1. **Morning Phase 3 polish** (list in `claude/MORNING-PLAN.md`): One good thing picture for Good News Network, summary cut at a sentence, team names on one line, check each rotating topic on its day and swap failing feeds, wall sizes.
-2. **Calm pages adjustments** (Scott to use Morning, Wellbeing, Plan and Settings on the phone first, then send one batch). Known leftovers: pop-up forms (add key date, edit list item) still have the old look. More background scenes whenever Scott sends them (section 12).
-3. **Scott's setup**: wall display hub PIN and tablet test (photo frame mode, alarms sound after a reload), confirm bank holidays load on the phone.
-4. **Parked ideas** (FUTURE-UPDATES): Lights on the Hue Remote API (item 6, frees the Voice Monkey triggers), Tesla sync, alarms set from the phone. Older roadmap: countdown timers, push notifications, home move hub, family sharing for lists.
+2. **Calm pages adjustments** (Scott to use Morning, Wellbeing, Plan and Settings on the phone first, then send one batch). Known leftovers: pop-up forms (add key date, edit list item) still have the old look. 
+3. **Background art:** round 2 done (9 scenes). More only if Scott asks; prompts in `claude/BACKGROUND-PROMPTS.md`.
+4. **Scott's setup**: wall display hub PIN and tablet test (photo frame mode, alarms sound after a reload), confirm bank holidays load on the phone.
+5. **Parked ideas** (FUTURE-UPDATES): Lights on the Hue Remote API (item 6, frees the Voice Monkey triggers), Tesla sync, alarms set from the phone. Older roadmap: countdown timers, push notifications, home move hub, family sharing for lists.
