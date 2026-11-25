@@ -368,3 +368,5 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - (25/11/2026, Scott) Ninth scene added: "Cotswolds" (id `cotswolds`, rolling hills with a honey-coloured dry-stone wall and misty valleys; pale golden dawn by day, starry moonlit sky by night), all four images from Scott (Gemini): phone day 154 KB and night 111 KB (1080x2332, WebP q78), landscape day 254 KB (q70, very detailed) and night 187 KB (2560x1592, q78). Round 2 of background art (Northern lights, Desert dunes, Cotswolds) complete; rotation now picks from nine scenes. sw.js VERSION sf-v111.
 
 - sf-v112: Fixed dark smudge behind today's date in the Wellbeing History calendar (Home date halo rule `.today` was also matching `.cal-cell.today`; now text-shadow none on the cell).
+
+- sf-v113: Back gesture / back button now closes pop-up panels (Weather, Lights, all overlays) instead of doing nothing. core/overlay.js pushes a history entry on open; X still works and removes it.
