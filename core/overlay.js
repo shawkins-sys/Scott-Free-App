@@ -36,6 +36,7 @@ export function openOverlay(title, renderFn, opts = {}) {
     root.innerHTML = '';
     document.body.classList.remove('no-scroll');
     document.removeEventListener('keydown', onKey);
+    if (opts.onClose) { try { opts.onClose(); } catch (err) { console.error(err); } }
     const own = history.state && history.state.sfOverlay === mark.sfOverlay;
     if (fromUi === true && own) history.back();
     return own;

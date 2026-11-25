@@ -11,6 +11,8 @@ import { renderTimers } from './timers.js';
 import { renderAlarms } from './alarms.js';
 import { renderRenewalCopy } from './renewals.js';
 import { isWall } from '../../core/device.js';
+import { useCalmPage } from '../../core/calm.js';
+import { renderTools } from './tools.js';
 
 const REPEATS = [
   ['none', 'Does not repeat'],
@@ -196,8 +198,10 @@ async function renderKeyDates(card) {
 
 export default {
   id: 'plan',
-  title: 'Plan',
+  title: 'Tools',
   async render(container) {
+    // Phone with the Calm style: Tools page of tiles (Scott, 25/11/2026).
+    if (useCalmPage('plan')) { await renderTools(container, { renderKeyDates }); return; }
     container.innerHTML = `
       ${isWall() ? '' : '<div class="card" id="plan-renewals"></div>'}
       <div class="card collapsible collapsed" id="plan-shopping"></div>

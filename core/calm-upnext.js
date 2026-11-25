@@ -22,7 +22,7 @@ export async function renderUpNext(slot) {
   const shown = due.slice(0, MAX_ROWS);
   const more = due.length - shown.length;
   slot.innerHTML = `
-    <a class="calm-upnext" href="#/hub/plan" aria-label="Up next, open Plan">
+    <a class="calm-upnext" href="#/hub/plan" aria-label="Up next, open Tools">
       <span class="calm-upnext-head">Up next</span>
       ${shown.map(({ item, date, days }) => {
         const age = ageOn(item, date);

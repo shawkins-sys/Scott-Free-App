@@ -1249,3 +1249,29 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .fr-status { text-align: center; margin: 8px 0 0; }
 .fr-actions { display: flex; justify-content: center; margin-top: 10px; }
 .calm-page .fr-cell { border-color: var(--bar-border); }
+
+/* Tools page (calm, phone; Scott, 25/11/2026): Coming up card (hidden when
+   nothing is due) and a two-column grid of glass tool tiles. Each tile opens
+   its tool in a glass sheet. */
+#tools-coming[hidden] { display: none; }
+.tools-coming .agenda-day:first-of-type .agenda-head { margin-top: 8px; }
+.tools-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.tool-tile {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; min-height: 124px;
+  padding: 16px; box-sizing: border-box; text-align: left; font: inherit; color: var(--text); cursor: pointer;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--bar-border); border-radius: 20px;
+}
+.tool-tile:active { transform: scale(0.97); }
+.tool-icon { display: block; width: 30px; height: 30px; color: var(--accent); margin-bottom: auto; }
+.tool-icon svg { width: 100%; height: 100%; display: block; }
+.tool-name { font-family: var(--serif); font-weight: 500; font-size: 1.15rem; line-height: 1.2; margin-top: 12px; }
+.tool-status { font-size: 0.8rem; color: var(--muted); line-height: 1.3; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Inside a glass sheet the tool's card is see-through and its own heading is
+   hidden (the sheet shows the title); action buttons stay. */
+#overlay.glass .tools-sheet > .card:not(.tools-renewals) { background: none; -webkit-backdrop-filter: none; backdrop-filter: none; border: 0; padding: 0; margin: 0 0 12px; }
+#overlay.glass .tools-sheet > .card:not(.tools-renewals) > .card-row .card-title { display: none; }
+#overlay.glass .tools-sheet > .card > .card-row { justify-content: flex-end; }
+#overlay.glass .tools-sheet > .card > .card-row:not(:has(button)) { display: none; }
+#overlay.glass .tools-sheet > .tools-renewals { background: var(--glass-inner); -webkit-backdrop-filter: none; backdrop-filter: none; }

@@ -9,7 +9,7 @@ export const hubs = [
   // data are kept but unused; to bring it back, restore this line:
   // { id: 'money', title: 'Money', icon: 'money', path: './hubs/money/index.js' },
   { id: 'wellbeing', title: 'Wellbeing', icon: 'wellbeing', path: './hubs/wellbeing/index.js' },
-  { id: 'plan',      title: 'Plan',      icon: 'plan',      path: './hubs/plan/index.js' },
+  { id: 'plan',      title: 'Tools',     icon: 'plan',      path: './hubs/plan/index.js' },
   { id: 'settings',  title: 'Settings',  icon: 'settings',  path: './hubs/settings/index.js' },
 ];
 
