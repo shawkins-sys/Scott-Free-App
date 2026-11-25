@@ -74,16 +74,6 @@ function newsHtml(topic) {
     </a></li>`).join('')}</ul>`;
 }
 
-// Rough reading time for the "x min read" line.
-function minutes(d, show) {
-  let words = 40;
-  if (show.football && d.football && !d.football.error) words += 40 + (d.football.results || []).length * 6;
-  for (const t of d.news || []) if (show[t.id]) words += (t.stories || []).reduce((n, s) => n + s.title.split(' ').length, 0);
-  if (show.good && d.good) words += (d.good.title + ' ' + (d.good.summary || '')).split(' ').length;
-  if (show.otd && d.onThisDay) words += d.onThisDay.text.split(' ').length;
-  return Math.max(1, Math.round(words / 200));
-}
-
 function pageHtml(saved, show) {
   const d = saved.data;
   const parts = [];
@@ -109,7 +99,7 @@ function pageHtml(saved, show) {
   return `
     <div class="card mo-card">
       <div class="mo-intro"><h1 class="mo-title">Morning read</h1>
-      <p class="muted small">${friendlyDate(new Date())} &middot; ${minutes(d, show)} min read</p></div>
+      <p class="muted small">${friendlyDate(new Date())}</p></div>
       ${parts.join('')}
       <p class="mo-end">That's everything for today</p>
     </div>
@@ -124,11 +114,11 @@ export default {
     let saved = savedMorning();
     const draw = () => {
       if (!container.isConnected) return;
-      // Calm style: the title and "x min read" move up into the page header.
+      // Calm style: the title moves up into the page header (date underneath; read time removed 25/11/2026).
       const hub = container.closest('.calm-page');
       if (hub && saved) {
         hub.querySelector('h1').textContent = 'Morning read';
-        hub.querySelector('.calm-page-sub').textContent = `${friendlyDate(new Date())} \u00b7 ${minutes(saved, show)} min read`;
+        hub.querySelector('.calm-page-sub').textContent = friendlyDate(new Date());
       }
       container.innerHTML = saved ? pageHtml(saved, show)
         : '<div class="card"><p class="muted">Getting this morning\'s read...</p></div>';
