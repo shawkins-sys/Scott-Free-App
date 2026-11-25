@@ -15,6 +15,8 @@ import { renderTimers } from './timers.js';
 import { renderRenewalCopy } from './renewals.js';
 import { renderCountdowns } from './countdowns.js';
 import { renderNotes } from './notes.js';
+import { renderLastDone } from './lastdone.js';
+import { cachedLastDone, listLastDone, lastDoneStatus, dueNow, info, dueText } from '../../core/lastdone.js';
 import { cachedNotes, listNotes, notesStatus } from '../../core/notes.js';
 import { cachedCountdowns, listCountdowns, countdownStatus, countdownRows } from '../../core/countdowns.js';
 
@@ -26,6 +28,7 @@ const ICON = {
   timers: svg('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>'),
   countdowns: svg('<path d="M7 3h10M7 21h10M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/>'),
   notes: svg('<path d="M6 3.5h9l4 4V20a.5.5 0 0 1-.5.5h-12A.5.5 0 0 1 6 20z"/><path d="M15 3.5V8h4M9 12h7M9 15.5h7"/>'),
+  lastdone: svg('<path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3 4v4h4"/><path d="M12 7.5V12l3 2"/>'),
   keydates: svg('<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M12 13.5v3M10.5 15h3"/>'),
 };
 
@@ -34,6 +37,7 @@ const TOOLS = [
   { id: 'timers', title: 'Timers' },
   { id: 'keydates', title: 'Key dates' },
   { id: 'countdowns', title: 'Countdowns' },
+  { id: 'lastdone', title: 'Last done' },
   { id: 'notes', title: 'Quick notes' },
 ];
 
@@ -81,7 +85,7 @@ function keyDatesStatus(items) {
 }
 
 // ---------- Coming up ----------
-async function renderComingUp(slot, keyDates, countdowns, onKeyDate, onCountdown) {
+async function renderComingUp(slot, keyDates, countdowns, lastDone, onKeyDate, onCountdown, onLastDone) {
   const result = await getEvents(DAYS).catch((err) => { console.warn('Calendar failed', err); return null; });
   if (!slot.isConnected) return;
   const events = result && result.configured ? result.events : [];
@@ -92,6 +96,14 @@ async function renderComingUp(slot, keyDates, countdowns, onKeyDate, onCountdown
     const rows = countdownRows(countdowns, key) + keyDateRows(keyDates, key, today) + eventRows(events, key, { dimFinished: true });
     if (rows) days.push(`<section class="agenda-day"><h3 class="agenda-head">${dayLabel(key)}</h3><ul class="ev-list">${rows}</ul></section>`);
   }
+  // Last done items due today or overdue sit at the top (Scott, 25/11/2026).
+  const due = dueNow(lastDone);
+  if (due.length) {
+    days.unshift(`<section class="agenda-day"><h3 class="agenda-head">Due now</h3><ul class="ev-list">${due.map((x) => `
+      <li class="ev kd ldr${info(x).state === 'overdue' ? ' overdue' : ''}"><a class="ev-btn" href="#/hub/plan">
+        <span class="ev-time">Last done</span><span class="ev-title">${esc(x.title)}</span><span class="ev-loc">${dueText(info(x))}</span>
+      </a></li>`).join('')}</ul></section>`);
+  }
   if (!days.length) { slot.hidden = true; slot.innerHTML = ''; return; }
   slot.innerHTML = `<div class="card tools-coming"><h2 class="card-title">Coming up</h2>${days.join('')}</div>`;
   slot.hidden = false;
@@ -99,7 +111,7 @@ async function renderComingUp(slot, keyDates, countdowns, onKeyDate, onCountdown
   // Key date rows link to this page; open the Key dates sheet instead.
   slot.querySelectorAll('.kd a').forEach((a) => a.addEventListener('click', (e) => {
     e.preventDefault();
-    if (a.closest('.cdr')) onCountdown(); else onKeyDate();
+    if (a.closest('.cdr')) onCountdown(); else if (a.closest('.ldr')) onLastDone(); else onKeyDate();
   }));
 }
 
@@ -121,6 +133,7 @@ export async function renderTools(container, { renderKeyDates }) {
   let keyDates = null;
   let countdowns = cachedCountdowns();
   let notes = cachedNotes();
+  let lastDone = cachedLastDone();
   const setStatus = (id, html) => {
     const el = container.querySelector(`[data-status="${id}"]`);
     if (el) el.innerHTML = html;
@@ -132,6 +145,9 @@ export async function renderTools(container, { renderKeyDates }) {
     setStatus('keydates', keyDatesStatus(keyDates));
     setStatus('countdowns', esc(countdownStatus(countdowns)));
     setStatus('notes', esc(notesStatus(notes)));
+    setStatus('lastdone', esc(lastDoneStatus(lastDone)));
+    const ld = container.querySelector('[data-tool="lastdone"]');
+    if (ld) ld.dataset.state = lastDone.length ? info(lastDone[0]).state : 'none';
   };
   const loadKeyDates = async () => {
     keyDates = await getKeyDatesSafe();
@@ -150,6 +166,7 @@ export async function renderTools(container, { renderKeyDates }) {
     ]);
   }, refreshAll);
 
+  const openLastDone = () => openSheet('Last done', (card) => renderLastDone(card), refreshAll);
   const openCountdowns = () => openSheet('Countdowns', (card) => renderCountdowns(card), refreshAll);
 
   async function refreshAll() {
@@ -160,8 +177,9 @@ export async function renderTools(container, { renderKeyDates }) {
     ]);
     countdowns = cds;
     notes = await listNotes().catch(() => notes);
+    lastDone = await listLastDone().catch(() => lastDone);
     refreshStatus();
-    renderComingUp(container.querySelector('#tools-coming'), items, countdowns, openKeyDates, openCountdowns);
+    renderComingUp(container.querySelector('#tools-coming'), items, countdowns, lastDone, openKeyDates, openCountdowns, openLastDone);
   }
 
   container.querySelector('.tools-grid').addEventListener('click', (e) => {
@@ -172,6 +190,7 @@ export async function renderTools(container, { renderKeyDates }) {
     if (id === 'timers') openSheet('Timers', (card) => renderTimers(card), refreshStatus);
     if (id === 'keydates') openKeyDates();
     if (id === 'countdowns') openCountdowns();
+    if (id === 'lastdone') openLastDone();
     if (id === 'notes') openSheet('Quick notes', (card) => renderNotes(card), () => { notes = cachedNotes(); refreshStatus(); });
   });
 

@@ -1302,3 +1302,17 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .nt-item.done .nt-text { color: var(--muted); text-decoration: line-through; }
 .nt-done { margin-top: 10px; }
 .nt-done-head { justify-content: space-between !important; }
+/* Last done sheet and tile (Tools): amber when due today, red when overdue. */
+.ld-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.ld-item { padding: 14px 0; border-top: 1px solid var(--bar-border); }
+.ld-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ld-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 500; overflow-wrap: anywhere; }
+.ld-since { font-size: 0.95rem; }
+.ld-item.due .ld-due { color: var(--alert); font-weight: 600; }
+.ld-item.overdue .ld-due { color: var(--lvl-1); font-weight: 600; }
+.ld-history { margin-top: 4px; }
+.ld-history[hidden] { display: none; }
+.tool-tile[data-state="due"] .tool-status { color: var(--alert); font-weight: 600; }
+.tool-tile[data-state="overdue"] .tool-status { color: var(--lvl-1); font-weight: 600; }
+.ldr .ev-loc { color: var(--alert); }
+.ldr.overdue .ev-loc { color: var(--lvl-1); }
