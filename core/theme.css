@@ -542,6 +542,7 @@ button { font: inherit; color: inherit; }
 .cal-cell.dot-4 { background: var(--lvl-4); }
 .cal-cell.dot-5 { background: var(--lvl-5); }
 .cal-cell.today { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--accent); }
+.cal-cell.today { text-shadow: none; } /* the Home date halo (.today) must not hit the calendar cell */
 .check-list { max-height: 50vh; overflow-y: auto; margin-bottom: 12px; }
 .check-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; }
 .check-row .amt { text-align: right; }
