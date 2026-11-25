@@ -1205,3 +1205,16 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .calm-page .w-head { margin-top: 16px; }
 .calm-page .period-nav { color: var(--text); }
 .calm-page .collapsible > .card-row .card-title::after { margin-left: auto; margin-right: 4px; }
+
+/* Plan (calm): hairlines, timer rows and list rows use the glass tones. */
+.calm-page .kd-item, .calm-page .shop-list-row, .calm-page .w-days li { border-color: var(--bar-border); }
+.calm-page .tm-item { background: var(--glass-inner); border-color: var(--bar-border); }
+.calm-page .tm-bar { background: var(--bar-border); }
+.calm-page .shop-list-name { font-family: var(--serif); font-weight: 500; font-size: 1.05rem; }
+.calm-page .ev-btn, .calm-page .agenda-day { border-color: var(--bar-border); }
+.calm-page .agenda-head { margin-top: 4px; }
+.calm-page .shop-tick { border-color: var(--muted); }
+.calm-page .card input:not([type=checkbox]):not([type=radio]), .calm-page .card select, .calm-page .card textarea {
+  background: var(--glass-inner); border: 1px solid var(--bar-border); color: var(--text); border-radius: 14px;
+}
+.calm-page .card input::placeholder, .calm-page .card textarea::placeholder { color: var(--muted); opacity: 0.8; }
