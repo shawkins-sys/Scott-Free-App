@@ -142,7 +142,6 @@ Replaced Money (Scott: Money felt like work; the app is to help him switch off).
 - Tiles adapt to their size (container queries); foldable inner screen uses the phone layout.
 - Home key dates line is a readable pill. Open app links are small pill buttons.
 - Another chat (24/11/2026) made Plan's Key dates and Lists open on tapping the heading, with counts (sf-v88, sf-v89). Work in one chat at a time to avoid clashing pushes; if a push is refused, rebase on origin/main and take the next VERSION number.
-
 - Calm pages and sheets (25/11/2026, sf-v103 to sf-v110): bottom bar taller and more see-through; Lights and Weather sheets from calm Home in glass (`openOverlay(title, fn, { glass: true })`); Morning, Wellbeing, Plan and Settings in the calm style; Settings is a list with a page per section. Details in PROGRESS.md.
 
 ## 11. Next step (updated 25/11/2026)
