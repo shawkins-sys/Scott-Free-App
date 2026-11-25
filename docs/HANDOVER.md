@@ -1,6 +1,6 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 24/11/2026. Current release: `sw.js` VERSION `sf-v107` (calm Home complete on the phone, all three phases; bottom bar icons only, slim glass; Wellbeing cards fold; Lists count shows lists; Morning page; timers and wall alarms; timed app lock; faster loading).
+Last updated: 24/11/2026. Current release: `sw.js` VERSION `sf-v108` (calm Home complete on the phone, all three phases; bottom bar icons only, slim glass; Wellbeing cards fold; Lists count shows lists; Morning page; timers and wall alarms; timed app lock; faster loading).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 

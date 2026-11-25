@@ -27,7 +27,9 @@ export async function setHomeStyle(style) {
 // Calm Home is for phones only (including a fold's inner screen).
 // Hubs drawn in the calm style (25/11/2026). Added one at a time as each page is
 // restyled; the Home style switch (Calm / Tiles) covers them all.
-export const CALM_PAGES = new Set(['morning']);
+export const CALM_PAGES = new Set(['morning', 'wellbeing']);
+// Muted line under each calm page title; pages not listed show today's date.
+export const CALM_SUB = { wellbeing: 'How the days have felt' };
 export const useCalmPage = (id) => useCalm() && CALM_PAGES.has(id);
 export const useCalm = () => !isWall() && isPhoneDevice() && homeStyle() === 'calm';
 

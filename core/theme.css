@@ -1184,3 +1184,24 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .calm-page .mo-thumb, .calm-page .mo-good-img { border-radius: 12px; }
 .calm-page .mo-table summary { border-top: 1px solid var(--bar-border); margin-top: 6px; }
 .calm-page .mo-refresh { color: var(--accent); }
+
+/* Shared calm page pieces (Wellbeing, Plan, Settings): serif card titles, glass
+   chips and buttons, slim collapsible rows. */
+.calm-page .card-title { font-family: var(--serif); font-weight: 500; font-size: 1.2rem; letter-spacing: 0; }
+.calm-page .chip, .calm-page .seg-btn, .calm-page .pill-btn, .calm-page .tab {
+  background: var(--glass-inner); border: 1px solid var(--bar-border); color: var(--muted); box-shadow: none;
+}
+.calm-page .chip.active, .calm-page .seg-btn.active, .calm-page .pill-btn.active, .calm-page .tab.active {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent); color: var(--accent); font-weight: 600;
+}
+.calm-page .card .pill-btn[data-add], .calm-page .card .pill-btn[data-breathe] {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent); color: var(--accent); font-weight: 600;
+}
+.calm-page .collapsible.collapsed { padding-top: 14px; padding-bottom: 14px; }
+.calm-page .card { margin-bottom: 12px; }
+.calm-page .cal-cell.today { box-shadow: 0 0 0 2px var(--glass), 0 0 0 4px var(--accent); }
+.calm-page .w-head { margin-top: 16px; }
+.calm-page .period-nav { color: var(--text); }
+.calm-page .collapsible > .card-row .card-title::after { margin-left: auto; margin-right: 4px; }
