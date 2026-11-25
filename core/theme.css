@@ -707,6 +707,8 @@ body.wall .shop-add input { min-height: 56px; }
   display: block; width: 8px; height: 8px; border-radius: 50%; margin: 0 0 8px 2px;
   background: #3fa865; box-shadow: 0 0 0 3px rgba(63, 168, 101, 0.18);
 }
+/* Shown only when offline or not connected (red); hidden while all is well (Scott, 25/11/2026). */
+.live-dot:not(.down) { visibility: hidden; }
 .live-dot.down { background: #d9534f; box-shadow: 0 0 0 3px rgba(217, 83, 79, 0.18); }
 body.wall .live-dot { width: 12px; height: 12px; }
 

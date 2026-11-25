@@ -5,7 +5,8 @@ const wrap = (d) =>
 export const icons = {
   home: wrap('<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>'),
   // Sun rising over the horizon (Morning hub).
-  morning: wrap('<path d="M3 18h18M6 21h12"/><path d="M7 18a5 5 0 0 1 10 0"/><path d="M12 6v3M5.6 10.6l1.6 1.6M18.4 10.6l-1.6 1.6M2.5 15h2M19.5 15h2"/>'),
+  // Redrawn larger (Scott, 25/11/2026: looked smaller than the others).
+  morning: wrap('<path d="M2.5 17h19M6.5 20.5h11"/><path d="M5.5 17a6.5 6.5 0 0 1 13 0"/><path d="M12 3.5v3.5M4.8 8.8l2.1 2.1M19.2 8.8l-2.1 2.1"/>'),
   money: wrap('<rect x="3" y="6" width="18" height="12" rx="3"/><circle cx="12" cy="12" r="2.5"/>'),
   // Heart drawn 18 wide to match the home icon (Scott, 25/11/2026: looked smaller).
   wellbeing: wrap('<path d="M12 20.5s-9-5.4-9-11.5a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.1-9 11.5-9 11.5z"/>'),
