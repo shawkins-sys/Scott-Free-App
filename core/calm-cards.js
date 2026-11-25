@@ -53,7 +53,7 @@ async function weatherCard(root) {
     el.querySelector('.calm-card-icon').innerHTML = w.icon(c.weather_code, c.is_day);
     el.querySelector('.calm-card-big').textContent = w.deg(c.temperature_2m);
     el.querySelector('.calm-card-small').textContent = line;
-    el.addEventListener('click', () => openOverlay('Weather', (c2) => w.default.renderExpanded(c2)));
+    el.addEventListener('click', () => openOverlay('Weather', (c2) => w.default.renderExpanded(c2), { glass: true }));
   } catch (err) {
     console.warn('Weather card failed', err);
     el.querySelector('.calm-card-big').textContent = 'Weather';

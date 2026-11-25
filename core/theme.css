@@ -1131,3 +1131,17 @@ body.wall .mo-story-title { font-size: 1.15rem; }
   background: color-mix(in srgb, var(--card) 40%, transparent);
   border: 1px solid var(--bar-border); box-shadow: none; color: var(--muted);
 }
+
+/* Weather sheet on calm Home (25/11/2026): current conditions, next 24 hours and
+   next 7 days as glass blocks inside the glass sheet. */
+#overlay.glass .weather-full .w-now,
+#overlay.glass .weather-full .w-scroll,
+#overlay.glass .weather-full .w-days {
+  padding: 14px 16px; border-radius: 16px;
+  background: color-mix(in srgb, var(--card) 55%, transparent);
+  border: 1px solid var(--bar-border);
+}
+#overlay.glass .weather-full .w-scroll { margin-top: 0; }
+#overlay.glass .weather-full .w-head { margin: 16px 4px 8px; }
+#overlay.glass .weather-full .w-days li:last-child { border-bottom: 0; }
+#overlay.glass .weather-full .w-days li { border-bottom-color: var(--bar-border); }
