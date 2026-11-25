@@ -336,6 +336,15 @@ export default {
         <div class="set-body"></div>
       </details>`;
     // Groups in order; a group with no sections on this device (Money on the wall) is left out.
+    // Calm style: a list of sections, each opening its own page (hubs/settings/calm.js).
+    if (container.closest('.calm-page')) {
+      const { renderCalmSettings } = await import(new URL('./calm.js', import.meta.url).href);
+      renderCalmSettings(container, {
+        groups: GROUPS, sections,
+        onSignOut: () => { if (!confirm('Sign out of Scott Hub on this device?')) return; clearLock(); signOut(); },
+      });
+      return;
+    }
     container.innerHTML = GROUPS.map((g) => {
       const inGroup = sections.filter((sec) => sec.group === g.id);
       const signout = g.id === 'device' ? '<p class="signout"><button class="link-btn" id="signout-btn">Sign out</button></p>' : '';

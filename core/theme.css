@@ -1218,3 +1218,16 @@ body.wall .mo-story-title { font-size: 1.15rem; }
   background: var(--glass-inner); border: 1px solid var(--bar-border); color: var(--text); border-radius: 14px;
 }
 .calm-page .card input::placeholder, .calm-page .card textarea::placeholder { color: var(--muted); opacity: 0.8; }
+
+/* Settings (calm): a list of rows, each opening its own page. */
+.calm-page .set-gt { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--muted); margin: 18px 6px 8px; text-shadow: 0 0 2px var(--halo), 0 0 8px var(--halo), 0 0 16px var(--halo); }
+.calm-page .set-list { padding: 4px 18px; margin-bottom: 4px; }
+.calm-page .set-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 0; color: var(--text); text-decoration: none; min-height: 44px; }
+.calm-page .set-row + .set-row { border-top: 1px solid var(--bar-border); }
+.calm-page .set-row small { display: block; color: var(--muted); font-size: 0.8rem; }
+.calm-page .set-row:active { opacity: 0.7; }
+.calm-page .chev { width: 18px; height: 18px; flex: 0 0 auto; color: var(--muted); }
+.calm-page .set-back { display: inline-flex; align-items: center; gap: 2px; padding: 8px 4px 0 0; color: var(--accent); font-weight: 500; text-decoration: none; text-shadow: 0 0 8px var(--halo); }
+.calm-page .set-back .chev { color: var(--accent); transform: rotate(180deg); margin-left: -4px; }
+.calm-page .set-page { padding: 16px 18px; }
+.calm-page .signout { text-align: center; margin: 22px 0 0; text-shadow: 0 0 2px var(--halo), 0 0 8px var(--halo); }
