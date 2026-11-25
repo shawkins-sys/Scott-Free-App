@@ -1017,7 +1017,7 @@ body.wall .mo-story-title { font-size: 1.15rem; }
   min-height: calc(100dvh - var(--bar-h) - var(--space) * 3 - env(safe-area-inset-top) - env(safe-area-inset-bottom));
 }
 @media (prefers-color-scheme: dark) { .calm { --halo: rgba(12, 19, 30, 0.9); } }
-.calm-head { padding: 8px 4px 18px; text-align: center; }
+.calm-head { position: relative; padding: 8px 4px 18px; text-align: center; }
 .calm-greeting, .calm-date, .calm-phrase, .calm-checked { text-shadow: 0 0 2px var(--halo), 0 0 8px var(--halo), 0 0 16px var(--halo); }
 .calm-greeting { font-family: var(--serif); font-weight: 500; font-size: 2rem; letter-spacing: -0.01em; }
 .calm-date { margin: 4px 0 0; font-size: 0.85rem; font-weight: 500; color: var(--muted); }
@@ -1043,7 +1043,8 @@ body.wall .mo-story-title { font-size: 1.15rem; }
   border-radius: 20px;
 }
 .calm .checkin-title { font-family: var(--serif); font-weight: 500; font-size: 1.35rem; }
-.calm .live-dot { margin: 0 auto 8px; }
+/* Status dot in the top left corner of calm Home (Scott, 25/11/2026). */
+.calm .live-dot { position: absolute; top: 4px; left: 6px; margin: 0; }
 
 /* Calm Home card row (Phase 2): glass squares that swipe sideways and snap.
    Four cards of 104px, so the row clearly runs past the right edge. */

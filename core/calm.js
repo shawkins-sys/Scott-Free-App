@@ -1,7 +1,7 @@
 // Calm Home (phone only). Home style is "calm" (default) or "tiles"; the
 // choice lives in settings.data.homeStyle with a copy on this device for a
 // fast start. The wall display and computers always keep the tile grid.
-// Phase 1: greeting, date, phrase, "Checked in" mark and the photo card.
+// Phase 1: greeting, date, phrase and the photo card.
 import { CONFIG } from '../config.js';
 import { greeting, friendlyDate } from './date.js';
 import { isWall, isPhoneDevice } from './device.js';
@@ -44,8 +44,6 @@ export async function syncHomeStyle() {
   } catch { return false; }
 }
 
-const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-
 export function calmHomeHtml(now = new Date()) {
   return `
     <section class="home calm">
@@ -54,7 +52,6 @@ export function calmHomeHtml(now = new Date()) {
         <h1 class="greeting calm-greeting">${greeting(now)}, ${CONFIG.ownerName}</h1>
         <p class="today calm-date">${friendlyDate(now)}</p>
         <p class="phrase calm-phrase" id="phrase-slot"></p>
-        <p class="calm-checked" id="calm-checked" hidden>${CHECK}<span>Checked in</span></p>
       </header>
       <div id="checkin-slot"></div>
       <div id="music-slot"></div>
@@ -68,11 +65,9 @@ export function calmHomeHtml(now = new Date()) {
 
 let photoStarted = false;
 
-// Runs once today's check-in is done: shows the "Checked in" mark and starts
-// the photo card. If the photos cannot load the card stays hidden and the art shows.
+// Runs once today's check-in is done: starts the photo card (the "Checked in"
+// mark was removed on 25/11/2026 as Home only shows after the check-in). If the photos cannot load the card stays hidden and the art shows.
 export async function revealCalm() {
-  const mark = document.getElementById('calm-checked');
-  if (mark) mark.hidden = false;
   const card = document.getElementById('calm-photo');
   if (!card || photoStarted) return;
   photoStarted = true;
