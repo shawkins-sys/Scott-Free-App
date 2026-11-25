@@ -39,6 +39,9 @@ export const SCENES = [
   { id: 'dunes', label: 'Desert dunes', v: 1,
     phone: { day: 'dunes-phone-day.webp', night: 'dunes-phone-night.webp' },
     wall: { day: 'dunes-wall-day.webp', night: 'dunes-wall-night.webp' } },
+  { id: 'cotswolds', label: 'Cotswolds', v: 1,
+    phone: { day: 'cotswolds-phone-day.webp', night: 'cotswolds-phone-night.webp' },
+    wall: { day: 'cotswolds-wall-day.webp', night: 'cotswolds-wall-night.webp' } },
 ];
 
 const PREF_CACHE = 'sf-background';
