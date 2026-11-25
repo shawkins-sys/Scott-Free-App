@@ -1,6 +1,6 @@
 # Scott Hub (formerly Scott Free): Handover for a New Chat
 
-Last updated: 24/11/2026. Current release: `sw.js` VERSION `sf-v110` (calm Home complete on the phone, all three phases; bottom bar icons only, slim glass; Wellbeing cards fold; Lists count shows lists; Morning page; timers and wall alarms; timed app lock; faster loading).
+Last updated: 25/11/2026. Current release: `sw.js` VERSION `sf-v111` (calm Home and calm pages (Morning, Wellbeing, Plan, Settings) on the phone; Lights and Weather sheets in glass; taller, more see-through bottom bar; nine background scenes; bottom bar icons only, slim glass; Wellbeing cards fold; Lists count shows lists; Morning page; timers and wall alarms; timed app lock; faster loading).
 
 Use this file to start a fresh chat. It replaces the need to re-read the old conversation.
 
@@ -79,12 +79,12 @@ Use this file to start a fresh chat. It replaces the need to re-read the old con
 - `core/livedot.js`: green/red status dot above the Home greeting.
 - `core/applink.js`: "Open <app>" links on tiles (Android intent, web fallback). Add new apps to `APPS`.
 - `core/background.js`: daily background scene rotation (see section 12).
-- `core/calm.js`: calm Home (phone only): `useCalm()`, `homeStyle()`/`setHomeStyle()` (`settings.data.homeStyle`, device copy `sf-home-style`), `calmHomeHtml()`, `revealCalm()` (Checked in mark, photo card, card row). `core/calm-cards.js`: the swipe row of glass cards. `core/calm-upnext.js`: the Up next card. Photos tile exposes `renderInline()` for the card.
+- `core/calm.js`: calm Home and calm pages (phone only): `CALM_PAGES` / `useCalmPage(id)` list the hubs drawn in the calm style (`CALM_SUB` = muted line under a title), `useCalm()`, `homeStyle()`/`setHomeStyle()` (`settings.data.homeStyle`, device copy `sf-home-style`), `calmHomeHtml()`, `revealCalm()` (Checked in mark, photo card, card row). `core/calm-cards.js`: the swipe row of glass cards. `core/calm-upnext.js`: the Up next card. Photos tile exposes `renderInline()` for the card.
 - `core/spotify.js`, `core/music.js`, `core/breathing.js`, `core/trends.js`, `core/weekly.js`.
 - `core/theme.css`: theme, `--lvl-1` to `--lvl-5`, `--alert`.
 
 **Hubs**
-- `hubs/morning/` (Morning page), `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping, timers, alarms, renewals), `hubs/settings/` (index, music, phrases, habits, wall, slideshow, timers, morning, background, backup). `hubs/money/` kept but not in `registry.js`.
+- `hubs/morning/` (Morning page), `hubs/wellbeing/` (index, trends), `hubs/plan/` (index, shopping, timers, alarms, renewals), `hubs/settings/` (index, calm (phone list, a page per section at `#/hub/settings/<id>`), music, phrases, habits, wall, slideshow, timers, morning, background, backup). `hubs/money/` kept but not in `registry.js`.
 - Settings sections, grouped under headings (21/11/2026): Daily routine (music, phrases, habits, breathing), Customisation (home style (phone only), background, photos), Device and security (lock, wall, backup and export, Sign out). App lock hidden on the wall. Daily routine also has Timer presets and Morning page. New sections need a `group` in `SECTIONS`.
 
 **Tiles:** `tiles/weather`, `tiles/photos`, `tiles/calendar`, `tiles/music`, `tiles/lights`.
@@ -126,7 +126,7 @@ Required questions about yesterday in the check-in (alcohol, social media, caffe
 
 ## 12. Background images (in progress)
 
-Any number of scenes (Scott wants more than 4 over time); add an entry to `SCENES` in `core/background.js`. Live: beach, palms ("Palm trees"), coral, rainforest, winter, mountains ("Misty mountains"). Planned: northern lights (with aurora). Each needs phone day, phone night, wall day (landscape 16:10), wall night. Done: all six scenes, phone and wall, day and night (21/11/2026; beach replaced with a new set, v 2). Landscape (wall) images are used on the wall display and on any screen wider than tall. To add one: compress to WebP (quality about 78, phone up to 1080 px wide, wall up to 2560 px), save as `assets/bg/<scene>-<phone|wall>-<day|night>.webp`, fill the path in `SCENES` in `core/background.js`, bump that scene's `v` if replacing. If the beach `v` changes, update `BG_FALLBACK` in sw.js. Bump sw.js VERSION. Keep composition: plain top, detail at edges and bottom.
+Any number of scenes (Scott wants more than 4 over time); add an entry to `SCENES` in `core/background.js`. Live (nine): beach, palms ("Palm trees"), coral, rainforest, winter, mountains ("Misty mountains"), northern lights, dunes ("Desert dunes"), cotswolds. Each needs phone day, phone night, wall day (landscape 16:10), wall night. Done: all six scenes, phone and wall, day and night (21/11/2026; beach replaced with a new set, v 2). Landscape (wall) images are used on the wall display and on any screen wider than tall. To add one: compress to WebP (quality about 78, phone up to 1080 px wide, wall up to 2560 px), save as `assets/bg/<scene>-<phone|wall>-<day|night>.webp`, fill the path in `SCENES` in `core/background.js`, bump that scene's `v` if replacing. If the beach `v` changes, update `BG_FALLBACK` in sw.js. Bump sw.js VERSION. Keep composition: plain top, detail at edges and bottom.
 
 ## 13. Morning page (built 22 to 24/11/2026)
 
@@ -143,8 +143,8 @@ Replaced Money (Scott: Money felt like work; the app is to help him switch off).
 ## 11. Next step (end of 24/11/2026 session)
 
 Suggested order:
-0. **Calm Home: done (sf-v99 to sf-v101).** Plan in `docs/CALM-HOME-PLAN.md`. Phase 1: `core/calm.js`, Settings, Home style, photo card, check-in gate. Phase 2: `core/calm-cards.js` (Weather, Music, Lights sheet, Calendar link), `core/music-resume.js`. Phase 3: `core/calm-upnext.js` (key dates today or tomorrow). Scott to check on the phone; possible later: overdue items in Up next, Lights toggle if Lights moves to the Hue Remote API (state and per-room off become possible).
+0. **Calm Home: done (sf-v99 to sf-v101).** Plan in `docs/CALM-HOME-PLAN.md`. Phase 1: `core/calm.js`, Settings, Home style, photo card, check-in gate. Phase 2: `core/calm-cards.js` (Weather, Music, Lights sheet, Calendar link), `core/music-resume.js`. Phase 3: `core/calm-upnext.js` (key dates today or tomorrow). Scott to check on the phone; possible later: overdue items in Up next, Lights toggle if Lights moves to the Hue Remote API (state and per-room off become possible). Calm pages (25/11/2026, sf-v107 to sf-v110): Morning, Wellbeing, Plan, Settings in the same style; Settings is a list with a page per section (Option B); Lights and Weather sheets from calm Home are glass (`openOverlay(title, fn, { glass: true })`); bottom bar 68px and more see-through (sf-v103, sf-v104). The Calm / Tiles switch turns all of it off.
 1. **Morning Phase 3 polish** (list in `claude/MORNING-PLAN.md`): One good thing picture for Good News Network, summary cut at a sentence, team names on one line, check each rotating topic on its day and swap failing feeds, wall sizes.
-2. **New background art** (Scott plans to add more scenes; see section 12 for how).
+2. **Calm pages adjustments** (Scott to use Morning, Wellbeing, Plan and Settings on the phone first, then send one batch). Known leftovers: pop-up forms (add key date, edit list item) still have the old look. More background scenes whenever Scott sends them (section 12).
 3. **Scott's setup**: wall display hub PIN and tablet test (photo frame mode, alarms sound after a reload), confirm bank holidays load on the phone.
 4. **Parked ideas** (FUTURE-UPDATES): Lights on the Hue Remote API (item 6, frees the Voice Monkey triggers), Tesla sync, alarms set from the phone. Older roadmap: countdown timers, push notifications, home move hub, family sharing for lists.
