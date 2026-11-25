@@ -12,6 +12,7 @@ const DESC = {
   homestyle: 'Calm or tiles',
   background: 'Scenes and rotation',
   photos: 'Slideshow and import',
+  framing: 'Choose what each photo shows',
   lock: 'PIN and fingerprint',
   wall: 'Wall display and hub PIN',
   backup: 'Download or restore your data',

@@ -370,3 +370,5 @@ Brief: `claude/scott-free-build-prompt.md` (v2, with section 14 addendum) in the
 - sf-v112: Fixed dark smudge behind today's date in the Wellbeing History calendar (Home date halo rule `.today` was also matching `.cal-cell.today`; now text-shadow none on the cell).
 
 - sf-v113: Back gesture / back button now closes pop-up panels (Weather, Lights, all overlays) instead of doing nothing. core/overlay.js pushes a history entry on open; X still works and removes it.
+
+- sf-v114: Smart photo framing. Each slideshow photo gets a focus point (settings.data.photoFocus, device copy `sf-photo-focus`; core/photo-focus.js). First time a photo shows, faces are found on the device (vendor/pico.js + assets/face/facefinder, core/face-focus.js) and the crop centres on them; no face saves a slightly high default (y 0.38). New Settings page "Photo framing" (hubs/settings/framing.js): grid of photos, tap one, tap the part to keep, live preview of the Home card, "Reset to automatic". Manual beats automatic across devices. Full screen still shows the whole photo.

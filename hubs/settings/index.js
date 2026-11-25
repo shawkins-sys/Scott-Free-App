@@ -13,6 +13,7 @@ import { renderBackgroundSettings } from './background.js';
 import { renderWallSettings } from './wall.js';
 import { renderBackupSettings } from './backup.js';
 import { renderSlideshowSettings } from './slideshow.js';
+import { renderFramingSettings } from './framing.js';
 import { renderTimerSettings } from './timers.js';
 import { renderMorningSettings } from './morning.js';
 import { renderHomeStyleSettings } from './homestyle.js';
@@ -321,6 +322,7 @@ const SECTIONS = [
   { id: 'photos', group: 'custom', title: 'Photos', render: renderPhotosSettings,
     // Open automatically during the Google Photos flow.
     autoOpen: () => !!(sessionStorage.getItem('sf-g-resume') || sessionStorage.getItem('sf-g-session')) },
+  { id: 'framing', group: 'custom', title: 'Photo framing', render: renderFramingSettings },
 ];
 
 export default {

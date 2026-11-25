@@ -8,6 +8,7 @@ import { supabase } from '../../core/supabase.js';
 import { getTodayCheckin, checkinDoneToday, getSettings } from '../../core/wellbeing.js';
 import { openOverlay } from '../../core/overlay.js';
 import { isWall } from '../../core/device.js';
+import { getFocus, setFocus, positionFor, applyFocusFromSettings, DEFAULT_FOCUS } from '../../core/photo-focus.js';
 
 const BUCKET = 'photos';
 const CACHE_NAME = 'sf-photos'; // kept across app updates (see sw.js)
@@ -51,7 +52,7 @@ export function applySlideshow(all) {
 function refreshCfg() {
   if (Date.now() - state.cfgAt < CFG_REFRESH_MS) return;
   state.cfgAt = Date.now();
-  getSettings().then((d) => applySlideshow(d.slideshow)).catch(() => {});
+  getSettings().then((d) => { applyFocusFromSettings(d.photoFocus); applySlideshow(d.slideshow); }).catch(() => {});
 }
 const SIGNED_URL_SECONDS = 3600;
 const IMAGE_EXT = /\.(jpe?g|png|webp|gif|avif)$/i; // HEIC is not supported by Chrome
@@ -120,6 +121,25 @@ function photoUrl(photo) {
   return p;
 }
 
+// For Settings (Photo framing): the photo list, and a photo as an object URL
+// the caller owns (revoke it when done). Uses the same once-only cache.
+export async function listPhotos() {
+  listPromise = listPromise || loadList();
+  try { return [...(await listPromise)].sort((a, b) => a.name.localeCompare(b.name)); } catch (err) { listPromise = null; throw err; }
+}
+export async function photoObjectUrl(photo) {
+  const cache = await openCache();
+  let res = cache && (await cache.match(photo.key));
+  if (!res) {
+    const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(photo.name, SIGNED_URL_SECONDS);
+    if (error) throw error;
+    res = await fetch(data.signedUrl);
+    if (!res.ok) throw new Error(`Photo download failed (${res.status})`);
+    if (cache) await cache.put(photo.key, res.clone());
+  }
+  return URL.createObjectURL(await res.blob());
+}
+
 // Keeps only the previous, current and next photos in memory.
 function trimMemory() {
   const n = state.photos.length;
@@ -147,23 +167,58 @@ async function show() {
   if (i !== state.index) return; // moved on while loading
   for (const v of liveViews()) {
     v.root.classList.toggle('photo-failed', !url);
-    if (url) await swapIn(v, url);
+    if (url) await swapIn(v, url, photo.name);
   }
   if (n > 1) photoUrl(state.photos[(i + 1) % n]).catch(() => {}); // preload next
   trimMemory();
 }
 
 // Shows a photo on the hidden layer, then brings it in (fade, zoom or straight swap).
-async function swapIn(view, url) {
+async function swapIn(view, url, name) {
   const [front, back] = view.front ? [view.imgs[1], view.imgs[0]] : [view.imgs[0], view.imgs[1]];
-  if (front.classList.contains('on') && front.src === url) return;
+  if (front.classList.contains('on') && front.src === url) { frame(view, front); return; }
   back.src = url;
+  back.dataset.name = name || '';
   try { await back.decode(); } catch { /* shown anyway */ }
+  if (!view.full && name && !getFocus(name)) await autoFocus(name, back);
+  frame(view, back);
   back.classList.remove('kb');
   void back.offsetWidth; // restarts the slow zoom
   back.classList.add('on', 'kb');
   front.classList.remove('on');
   view.front = !view.front;
+}
+
+// First time a photo is shown: look for faces once and save the point to crop on.
+// No face: the default (slightly high) point is saved so it is not checked again.
+const checking = new Map();
+function autoFocus(name, img) {
+  if (!checking.has(name)) {
+    const run = (async () => {
+      try {
+        const { findFocus } = await import('../../core/face-focus.js');
+        const f = await Promise.race([findFocus(img), new Promise((r) => setTimeout(() => r(undefined), 4000))]);
+        if (f === undefined) return; // too slow this time: try again next time it is shown
+        const p = f || DEFAULT_FOCUS;
+        setFocus(name, p.x, p.y);
+      } catch (err) { console.warn('Face check skipped', name, err); }
+    })();
+    checking.set(name, run);
+    run.finally(() => { if (!getFocus(name)) checking.delete(name); });
+  }
+  return checking.get(name);
+}
+
+// Crops around the photo's focus point (see core/photo-focus.js). Full screen shows the whole photo.
+function frame(view, img) {
+  if (view.full || !img.naturalWidth) { img.style.objectPosition = ''; return; }
+  const box = view.root.getBoundingClientRect();
+  img.style.objectPosition = positionFor(getFocus(img.dataset.name), img.naturalWidth, img.naturalHeight, box.width, box.height);
+}
+
+// Re-frames the visible photos (after a focus point changes, or the card resizes).
+export function reframePhotos() {
+  for (const v of liveViews()) v.imgs.forEach((img) => frame(v, img));
 }
 
 function styleView(view) {
@@ -212,6 +267,7 @@ function mountView(container, full) {
     root,
     imgs: [...root.querySelectorAll('img')],
     front: false,
+    full,
     updatePause() {
       btn.innerHTML = state.paused ? PLAY : PAUSE;
       btn.setAttribute('aria-label', state.paused ? 'Play slideshow' : 'Pause slideshow');
@@ -241,6 +297,7 @@ function mountView(container, full) {
     else if (!full && Math.abs(dx) < 10 && Math.abs(dy) < 10) openOverlay('Photos', (c) => startView(c, true));
   });
 
+  if ('ResizeObserver' in window) new ResizeObserver(() => view.imgs.forEach((img) => frame(view, img))).observe(root);
   state.views.add(view);
   styleView(view);
   view.updatePause();
