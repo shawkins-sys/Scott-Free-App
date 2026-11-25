@@ -1284,3 +1284,18 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .cd-days small { display: block; font-family: var(--font); font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
 .cd-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .cd-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 500; overflow-wrap: anywhere; }
+/* Quick notes sheet (Tools phase 3): tick circle, pinned notes first, Done group. */
+.nt-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.nt-form textarea { width: 100%; box-sizing: border-box; resize: vertical; min-height: 84px; padding: 10px 12px; font: inherit; }
+.nt-list { list-style: none; margin: 0; padding: 0; }
+.nt-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-top: 1px solid var(--bar-border); }
+.nt-tick { flex: 0 0 26px; width: 26px; height: 26px; margin-top: 1px; padding: 3px; border-radius: 50%; border: 1.5px solid var(--muted); background: none; color: #fff; cursor: pointer; }
+.nt-tick svg { width: 100%; height: 100%; display: block; }
+.nt-item.done .nt-tick { background: var(--accent); border-color: var(--accent); }
+.nt-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.nt-text { overflow-wrap: anywhere; line-height: 1.45; }
+.nt-pin { display: inline-block; width: 15px; height: 15px; margin-right: 6px; vertical-align: -2px; color: var(--accent); }
+.nt-pin svg { width: 100%; height: 100%; display: block; }
+.nt-item.done .nt-text { color: var(--muted); text-decoration: line-through; }
+.nt-done { margin-top: 10px; }
+.nt-done-head { justify-content: space-between !important; }

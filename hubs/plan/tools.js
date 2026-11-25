@@ -14,6 +14,8 @@ import { renderShopping } from './shopping.js';
 import { renderTimers } from './timers.js';
 import { renderRenewalCopy } from './renewals.js';
 import { renderCountdowns } from './countdowns.js';
+import { renderNotes } from './notes.js';
+import { cachedNotes, listNotes, notesStatus } from '../../core/notes.js';
 import { cachedCountdowns, listCountdowns, countdownStatus, countdownRows } from '../../core/countdowns.js';
 
 const DAYS = 8; // today plus the next 7 days
@@ -23,6 +25,7 @@ const ICON = {
   lists: svg('<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>'),
   timers: svg('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>'),
   countdowns: svg('<path d="M7 3h10M7 21h10M8 3v3.5a4 4 0 0 0 1.6 3.2L12 12l2.4-2.3A4 4 0 0 0 16 6.5V3M8 21v-3.5a4 4 0 0 1 1.6-3.2L12 12l2.4 2.3a4 4 0 0 1 1.6 3.2V21"/>'),
+  notes: svg('<path d="M6 3.5h9l4 4V20a.5.5 0 0 1-.5.5h-12A.5.5 0 0 1 6 20z"/><path d="M15 3.5V8h4M9 12h7M9 15.5h7"/>'),
   keydates: svg('<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M12 13.5v3M10.5 15h3"/>'),
 };
 
@@ -31,6 +34,7 @@ const TOOLS = [
   { id: 'timers', title: 'Timers' },
   { id: 'keydates', title: 'Key dates' },
   { id: 'countdowns', title: 'Countdowns' },
+  { id: 'notes', title: 'Quick notes' },
 ];
 
 const tileHtml = (t) => `
@@ -116,6 +120,7 @@ export async function renderTools(container, { renderKeyDates }) {
 
   let keyDates = null;
   let countdowns = cachedCountdowns();
+  let notes = cachedNotes();
   const setStatus = (id, html) => {
     const el = container.querySelector(`[data-status="${id}"]`);
     if (el) el.innerHTML = html;
@@ -126,6 +131,7 @@ export async function renderTools(container, { renderKeyDates }) {
     setStatus('timers', esc(timersStatus()));
     setStatus('keydates', keyDatesStatus(keyDates));
     setStatus('countdowns', esc(countdownStatus(countdowns)));
+    setStatus('notes', esc(notesStatus(notes)));
   };
   const loadKeyDates = async () => {
     keyDates = await getKeyDatesSafe();
@@ -153,6 +159,7 @@ export async function renderTools(container, { renderKeyDates }) {
       listCountdowns().catch((err) => { console.warn('Countdowns not loaded', err); return countdowns; }),
     ]);
     countdowns = cds;
+    notes = await listNotes().catch(() => notes);
     refreshStatus();
     renderComingUp(container.querySelector('#tools-coming'), items, countdowns, openKeyDates, openCountdowns);
   }
@@ -165,6 +172,7 @@ export async function renderTools(container, { renderKeyDates }) {
     if (id === 'timers') openSheet('Timers', (card) => renderTimers(card), refreshStatus);
     if (id === 'keydates') openKeyDates();
     if (id === 'countdowns') openCountdowns();
+    if (id === 'notes') openSheet('Quick notes', (card) => renderNotes(card), () => { notes = cachedNotes(); refreshStatus(); });
   });
 
   // Live updates: list changes, timer ticks. Listeners stop once the page is left.
