@@ -1,7 +1,7 @@
 // Full-screen panel used for expanded tiles and detail views.
 import { icons } from './icons.js';
 
-export function openOverlay(title, renderFn) {
+export function openOverlay(title, renderFn, opts = {}) {
   const root = document.getElementById('overlay');
   root.innerHTML = `
     <div class="overlay-panel" role="dialog" aria-modal="true" aria-label="${title}">
@@ -11,11 +11,13 @@ export function openOverlay(title, renderFn) {
       </header>
       <div class="overlay-body"></div>
     </div>`;
+  root.classList.toggle('glass', !!opts.glass);
   root.hidden = false;
   document.body.classList.add('no-scroll');
 
   const close = () => {
     root.hidden = true;
+    root.classList.remove('glass');
     root.innerHTML = '';
     document.body.classList.remove('no-scroll');
     document.removeEventListener('keydown', onKey);

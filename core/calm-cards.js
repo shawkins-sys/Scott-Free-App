@@ -151,6 +151,6 @@ export function renderCardRow(slot) {
   musicCard(slot);
   slot.querySelector('[data-card="lights"]').addEventListener('click', async () => {
     const mod = await import(new URL('../tiles/lights/index.js', import.meta.url).href);
-    openOverlay('Lights', (c) => mod.default.renderExpanded(c));
+    openOverlay('Lights', (c) => mod.default.renderExpanded(c), { glass: true });
   });
 }

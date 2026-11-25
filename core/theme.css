@@ -1095,3 +1095,39 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .calm.no-upnext .calm-card-icon img { width: 36px; height: 36px; border-radius: 10px; }
 .calm.no-upnext .calm-card-big { font-size: 1.1rem; }
 .calm.no-upnext .calm-card-small { font-size: 0.78rem; }
+
+/* Glass sheet for the calm Home Lights card (25/11/2026): the same frosted
+   glass as the bottom bar and cards, floating above the art. Only used when
+   an overlay is opened with { glass: true }; the tile layout keeps its panel. */
+#overlay.glass {
+  background: rgba(10, 16, 26, 0.28);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  padding: 0 12px calc(12px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+#overlay.glass .overlay-panel {
+  background: color-mix(in srgb, var(--card) 66%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4); backdrop-filter: blur(22px) saturate(1.4);
+  border: 1px solid var(--bar-border); border-radius: 24px;
+  padding: 18px 18px 18px;
+}
+#overlay.glass .overlay-head h2 { font-family: ui-serif, "Iowan Old Style", Georgia, Cambria, "Times New Roman", serif; font-weight: 500; font-size: 1.5rem; letter-spacing: -0.01em; }
+#overlay.glass .li-tile { display: flex; flex-direction: column; gap: 10px; }
+#overlay.glass .li-row {
+  padding: 10px 10px 10px 16px; border-radius: 16px;
+  background: color-mix(in srgb, var(--card) 55%, transparent);
+  border: 1px solid var(--bar-border);
+}
+#overlay.glass .li-btn, #overlay.glass .li-alloff {
+  border-radius: 999px; min-height: 44px; margin: 0;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--accent); font-weight: 600; box-shadow: none;
+}
+#overlay.glass .li-alloff { background: color-mix(in srgb, var(--card) 55%, transparent); border-color: var(--bar-border); color: var(--text); }
+#overlay.glass .li-msg { margin: 0; }
+#overlay.glass .tile-applink {
+  align-self: center; width: fit-content; min-height: 40px; padding: 8px 18px;
+  background: color-mix(in srgb, var(--card) 40%, transparent);
+  border: 1px solid var(--bar-border); box-shadow: none; color: var(--muted);
+}
