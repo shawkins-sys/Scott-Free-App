@@ -1331,3 +1331,12 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .calc-key.op { color: var(--accent); font-size: 1.6rem; }
 .calc-key.eq { background: var(--accent); border-color: var(--accent); color: #fff; font-size: 1.6rem; }
 .calc-key:active { transform: scale(0.95); }
+/* Unit converter and Currency sheets (Tools; Scott, 26/11/2026). */
+.conv-groups { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.conv-box { display: flex; flex-direction: column; gap: 10px; }
+.conv-box select { width: 100%; }
+.conv-value { font-family: var(--serif); font-size: 2rem; padding: 8px 12px; width: 100%; box-sizing: border-box; }
+.conv-swap { align-self: center; width: 44px; height: 44px; padding: 10px; border-radius: 50%; cursor: pointer; color: var(--accent); background: var(--glass-inner); border: 1px solid var(--bar-border); }
+.conv-swap svg { width: 100%; height: 100%; display: block; }
+.conv-result { font-family: var(--serif); font-size: 2rem; font-weight: 500; line-height: 1.2; overflow-wrap: anywhere; }
+.fx-note { margin-top: 14px; }

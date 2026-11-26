@@ -17,6 +17,8 @@ import { renderCountdowns } from './countdowns.js';
 import { renderNotes } from './notes.js';
 import { renderLastDone } from './lastdone.js';
 import { renderCalc, lastAnswer } from './calc.js';
+import { renderUnits, unitsStatus } from './units.js';
+import { renderCurrency, currencyStatus } from './currency.js';
 import { cachedLastDone, listLastDone, lastDoneStatus, dueNow, info, dueText } from '../../core/lastdone.js';
 import { cachedNotes, listNotes, notesStatus } from '../../core/notes.js';
 import { cachedCountdowns, listCountdowns, countdownStatus, countdownRows } from '../../core/countdowns.js';
@@ -31,6 +33,8 @@ const ICON = {
   notes: svg('<path d="M6 3.5h9l4 4V20a.5.5 0 0 1-.5.5h-12A.5.5 0 0 1 6 20z"/><path d="M15 3.5V8h4M9 12h7M9 15.5h7"/>'),
   lastdone: svg('<path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3 4v4h4"/><path d="M12 7.5V12l3 2"/>'),
   calc: svg('<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8 7.5h8"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 15.5h.01M12 15.5h.01M15.5 15.5h.01M8.5 18h.01M12 18h.01M15.5 18h.01" stroke-width="2.4"/>'),
+  units: svg('<path d="M3 15.5l12.5-12.5 5.5 5.5L8.5 21z"/><path d="M7 11.5l2 2M10 8.5l1.5 1.5M13 5.5l2 2"/>'),
+  currency: svg('<circle cx="12" cy="12" r="8.5"/><path d="M14.5 8.5a3 3 0 0 0-5 2.2V16M8 16h7M8 12.5h4.5"/>'),
   keydates: svg('<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M12 13.5v3M10.5 15h3"/>'),
 };
 
@@ -42,6 +46,8 @@ const TOOLS = [
   { id: 'lastdone', title: 'Last done' },
   { id: 'notes', title: 'Quick notes' },
   { id: 'calc', title: 'Calculator' },
+  { id: 'units', title: 'Unit converter' },
+  { id: 'currency', title: 'Currency' },
 ];
 
 const tileHtml = (t) => `
@@ -148,6 +154,8 @@ export async function renderTools(container, { renderKeyDates }) {
     setStatus('keydates', keyDatesStatus(keyDates));
     setStatus('countdowns', esc(countdownStatus(countdowns)));
     setStatus('notes', esc(notesStatus(notes)));
+    setStatus('units', esc(unitsStatus()));
+    setStatus('currency', esc(currencyStatus()));
     setStatus('calc', esc(lastAnswer() ? `Last answer: ${lastAnswer()}` : 'Tap to work something out'));
     setStatus('lastdone', esc(lastDoneStatus(lastDone)));
     const ld = container.querySelector('[data-tool="lastdone"]');
@@ -195,6 +203,8 @@ export async function renderTools(container, { renderKeyDates }) {
     if (id === 'keydates') openKeyDates();
     if (id === 'countdowns') openCountdowns();
     if (id === 'lastdone') openLastDone();
+    if (id === 'units') openSheet('Unit converter', (card) => renderUnits(card), refreshStatus);
+    if (id === 'currency') openSheet('Currency', (card) => renderCurrency(card), refreshStatus);
     if (id === 'calc') openSheet('Calculator', (card) => renderCalc(card), refreshStatus);
     if (id === 'notes') openSheet('Quick notes', (card) => renderNotes(card), () => { notes = cachedNotes(); refreshStatus(); });
   });
