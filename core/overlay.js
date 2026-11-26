@@ -15,7 +15,13 @@ export function openOverlay(title, renderFn, opts = {}) {
       </header>
       <div class="overlay-body"></div>
     </div>`;
-  root.classList.toggle('glass', !!opts.glass);
+  // Glass on calm pages (Scott, 26/11/2026): any pop-up opened while a calm
+  // page or calm Home is showing uses the floating glass panel, unless the
+  // caller passes { glass: false } (full-screen photos). Tiles style, the wall
+  // and computers never show calm pages, so they keep the plain panel.
+  const glass = opts.glass ?? !!document.querySelector('#app .calm-page, #app .home.calm');
+  root.classList.toggle('glass', glass);
+  root.querySelector('.overlay-body').classList.toggle('calm-page', glass);
   root.hidden = false;
   document.body.classList.add('no-scroll');
 

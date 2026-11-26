@@ -1135,6 +1135,16 @@ body.wall .mo-story-title { font-size: 1.15rem; }
   border: 1px solid var(--bar-border); border-radius: 24px;
   padding: 18px 18px 18px;
 }
+/* Every pop-up on a calm page (26/11/2026): forms and detail panels in glass.
+   The overlay body carries .calm-page, so the shared calm chips, pills and
+   card rules apply; these cover what sits outside a .card. */
+#overlay.glass input:not([type=checkbox]):not([type=radio]):not([type=range]), #overlay.glass select, #overlay.glass textarea {
+  background: var(--glass-inner); border: 1px solid var(--bar-border); color: var(--text); border-radius: 14px;
+}
+#overlay.glass input::placeholder, #overlay.glass textarea::placeholder { color: var(--muted); opacity: 0.8; }
+#overlay.glass hr, #overlay.glass li, #overlay.glass .kd-item, #overlay.glass .wk-row, #overlay.glass .sum-row { border-color: var(--bar-border); }
+#overlay.glass .primary-btn { border-radius: 14px; }
+#overlay.glass .overlay-body > .card { background: none; -webkit-backdrop-filter: none; backdrop-filter: none; border: 0; padding: 0; margin: 0; }
 #overlay.glass .overlay-head h2 { font-family: ui-serif, "Iowan Old Style", Georgia, Cambria, "Times New Roman", serif; font-weight: 500; font-size: 1.5rem; letter-spacing: -0.01em; }
 #overlay.glass .li-tile { display: flex; flex-direction: column; gap: 10px; }
 #overlay.glass .li-row {

@@ -294,7 +294,7 @@ function mountView(container, full) {
     const dy = e.clientY - start.y;
     start = null;
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
-    else if (!full && Math.abs(dx) < 10 && Math.abs(dy) < 10) openOverlay('Photos', (c) => startView(c, true));
+    else if (!full && Math.abs(dx) < 10 && Math.abs(dy) < 10) openOverlay('Photos', (c) => startView(c, true), { glass: false });
   });
 
   if ('ResizeObserver' in window) new ResizeObserver(() => view.imgs.forEach((img) => frame(view, img))).observe(root);
