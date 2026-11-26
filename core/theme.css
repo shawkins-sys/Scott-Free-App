@@ -1316,3 +1316,18 @@ body.wall .mo-story-title { font-size: 1.15rem; }
 .tool-tile[data-state="overdue"] .tool-status { color: var(--lvl-1); font-weight: 600; }
 .ldr .ev-loc { color: var(--alert); }
 .ldr.overdue .ev-loc { color: var(--lvl-1); }
+/* Calculator sheet (Tools; Scott, 26/11/2026). */
+.calc-screen { text-align: right; padding: 6px 4px 14px; min-width: 0; }
+.calc-expr { font-size: 0.95rem; color: var(--muted); min-height: 1.4em; overflow-wrap: anywhere; }
+.calc-result { font-family: var(--serif); font-size: 2.6rem; line-height: 1.15; font-weight: 500; overflow-wrap: anywhere; }
+.calc-result.preview { color: var(--muted); }
+.calc-keys { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.calc-key {
+  height: 60px; border-radius: 18px; font: inherit; font-size: 1.35rem; cursor: pointer; color: var(--text);
+  background: var(--glass-inner); border: 1px solid var(--bar-border);
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.calc-key.fn { color: var(--accent); font-size: 1.1rem; }
+.calc-key.op { color: var(--accent); font-size: 1.6rem; }
+.calc-key.eq { background: var(--accent); border-color: var(--accent); color: #fff; font-size: 1.6rem; }
+.calc-key:active { transform: scale(0.95); }
