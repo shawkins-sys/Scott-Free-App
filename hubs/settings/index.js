@@ -281,18 +281,19 @@ async function renderPhotosSettings(container) {
     }
 }
 
-// Breathing section: vibration on or off.
+// Breathing section: vibration and meditation chime on or off.
 async function renderBreathingSettings(body) {
   const s = await getBreathingSettings();
   body.innerHTML = `
-    <p class="muted small">Box breathing runs after the check-in when emotional or work stress is 5, and any time from the Wellbeing hub.</p>
+    <p class="muted small">Box breathing runs after the check-in when emotional or work stress is 5, and any time from the Wellbeing hub. These settings also apply to Meditation and grounding.</p>
     <label class="check"><input type="checkbox" name="vibrate"${s.vibrate ? ' checked' : ''}> Gentle vibration at each step</label>
+    <label class="check"><input type="checkbox" name="chime"${s.chime ? ' checked' : ''}> Soft chime at the end of a meditation</label>
     <p class="form-msg" aria-live="polite"></p>`;
-  body.querySelector('[name=vibrate]').addEventListener('change', async (e) => {
+  body.querySelectorAll('[name=vibrate], [name=chime]').forEach((box) => box.addEventListener('change', async (e) => {
     const msg = body.querySelector('.form-msg');
-    try { await saveBreathingSettings({ vibrate: e.target.checked }); msg.classList.remove('error'); msg.textContent = 'Saved.'; }
+    try { await saveBreathingSettings({ [e.target.name]: e.target.checked }); msg.classList.remove('error'); msg.textContent = 'Saved.'; }
     catch { msg.classList.add('error'); msg.textContent = 'That did not save. Please try again.'; }
-  });
+  }));
 }
 
 // ---------- Settings page: collapsible sections under group headings, ----------

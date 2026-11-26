@@ -11,6 +11,7 @@ import { formatKey } from '../../core/keydates.js';
 import { renderTrends } from './trends.js';
 import { isWall } from '../../core/device.js';
 import { runBreathing } from '../../core/breathing.js';
+import { EXERCISES, runMeditation } from '../../core/meditation.js';
 import { listReviews, buildSnapshot, reviewHtml, weekStartOf, syncReviews } from '../../core/weekly.js';
 
 // Weekly review card: this week so far (not saved) and Past reviews, newest first.
@@ -130,9 +131,14 @@ export default {
       <div class="card collapsible collapsed" id="wb-weekly"></div>
       <div class="card collapsible collapsed"><div class="card-row"><h2 class="card-title" role="button" aria-expanded="false">Box breathing</h2></div>
         <p class="muted small">Breathe in 4, hold 4, out 4, hold 4. Four rounds, about a minute.</p>
-        <button class="pill-btn" data-breathe>Start</button></div>`;
+        <button class="pill-btn" data-breathe>Start</button></div>
+      <div class="card collapsible collapsed"><div class="card-row"><h2 class="card-title" role="button" aria-expanded="false">Meditation and grounding</h2></div>
+        <ul class="meditate-list">${EXERCISES.map((x) => `
+          <li class="meditate-row"><div><strong>${x.title}</strong><p class="muted small">${x.blurb} ${x.length}.</p></div>
+            <button class="pill-btn" data-meditate="${x.id}">Start</button></li>`).join('')}</ul></div>`;
     container.querySelector('[data-breathe]').addEventListener('click', () => runBreathing());
-    // Weekly review and Box breathing open on tapping the heading; closed on
+    container.querySelectorAll('[data-meditate]').forEach((b) => b.addEventListener('click', () => runMeditation(b.dataset.meditate)));
+    // Weekly review, Box breathing and Meditation open on tapping the heading; closed on
     // arrival, like Lists and Key dates in Plan (Scott, 24/11/2026).
     container.querySelectorAll('.collapsible').forEach((card) => {
       card.addEventListener('click', (e) => {

@@ -13,7 +13,7 @@ const PAD = 14;
 // Settings (settings.data.breathing)
 export async function getBreathingSettings() {
   const s = await getSettings();
-  return { vibrate: true, ...(s.breathing || {}) };
+  return { vibrate: true, chime: true, ...(s.breathing || {}) };
 }
 export async function saveBreathingSettings(patch) {
   const current = await getBreathingSettings();
@@ -29,7 +29,7 @@ const R = SIZE - PAD;
 const CORNERS = [[L, R], [L, L], [R, L], [R, R], [L, R]];
 
 // Keeps the screen on for the exercise (Screen Wake Lock). Returns a release function.
-async function holdScreenOn() {
+export async function holdScreenOn() {
   if (!('wakeLock' in navigator)) return () => {};
   let lock = null;
   let active = true;
