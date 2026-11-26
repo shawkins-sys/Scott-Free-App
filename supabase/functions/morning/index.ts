@@ -256,7 +256,20 @@ export async function football(token: string) {
       ({ pos: r.position, team: short(r.team), id: r.team.id, played: r.playedGames, gd: r.goalDifference, pts: r.points }));
   const mine = table.find((r: { id: number }) => r.id === TEAM_ID) || null;
 
-  return { teamId: TEAM_ID, teamName: 'Man Utd', last, next, position: mine, matchday: lastMatchday, results, table };
+  // Champions League: latest finished matchday in the same window (Scott, 26/11/2026).
+  // Optional: a failure here never hides the Premier League parts.
+  let cl = null;
+  try {
+    const clData = await fd(`/competitions/CL/matches?dateFrom=${iso(from)}&dateTo=${iso(to)}`, token);
+    const clDone = (clData.matches as FdMatch[]).filter((m) => m.status === 'FINISHED' && m.matchday);
+    const clDay = Math.max(0, ...clDone.map((m) => m.matchday || 0));
+    if (clDay) {
+      cl = { matchday: clDay, results: clDone.filter((m) => m.matchday === clDay)
+        .sort((a, b) => a.utcDate.localeCompare(b.utcDate)).map(slim) };
+    }
+  } catch (err) { console.error('CL', err); }
+
+  return { teamId: TEAM_ID, teamName: 'Man Utd', last, next, position: mine, matchday: lastMatchday, results, table, cl };
 }
 
 // ---------- Server ----------
