@@ -242,6 +242,26 @@ if ('serviceWorker' in navigator) {
       });
     })
     .catch((err) => console.warn('Service worker not registered', err));
+
+  // A new release takes over straight away, but this page still has the old
+  // styles loaded, so new screens can appear unstyled (Scott, 26/11/2026: the
+  // Calculator keypad). Reload once to pick up the whole release; if something
+  // is being typed or a sheet is open, wait until the app is next put away.
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloading = false;
+  const reloadNow = () => { if (!reloading) { reloading = true; window.location.reload(); } };
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController) return; // first install, nothing old on screen
+    const busy = () => {
+      const a = document.activeElement;
+      const overlay = document.getElementById('overlay');
+      return (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) || (overlay && !overlay.hidden);
+    };
+    if (!busy()) { reloadNow(); return; }
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') reloadNow();
+    });
+  });
 }
 
 let signedIn = false;
