@@ -133,10 +133,57 @@ function setBar(mode, colour) {
   if (meta && colour) meta.setAttribute('content', colour);
 }
 
+// Bottom bar (Scott, 28/11/2026): the see-through bar lost its icons over dark
+// or busy art (Cotswolds stone wall). The bottom 6% of each image is measured
+// once (brightness under the veil, and how much it varies); a dark or busy
+// strip in light mode, or a bright or busy one in dark mode, gets the
+// stronger frosted bar via data-bar-day / data-bar-night on <html>.
+const BOTTOM_VEIL = { light: 0.08, dark: 0.15 };
+const lin = (c) => (c / 255) ** 2.2;
+
+function bottomNeedsStrong(src, mode) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas');
+        c.width = 32; c.height = 6;
+        const g = c.getContext('2d', { willReadFrequently: true });
+        const h = img.naturalHeight;
+        g.drawImage(img, 0, h * 0.94, img.naturalWidth, h * 0.06, 0, 0, 32, 6);
+        const d = g.getImageData(0, 0, 32, 6).data;
+        const veil = VEIL[mode].rgb, a = BOTTOM_VEIL[mode];
+        const Ls = [];
+        for (let i = 0; i < d.length; i += 4) {
+          const [r, gr, b] = [0, 1, 2].map((k) => veil[k] * a + d[i + k] * (1 - a));
+          Ls.push(0.2126 * lin(r) + 0.7152 * lin(gr) + 0.0722 * lin(b));
+        }
+        const mean = Ls.reduce((x, y) => x + y, 0) / Ls.length;
+        const sd = Math.sqrt(Ls.reduce((x, y) => x + (y - mean) ** 2, 0) / Ls.length);
+        resolve(mode === 'light' ? (mean < 0.4 || sd > 0.15) : (mean > 0.2 || sd > 0.12));
+      } catch { resolve(null); }
+    };
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+function setBottomBar(mode, strong) {
+  const key = mode === 'light' ? 'barDay' : 'barNight';
+  if (strong) document.documentElement.dataset[key] = 'strong';
+  else delete document.documentElement.dataset[key];
+}
+
 async function matchStatusBar(daySrc, nightSrc) {
   let cache = {};
   try { cache = JSON.parse(localStorage.getItem(BAR_CACHE) || '{}'); } catch { /* ignore */ }
   for (const [mode, src] of [['light', daySrc], ['dark', nightSrc]]) {
+    const bkey = `bottom|${src}`;
+    if (typeof cache[bkey] !== 'boolean') {
+      const strong = await bottomNeedsStrong(src, mode);
+      if (strong !== null) cache[bkey] = strong;
+    }
+    setBottomBar(mode, cache[bkey] === true);
     if (cache[src]) { setBar(mode, cache[src]); continue; }
     const rgb = await topColour(src);
     if (!rgb) continue;
